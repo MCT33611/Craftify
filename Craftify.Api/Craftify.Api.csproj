@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>a2991d4a-8045-4db0-ba04-eaefae025884</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Craftify.Application\Craftify.Application.csproj" />
+    <ProjectReference Include="..\Craftify.Contracts\Craftify.Contracts.csproj" />
+    <ProjectReference Include="..\Craftify.Infrastructure\Craftify.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
