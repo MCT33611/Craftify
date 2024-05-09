@@ -4,6 +4,8 @@ using Craftify.Infrastructure.Authentication;
 using Craftify.Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using Craftify.Application.Common.Interfaces.Persistence;
+using Craftify.Infrastructure.Presistence;
 namespace Craftify.Infrastructure
 {
     public static class DependencyInjection
@@ -14,8 +16,11 @@ namespace Craftify.Infrastructure
             )
         {
             services.Configure<JwtSettings>(_config.GetSection(JwtSettings.SectionName));
+
             services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
             services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+
+            services.AddScoped<IUserRepository, UserRepository>();
             return services;
         }
     }

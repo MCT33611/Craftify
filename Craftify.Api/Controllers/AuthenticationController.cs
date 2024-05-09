@@ -12,23 +12,37 @@ namespace Craftify.Api.Controllers
         [HttpPost("register")]
         public IActionResult Register(RegisterRequest request)
         {
-            var authResponse = _authenticationService.Register(
+            var authResult = _authenticationService.Register(
                 request.FirstName,
                 request.LastName,
                 request.Email,
                 request.Password
                 );
-            return Ok(authResponse);
+            var response = new AuthenticationResponse(
+                authResult.User.Id,
+                authResult.User.FirstName,
+                authResult.User.LastName,
+                authResult.User.Email,
+                authResult.Token
+                );
+            return Ok(response);
         }
 
         [HttpPost("login")]
         public IActionResult Login(LoginRequest request)
         {
-            var authResponse = _authenticationService.Login(
+            var authResult = _authenticationService.Login(
                 request.Email,
-                request.Passwrod
+                request.Password
                 );
-            return Ok(authResponse);
+            var response = new AuthenticationResponse(
+                authResult.User.Id,
+                authResult.User.FirstName,
+                authResult.User.LastName,
+                authResult.User.Email,
+                authResult.Token
+                );
+            return Ok(response);
         }
     }
 }

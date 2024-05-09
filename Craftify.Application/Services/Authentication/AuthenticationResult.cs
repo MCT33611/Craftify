@@ -1,11 +1,10 @@
-﻿namespace Craftify.Application.Services.Authentication
+﻿using Craftify.Domain.Entities;
+
+namespace Craftify.Application.Services.Authentication
 {
     public record AuthenticationResult
     (
-        Guid Id,
-        string FistName,
-        string LastName,
-        string Email,
+        User User,
         string Token
 
     );

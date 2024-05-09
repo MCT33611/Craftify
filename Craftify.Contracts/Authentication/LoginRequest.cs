@@ -4,6 +4,6 @@ namespace Craftify.Contracts.Authentication;
     public record LoginRequest
     (
         string Email,
-        string Passwrod
+        string Password
     );
 
