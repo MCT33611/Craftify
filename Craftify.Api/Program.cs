@@ -1,11 +1,13 @@
 
+using Craftify.Api.Filters;
+using Craftify.Api.Middlewares;
 using Craftify.Application;
 using Craftify.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 {
 
-    builder.Services.AddControllers();
+    builder.Services.AddControllers(options=> options.Filters.Add<ErrorHandlingFilterAttribute>());
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
