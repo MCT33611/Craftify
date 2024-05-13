@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
+using Craftify.Infrastructure.Presistence.Repositories;
 namespace Craftify.Infrastructure
 {
     public static class DependencyInjection
@@ -21,6 +23,11 @@ namespace Craftify.Infrastructure
         {
             services.AddAuth(_config);
             services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+
+            services.AddDbContext<CraftifyDbContext>(options =>
+            {
+                options.UseSqlServer(_config.GetConnectionString("DefaultConnection"));
+            });
 
             services.AddScoped<IUserRepository, UserRepository>();
             return services;
