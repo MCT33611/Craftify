@@ -1,17 +1,13 @@
-
-using Craftify.Api.Filters;
-using Craftify.Api.Middlewares;
 using Craftify.Application;
 using Craftify.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 {
 
-    builder.Services.AddControllers(options=> options.Filters.Add<ErrorHandlingFilterAttribute>());
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
+
 
     builder.Services
+        .AddPresentation()
         .AddApplication()
         .AddInfrastructure(builder.Configuration);
 }
@@ -26,7 +22,12 @@ var app = builder.Build();
         app.UseSwaggerUI();
     }
 
+
     app.UseHttpsRedirection();
+
+    app.UseAuthentication();
+
+    app.UseAuthentication();
 
     app.UseAuthorization();
 

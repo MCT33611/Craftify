@@ -1,48 +1,49 @@
-﻿using Craftify.Application.Services.Authentication;
+﻿using Craftify.Application.Authentication.Commands.Register;
+using Craftify.Application.Authentication.Common;
+using Craftify.Application.Authentication.Queries.Login;
 using Craftify.Contracts.Authentication;
-using Microsoft.AspNetCore.Http;
+using Craftify.Domain.Common.Errors;
+using ErrorOr;
+using MapsterMapper;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Craftify.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthenticationController(IAuthenticationService _authenticationService) : ControllerBase
+    public class AuthenticationController(
+        ISender _mediator,
+        IMapper _mapper
+        ) : ApiController
     {
         [HttpPost("register")]
-        public IActionResult Register(RegisterRequest request)
+        public async Task<IActionResult> Register(RegisterRequest request)
         {
-            var authResult = _authenticationService.Register(
-                request.FirstName,
-                request.LastName,
-                request.Email,
-                request.Password
+            var command = _mapper.Map<RegisterCommand>(request);
+            ErrorOr<AuthenticationResult> authResult = await _mediator.Send(command);
+
+            return authResult.Match(
+                authResult => Ok(_mapper.Map<AuthenticationResult>(authResult)),
+                errors => Problem(errors)
                 );
-            var response = new AuthenticationResponse(
-                authResult.User.Id,
-                authResult.User.FirstName,
-                authResult.User.LastName,
-                authResult.User.Email,
-                authResult.Token
-                );
-            return Ok(response);
         }
 
+
         [HttpPost("login")]
-        public IActionResult Login(LoginRequest request)
+        public async Task<IActionResult> Login(LoginRequest request)
         {
-            var authResult = _authenticationService.Login(
-                request.Email,
-                request.Password
+            var query = _mapper.Map<LoginQuery>(request);
+            var authResult = await _mediator.Send(query);
+            if(authResult.IsError && authResult.FirstError == Errors.Authentication.InvalidCredentials)
+            {
+                return Problem(statusCode: StatusCodes.Status401Unauthorized, title: authResult.FirstError.Description);
+            }
+            return authResult.Match(
+                authResult => Ok(_mapper.Map<AuthenticationResult>(authResult)),
+                errors => Problem(errors)
                 );
-            var response = new AuthenticationResponse(
-                authResult.User.Id,
-                authResult.User.FirstName,
-                authResult.User.LastName,
-                authResult.User.Email,
-                authResult.Token
-                );
-            return Ok(response);
         }
+
     }
 }

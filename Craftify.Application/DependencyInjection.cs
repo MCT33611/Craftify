@@ -1,10 +1,12 @@
-﻿using Craftify.Application.Services.Authentication;
+﻿using Craftify.Application.Authentication.Commands.Register;
+using Craftify.Application.Authentication.Common;
+using Craftify.Application.Common.Behaviors;
+using ErrorOr;
+using FluentValidation;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net.Http.Headers;
+using System.Reflection;
 
 namespace Craftify.Application
 {
@@ -12,7 +14,10 @@ namespace Craftify.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            services.AddScoped<IAuthenticationService,AuthenticationService>();
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             return services;
         }
     }
