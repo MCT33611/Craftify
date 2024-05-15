@@ -1,4 +1,5 @@
-﻿using Craftify.Application.Authentication.Commands.Register;
+﻿using Craftify.Application.Authentication.Commands.ConfirmEmail;
+using Craftify.Application.Authentication.Commands.Register;
 using Craftify.Application.Authentication.Common;
 using Craftify.Application.Authentication.Queries.Login;
 using Craftify.Contracts.Authentication;
@@ -24,9 +25,33 @@ namespace Craftify.Api.Controllers
             ErrorOr<AuthenticationResult> authResult = await _mediator.Send(command);
 
             return authResult.Match(
-                authResult => Ok(_mapper.Map<AuthenticationResult>(authResult)),
+                authResult => Ok(_mapper.Map<AuthenticationResponse>(authResult)),
                 errors => Problem(errors)
                 );
+        }
+
+        [HttpPut("ConfirmEmail")]
+        public async Task<IActionResult> ConfirmEmail(ConfirmEmailRequest request)
+        {
+            try
+            {
+                var command = _mapper.Map<ConfirmEmailCommand>(request);
+                ErrorOr<bool> result = await _mediator.Send(command);
+
+                if (!result.IsError)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError,"An error occurred");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred: {ex.Message}");
+            }
         }
 
 

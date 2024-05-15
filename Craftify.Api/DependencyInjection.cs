@@ -39,7 +39,18 @@ namespace Craftify.Infrastructure
                 });
 
             });
+            services.AddCors(options =>
+            {
 
+
+                options.AddPolicy("AllowAllOrigins", builder =>
+                {
+                    builder
+                        .AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
             services.AddMappings();
             return services;
         }

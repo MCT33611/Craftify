@@ -12,6 +12,11 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using Craftify.Infrastructure.Presistence.Repositories;
+using Craftify.Application.Common.Interfaces.Persistence.IRepository;
+using Craftify.Infrastructure.Presistence.Repository;
+using Microsoft.AspNetCore.Identity;
+using Craftify.Domain.Entities;
+using Craftify.Domain.Constants;
 namespace Craftify.Infrastructure
 {
     public static class DependencyInjection
@@ -29,7 +34,9 @@ namespace Craftify.Infrastructure
                 options.UseSqlServer(_config.GetConnectionString("DefaultConnection"));
             });
 
-            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.AddScoped<IPasswordHasher<object>, PasswordHasher<object>>();
             return services;
         }
 
@@ -57,6 +64,24 @@ namespace Craftify.Infrastructure
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret!))
                     };
                 });
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(AppConstants.Role_Admin, policy =>
+                {
+                    policy.RequireRole(AppConstants.Role_Admin);
+                });
+
+                options.AddPolicy(AppConstants.Role_Customer, policy =>
+                {
+                    policy.RequireRole(AppConstants.Role_Customer);
+                });
+
+                options.AddPolicy(AppConstants.Role_Admin, policy =>
+                {
+                    policy.RequireRole(AppConstants.Role_Customer);
+                });
+
+            });
             return services;
         }
 

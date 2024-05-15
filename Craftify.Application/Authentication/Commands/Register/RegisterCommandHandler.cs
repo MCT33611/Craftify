@@ -5,19 +5,21 @@ using Craftify.Domain.Common.Errors;
 using ErrorOr;
 using MediatR;
 using Craftify.Application.Authentication.Common;
+using Craftify.Application.Common.Interfaces.Persistence.IRepository;
+using Craftify.Domain.Constants;
 
 namespace Craftify.Application.Authentication.Commands.Register
 {
-    public class RegisterCommandHandler(
+    public class ConfirmEmailCommandHandler(
         IJwtTokenGenerator _jwtTokenGenerator,
-        IUserRepository _userRepository
+        IUnitOfWork _unitOfWork
         ) : 
         IRequestHandler<RegisterCommand, ErrorOr<AuthenticationResult>>
     {
 
         public async Task<ErrorOr<AuthenticationResult>> Handle(RegisterCommand command, CancellationToken cancellationToken)
         {
-            if (_userRepository.GetUserByEmail(command.Email) is not null)
+            if (_unitOfWork.User.GetUserByEmail(command.Email) is not null)
             {
                 return  Errors.User.DuplicateEmail;
             }
@@ -27,9 +29,12 @@ namespace Craftify.Application.Authentication.Commands.Register
                 Email = command.Email,
                 FirstName = command.FirstName,
                 LastName = command.LastName,
-                Password = command.Password
+                PasswordHash = _unitOfWork.User.HashPassword(command.Password),
+                Role = AppConstants.Role_Customer
             };
-            _userRepository.Add(user);
+
+            _unitOfWork.User.Add(user);
+            _unitOfWork.Save();
             //3. Create JWT token
             string token = _jwtTokenGenerator.GenerateToken(user);
             await Task.CompletedTask;

@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 
 namespace Craftify.Application.Authentication.Commands.Register
 {
-    public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
+    public class ConfirmEmailCommandValidator : AbstractValidator<RegisterCommand>
     {
-        public RegisterCommandValidator()
+        public ConfirmEmailCommandValidator()
         {
             RuleFor(x => x.FirstName).NotEmpty();
             RuleFor(x => x.LastName).NotEmpty();

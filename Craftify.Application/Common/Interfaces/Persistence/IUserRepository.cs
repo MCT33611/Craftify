@@ -7,10 +7,12 @@ using System.Threading.Tasks;
 
 namespace Craftify.Application.Common.Interfaces.Persistence
 {
-    public interface IUserRepository
+    public interface IUserRepository : IRepository<User>
     {
         User? GetUserByEmail(string email);
-
-        void Add(User user);
+        User? GetUserById(Guid Id);
+        bool VerifyPassword(string PasswordHash, string providedPassword);
+        string HashPassword(string providedPassword);
+        void Update(User user);
     }
 }

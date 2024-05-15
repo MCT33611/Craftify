@@ -22,6 +22,7 @@ var app = builder.Build();
         app.UseSwaggerUI();
     }
 
+    app.UseCors("AllowAllOrigins");
 
     app.UseHttpsRedirection();
 
