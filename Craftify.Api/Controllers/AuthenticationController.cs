@@ -1,4 +1,5 @@
 ﻿using Craftify.Application.Authentication.Commands.ConfirmEmail;
+using Craftify.Application.Authentication.Commands.ForgotPassword;
 using Craftify.Application.Authentication.Commands.Register;
 using Craftify.Application.Authentication.Common;
 using Craftify.Application.Authentication.Queries.Login;
@@ -70,5 +71,27 @@ namespace Craftify.Api.Controllers
                 );
         }
 
+        [HttpPost("LoginWithGoogle")]
+        public async Task<IActionResult> LoginWithGoogle([FromBody] string credential)
+        {
+            var command = new LoginWithGoogleCommand(credential);
+            var result = await _mediator.Send(command);
+
+            return result.Match(
+                success => Ok(new { token = success }),
+                error => StatusCode(StatusCodes.Status500InternalServerError, error)
+            );
+        }
+
+        [HttpPost("ForgotPassword/{Email}")]
+        public async Task<IActionResult> ForgotPassword(string email)
+        {
+            var command = new ForgotPasswordCommand(email);
+            var result = await _mediator.Send(command);
+
+            return result.Match<IActionResult>(
+                success => Ok(new { ResetToken = success }),
+                error => NotFound(Errors.User.InvaildCredetial));
+        }
     }
 }

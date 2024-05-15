@@ -4,6 +4,7 @@ using Craftify.Infrastructure.Presistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Craftify.Infrastructure.Migrations
 {
     [DbContext(typeof(CraftifyDbContext))]
-    partial class CraftifyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240515132920_modify-authenction_table_add_expire")]
+    partial class modifyauthenction_table_add_expire
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -48,8 +48,13 @@ namespace Craftify.Infrastructure
             var jwtSettings = new JwtSettings();
             _config.Bind(JwtSettings.SectionName, jwtSettings);
             services.AddSingleton(Options.Create(jwtSettings));
-
             services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
+
+            var googleSettings = new GoogleSettings();
+            _config.Bind(GoogleSettings.SectionName, googleSettings);
+            services.AddSingleton(Options.Create(googleSettings));
+            services.AddSingleton<IGooglePayloadGenerator, GooglePayloadGenerator>();
+
             services.AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {

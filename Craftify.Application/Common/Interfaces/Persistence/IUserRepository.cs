@@ -13,6 +13,8 @@ namespace Craftify.Application.Common.Interfaces.Persistence
         User? GetUserById(Guid Id);
         bool VerifyPassword(string PasswordHash, string providedPassword);
         string HashPassword(string providedPassword);
+        bool IsTokenValid(string email, string token);
+        string GenerateResetToken(string email);
         void Update(User user);
     }
 }

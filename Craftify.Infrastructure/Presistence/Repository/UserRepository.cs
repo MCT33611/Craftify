@@ -40,5 +40,64 @@ namespace Craftify.Infrastructure.Presistence.Repositories
             var result = _passwordHasher.VerifyHashedPassword(null!,PasswordHash, providedPassword);
             return result == PasswordVerificationResult.Success;
         }
+
+        public string GenerateResetToken(string email)
+        {
+            // Generate a random token
+            string token = GenerateRandomToken();
+
+            // Set the expiry date to be, for example, 24 hours from now
+            DateTime expiry = DateTime.UtcNow.AddHours(24);
+
+            // Store the token along with the email address and expiry date
+            _db.Authentications.Add(new()
+            {
+                Email = email,
+                ExpireAt = expiry,
+                ResetToken = token
+            });
+
+            return token;
+        }
+
+        // Check if the token is valid for the given email address
+        public bool IsTokenValid(string email, string token)
+        {
+            // Find the authentication record in the database based on the email and token
+            var authentication = _db.Authentications
+                .SingleOrDefault(a => a.Email == email && a.ResetToken == token);
+
+            // If authentication record is found
+            if (authentication != null)
+            {
+                // Check if the token has not expired
+                if (authentication.ExpireAt > DateTime.UtcNow)
+                {
+                    // Token has used, remove it from the database
+                    _db.Authentications.Remove(authentication);
+                    // Token is valid
+                    return true;
+                }
+                else
+                {
+                    // Token has expired, remove it from the database
+                    _db.Authentications.Remove(authentication);
+                }
+                _db.SaveChanges();
+            }
+
+            // Token is not valid
+            return false;
+        }
+
+        private string GenerateRandomToken()
+        {
+            const int tokenLength = 32;
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var random = new Random();
+            var token = new string(Enumerable.Repeat(chars, tokenLength)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+            return token;
+        }
     }
 }
