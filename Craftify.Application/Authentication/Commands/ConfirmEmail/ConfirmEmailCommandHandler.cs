@@ -22,6 +22,10 @@ namespace Craftify.Application.Authentication.Commands.ConfirmEmail
             {
                 return  Errors.User.DuplicateEmail;
             }
+            if (!_unitOfWork.User.IsOTPValid(command.Email, command.OTP))
+            {
+                return Errors.User.InvaildCredetial;
+            }
 
             user.EmailConfirmed = true;
 

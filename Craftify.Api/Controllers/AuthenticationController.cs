@@ -1,6 +1,7 @@
 ﻿using Craftify.Application.Authentication.Commands.ConfirmEmail;
 using Craftify.Application.Authentication.Commands.ForgotPassword;
 using Craftify.Application.Authentication.Commands.Register;
+using Craftify.Application.Authentication.Commands.ResetPasswordCommand;
 using Craftify.Application.Authentication.Common;
 using Craftify.Application.Authentication.Queries.Login;
 using Craftify.Contracts.Authentication;
@@ -92,6 +93,27 @@ namespace Craftify.Api.Controllers
             return result.Match<IActionResult>(
                 success => Ok(new { ResetToken = success }),
                 error => NotFound(Errors.User.InvaildCredetial));
+        }
+
+        [HttpPut("ResetPassword")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordRequest model)
+        {
+            if (model == null)
+            {
+                return BadRequest("Email, token, and new password are required for password reset.");
+            }
+
+            var command = _mapper.Map<ResetPasswordCommand>(model);
+            var result = await _mediator.Send(command);
+
+            if (result.Value)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("Failed to reset password.");
+            }
         }
     }
 }

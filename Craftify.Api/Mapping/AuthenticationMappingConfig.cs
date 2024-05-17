@@ -1,4 +1,5 @@
 ﻿using Craftify.Application.Authentication.Commands.Register;
+using Craftify.Application.Authentication.Commands.ResetPasswordCommand;
 using Craftify.Application.Authentication.Common;
 using Craftify.Application.Authentication.Queries.Login;
 using Craftify.Contracts.Authentication;
@@ -14,6 +15,7 @@ namespace Craftify.Api.Mapping
             config.NewConfig<LoginRequest, LoginQuery>();
             config.NewConfig<AuthenticationResult, AuthenticationResponse>()
                 .Map(dest => dest, src => src.User);
+            config.NewConfig<ResetPasswordRequest, ResetPasswordCommand>();
         }
     }
 }

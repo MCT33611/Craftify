@@ -3,6 +3,7 @@ using Craftify.Application.Common.Interfaces.Persistence;
 using Craftify.Domain.Entities;
 using Craftify.Infrastructure.Persistence.Repository;
 using Microsoft.AspNetCore.Identity;
+using Newtonsoft.Json.Linq;
 
 namespace Craftify.Infrastructure.Presistence.Repositories
 {
@@ -41,6 +42,7 @@ namespace Craftify.Infrastructure.Presistence.Repositories
             return result == PasswordVerificationResult.Success;
         }
 
+
         public string GenerateResetToken(string email)
         {
             // Generate a random token
@@ -56,10 +58,9 @@ namespace Craftify.Infrastructure.Presistence.Repositories
                 ExpireAt = expiry,
                 ResetToken = token
             });
-
+            _db.SaveChanges();
             return token;
         }
-
         // Check if the token is valid for the given email address
         public bool IsTokenValid(string email, string token)
         {
@@ -90,7 +91,68 @@ namespace Craftify.Infrastructure.Presistence.Repositories
             return false;
         }
 
-        private string GenerateRandomToken()
+        public string GenerateOTP(string email)
+        {
+            // Generate a random OTP
+            string otp = GenerateRandomOTP();
+
+            // Store the OTP along with the email address (and expiry date if needed)
+            // You can decide whether to store OTP in the database or not
+            DateTime expiry = DateTime.UtcNow.AddMinutes(1);
+            _db.Authentications.Add(new()
+            {
+                Email = email,
+                ExpireAt = expiry,
+                OTP = otp
+            });
+            _db.SaveChanges();
+
+            return otp;
+        }
+        public bool IsOTPValid(string email, string otp)
+        {
+            // Find the stored OTP in the database based on the email address
+            // You can decide whether to store OTP in the database or not
+
+            // For example, if you're storing OTP in the database
+            var storedOTP = _db.Authentications.SingleOrDefault(o => o.Email == email);
+
+            if (storedOTP != null)
+            {
+                // Check if the provided OTP matches the stored OTP
+                if (otp == storedOTP.OTP)
+                {
+                    // Optionally, check for expiry if needed
+                    if (storedOTP.ExpireAt > DateTime.UtcNow)
+                    {
+                        // OTP is valid
+                        // Optionally, remove the OTP from the database if it's single-use
+                        _db.Authentications.Remove(storedOTP);
+                        _db.SaveChanges();
+                        return true;
+                    }
+                }
+                else
+                {
+                    // Incorrect OTP
+                    return false;
+                }
+            }
+
+            // OTP is not valid
+            return false;
+        }
+
+        private static string GenerateRandomOTP()
+        {
+            const int otpLength = 6; // Length of OTP
+            const string digits = "0123456789"; // Characters to choose from
+            var random = new Random();
+            var otp = new string(Enumerable.Repeat(digits, otpLength)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+            return otp;
+        }
+        private static string GenerateRandomToken()
         {
             const int tokenLength = 32;
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

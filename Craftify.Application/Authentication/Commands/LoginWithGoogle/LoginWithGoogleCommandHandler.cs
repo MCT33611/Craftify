@@ -49,7 +49,7 @@ namespace Craftify.Application.Authentication.Commands.Register
                     token
                     );
             }
-            catch (Exception ex )
+            catch (Exception)
             {
                 return Errors.User.InvaildCredetial;
             }

@@ -9,6 +9,7 @@ namespace Craftify.Application.Authentication.Commands.ConfirmEmail
         public ConfirmEmailCommandValidator()
         {
             RuleFor(x => x.Email).NotEmpty();
+            RuleFor(x => x.OTP).NotEmpty();
         }
     }
 

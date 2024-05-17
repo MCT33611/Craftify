@@ -16,5 +16,7 @@ namespace Craftify.Application.Common.Interfaces.Persistence
         bool IsTokenValid(string email, string token);
         string GenerateResetToken(string email);
         void Update(User user);
+        string GenerateOTP(string email);
+        bool IsOTPValid(string email, string otp);
     }
 }

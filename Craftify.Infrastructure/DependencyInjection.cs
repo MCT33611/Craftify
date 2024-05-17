@@ -4,19 +4,17 @@ using Craftify.Infrastructure.Authentication;
 using Craftify.Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
-using Craftify.Application.Common.Interfaces.Persistence;
 using Craftify.Infrastructure.Presistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
-using Craftify.Infrastructure.Presistence.Repositories;
 using Craftify.Application.Common.Interfaces.Persistence.IRepository;
 using Craftify.Infrastructure.Presistence.Repository;
 using Microsoft.AspNetCore.Identity;
-using Craftify.Domain.Entities;
 using Craftify.Domain.Constants;
+using Microsoft.AspNetCore.Identity.UI.Services;
 namespace Craftify.Infrastructure
 {
     public static class DependencyInjection
@@ -36,7 +34,20 @@ namespace Craftify.Infrastructure
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+            services.AddScoped<IEmailSender, EmailSender>();
+
             services.AddScoped<IPasswordHasher<object>, PasswordHasher<object>>();
+
+            services.AddScoped<ICloudinaryService, CloudinaryService>(provider =>
+            {
+                // Retrieve Cloudinary configuration from appsettings.json
+                var cloudinarySettings = _config.GetSection(CloudinarySettings.SectionName).Get<CloudinarySettings>();
+                return new CloudinaryService(
+                    cloudinarySettings!.CloudName,
+                    cloudinarySettings!.ApiKey,
+                    cloudinarySettings!.ApiSecret
+                    );
+            });
             return services;
         }
 
