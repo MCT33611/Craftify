@@ -1,6 +1,7 @@
 ﻿using Craftify.Application.Common.Interfaces.Persistence.IRepository;
 using Craftify.Application.Service.Common;
 using Craftify.Domain.Common.Errors;
+using Craftify.Domain.Entities;
 using ErrorOr;
 using MediatR;
 using System;
@@ -30,7 +31,7 @@ namespace Craftify.Application.Service.Queries.GetService
                 service.ProviderId,
                 service.Title,
                 service.Description,
-                service.Category,
+                service.CategoryId,
                 service.Price,
                 service.Availability,
                 service.ZipCode

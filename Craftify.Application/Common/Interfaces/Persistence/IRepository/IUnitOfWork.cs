@@ -6,6 +6,8 @@
 
         IServiceRepository Service { get; }
 
+        ICategoryRepository Category { get; }
+
         void Save();
     }
 }

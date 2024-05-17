@@ -1,9 +1,8 @@
 ﻿using Craftify.Application.Service.Commands.CreateService;
-using Craftify.Application.Service.Commands.DeleteService;
 using FluentValidation;
 
 
-namespace Craftify.Application.Profile.Commands.CreateService
+namespace Craftify.Application.Service.Commands.DeleteService
 {
     public class DeleteServiceCommandValidator : AbstractValidator<DeleteServiceCommand>
     {

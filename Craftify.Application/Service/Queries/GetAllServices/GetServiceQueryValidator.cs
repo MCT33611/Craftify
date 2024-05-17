@@ -1,4 +1,5 @@
-﻿using Craftify.Application.Profile.Queries.GetProfile;
+﻿using Craftify.Application.Category.Queries.GetCategory;
+using Craftify.Application.Profile.Queries.GetProfile;
 using Craftify.Application.Service.Queries.GetService;
 using FluentValidation;
 using System;

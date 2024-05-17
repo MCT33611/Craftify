@@ -9,14 +9,14 @@ using Newtonsoft.Json.Linq;
 namespace Craftify.Infrastructure.Presistence.Repositories
 {
     public class ServiceRepository(
-        CraftifyDbContext _db
-        ) :Repository<Service>(_db), IServiceRepository
+        CraftifyDbContext db
+        ) :Repository<Service>(db), IServiceRepository
     {
 
 
         public void Update(Service user)
         {
-            _db.Services.Update(user);
+            db.Services.Update(user);
         }
     }
 }

@@ -17,7 +17,6 @@ namespace Craftify.Application.Service.Commands.UpdateService
             {
                 service.Title = request.Title ?? service.Title;
                 service.Description = request.Description ?? service.Description;
-                service.Category = request.Category ?? service.Category;
                 service.Price = request.Price ?? service.Price;
                 service.Availability = request.Availability;
                 service.ZipCode = request.ZipCode ?? service.ZipCode;

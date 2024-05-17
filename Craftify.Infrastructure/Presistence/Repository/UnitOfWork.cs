@@ -21,6 +21,8 @@ namespace Craftify.Infrastructure.Presistence.Repository
 
         public IServiceRepository Service => new ServiceRepository(_db);
 
+        public ICategoryRepository Category => new CategoryRepository(_db);
+
         public void Save()
         {
             _db.SaveChanges();

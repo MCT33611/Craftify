@@ -10,7 +10,7 @@ namespace Craftify.Application.Profile.Commands.CreateService
         {
             RuleFor(x => x.Title).NotEmpty();
             RuleFor(x => x.Description).NotEmpty();
-            RuleFor(x => x.Category).NotEmpty();
+            RuleFor(x => x.CategoryId).NotEmpty();
             RuleFor(x => x.Price).NotEmpty();
             RuleFor(x => x.Availability).NotEmpty();
             RuleFor(x => x.ZipCode).NotEmpty();

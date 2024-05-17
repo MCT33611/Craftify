@@ -8,24 +8,24 @@ using Newtonsoft.Json.Linq;
 namespace Craftify.Infrastructure.Presistence.Repositories
 {
     public class UserRepository(
-        CraftifyDbContext _db,
+        CraftifyDbContext db,
         IPasswordHasher<object> _passwordHasher
-        ) :Repository<User>(_db), IUserRepository
+        ) :Repository<User>(db), IUserRepository
     {
 
         public void Update( User user)
         {
-            _db.Users.Add( user );
+            db.Users.Add( user );
         }
 
         public User? GetUserByEmail(string email)
         {
-            return _db.Users.SingleOrDefault(user => user.Email == email);
+            return db.Users.SingleOrDefault(user => user.Email == email);
         }
 
         public User? GetUserById(Guid Id)
         {
-            return _db.Users.SingleOrDefault(user => user.Id == Id);
+            return db.Users.SingleOrDefault(user => user.Id == Id);
         }
 
         public string HashPassword(string providedPassword)
@@ -52,20 +52,20 @@ namespace Craftify.Infrastructure.Presistence.Repositories
             DateTime expiry = DateTime.UtcNow.AddHours(24);
 
             // Store the token along with the email address and expiry date
-            _db.Authentications.Add(new()
+            db.Authentications.Add(new()
             {
                 Email = email,
                 ExpireAt = expiry,
                 ResetToken = token
             });
-            _db.SaveChanges();
+            db.SaveChanges();
             return token;
         }
         // Check if the token is valid for the given email address
         public bool IsTokenValid(string email, string token)
         {
             // Find the authentication record in the database based on the email and token
-            var authentication = _db.Authentications
+            var authentication = db.Authentications
                 .SingleOrDefault(a => a.Email == email && a.ResetToken == token);
 
             // If authentication record is found
@@ -75,16 +75,16 @@ namespace Craftify.Infrastructure.Presistence.Repositories
                 if (authentication.ExpireAt > DateTime.UtcNow)
                 {
                     // Token has used, remove it from the database
-                    _db.Authentications.Remove(authentication);
+                    db.Authentications.Remove(authentication);
                     // Token is valid
                     return true;
                 }
                 else
                 {
                     // Token has expired, remove it from the database
-                    _db.Authentications.Remove(authentication);
+                    db.Authentications.Remove(authentication);
                 }
-                _db.SaveChanges();
+                db.SaveChanges();
             }
 
             // Token is not valid
@@ -99,13 +99,13 @@ namespace Craftify.Infrastructure.Presistence.Repositories
             // Store the OTP along with the email address (and expiry date if needed)
             // You can decide whether to store OTP in the database or not
             DateTime expiry = DateTime.UtcNow.AddMinutes(1);
-            _db.Authentications.Add(new()
+            db.Authentications.Add(new()
             {
                 Email = email,
                 ExpireAt = expiry,
                 OTP = otp
             });
-            _db.SaveChanges();
+            db.SaveChanges();
 
             return otp;
         }
@@ -115,7 +115,7 @@ namespace Craftify.Infrastructure.Presistence.Repositories
             // You can decide whether to store OTP in the database or not
 
             // For example, if you're storing OTP in the database
-            var storedOTP = _db.Authentications.SingleOrDefault(o => o.Email == email);
+            var storedOTP = db.Authentications.SingleOrDefault(o => o.Email == email);
 
             if (storedOTP != null)
             {
@@ -127,8 +127,8 @@ namespace Craftify.Infrastructure.Presistence.Repositories
                     {
                         // OTP is valid
                         // Optionally, remove the OTP from the database if it's single-use
-                        _db.Authentications.Remove(storedOTP);
-                        _db.SaveChanges();
+                        db.Authentications.Remove(storedOTP);
+                        db.SaveChanges();
                         return true;
                     }
                 }

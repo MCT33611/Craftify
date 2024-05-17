@@ -29,7 +29,7 @@ namespace Craftify.Application.Service.Queries.GetAllService
                     service.ProviderId,
                     service.Title,
                     service.Description,
-                    service.Category,
+                    service.CategoryId,
                     service.Price,
                     service.Availability,
                     service.ZipCode

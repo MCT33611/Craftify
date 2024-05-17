@@ -16,7 +16,7 @@ namespace Craftify.Application.Service.Commands.CreateService
                 Id = Guid.NewGuid(),
                 Title = request.Title,
                 Description = request.Description,
-                Category = request.Category,
+                CategoryId = request.CategoryId,
                 Price = request.Price,
                 Availability = request.Availability,
                 ZipCode = request.ZipCode

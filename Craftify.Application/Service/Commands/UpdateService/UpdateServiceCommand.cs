@@ -12,7 +12,7 @@ namespace Craftify.Application.Service.Commands.UpdateService
         Guid Id,
         string Title,
         string Description,
-        string Category,
+        Guid CategoryId,
         decimal? Price,
         bool Availability,
         string ZipCode

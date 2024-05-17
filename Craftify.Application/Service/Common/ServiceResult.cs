@@ -11,7 +11,7 @@ namespace Craftify.Application.Service.Common
         Guid ProviderId,
         string Title,
         string Description,
-        string Category,
+        Guid CategoryId,
         decimal? Price,
         bool Availability,
         string ZipCode);

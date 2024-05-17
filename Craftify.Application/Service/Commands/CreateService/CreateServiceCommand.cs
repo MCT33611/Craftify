@@ -11,7 +11,7 @@ namespace Craftify.Application.Service.Commands.CreateService
     public record CreateServiceCommand(
         string Title,
         string Description,
-        string Category,
+        Guid   CategoryId,
         decimal? Price,
         bool Availability,
         string ZipCode) : IRequest<ErrorOr<Guid>>;
