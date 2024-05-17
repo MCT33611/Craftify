@@ -4,6 +4,8 @@
     {
         IUserRepository User {  get; }
 
+        IServiceRepository Service { get; }
+
         void Save();
     }
 }

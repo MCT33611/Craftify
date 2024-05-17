@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Craftify.Application.Common.Interfaces.Persistence
+namespace Craftify.Application.Common.Interfaces.Persistence.IRepository
 {
     public interface IUserRepository : IRepository<User>
     {

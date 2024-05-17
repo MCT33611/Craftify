@@ -80,24 +80,19 @@ namespace Craftify.Infrastructure
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret!))
                     };
                 });
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy(AppConstants.Role_Admin, policy =>
+            services.AddAuthorizationBuilder()
+                .AddPolicy(AppConstants.Role_Admin, policy =>
                 {
                     policy.RequireRole(AppConstants.Role_Admin);
-                });
-
-                options.AddPolicy(AppConstants.Role_Customer, policy =>
+                })
+                .AddPolicy(AppConstants.Role_Customer, policy =>
+                {
+                    policy.RequireRole(AppConstants.Role_Customer);
+                })
+                .AddPolicy(AppConstants.Role_Admin, policy =>
                 {
                     policy.RequireRole(AppConstants.Role_Customer);
                 });
-
-                options.AddPolicy(AppConstants.Role_Admin, policy =>
-                {
-                    policy.RequireRole(AppConstants.Role_Customer);
-                });
-
-            });
             return services;
         }
 

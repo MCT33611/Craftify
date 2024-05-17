@@ -1,5 +1,5 @@
 ﻿using Craftify.Application.Authentication.Commands.Register;
-using Craftify.Application.Common.Interfaces.Persistence;
+using Craftify.Application.Common.Interfaces.Persistence.IRepository;
 using Craftify.Domain.Entities;
 using Craftify.Infrastructure.Persistence.Repository;
 using Microsoft.AspNetCore.Identity;

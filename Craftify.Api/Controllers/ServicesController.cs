@@ -1,18 +1,50 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Craftify.Application.Common.Interfaces.Persistence.IRepository;
+using Craftify.Application.Service.Commands.CreateService;
+using Craftify.Application.Service.Commands.DeleteService;
+using Craftify.Application.Service.Commands.UpdateService;
+using Craftify.Contracts.Service;
+using Craftify.Domain.Constants;
+using ErrorOr;
+using Mapster;
+using MapsterMapper;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Craftify.Api.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = $"{AppConstants.Role_Admin},{ AppConstants.Role_Worker}")]
     [Route("api/[controller]")]
     [ApiController]
-    public class ServicesController() : ControllerBase
+    public class ServicesController(
+        IMapper _mapper,
+        IMediator _mediator
+        ) : ControllerBase
     {
-        [HttpGet]
-        public IActionResult ListServices()
+        [HttpPost]
+        public async Task<IActionResult> CreateService(ServiceRequest request)
         {
-            return Ok(Array.Empty<string>());
+            var serviceId = await _mediator.Send(request);
+            return CreatedAtAction("GetService", new { id = serviceId }, null);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateService(Guid id, ServiceRequest request)
+        {
+            TypeAdapterConfig<ServiceRequest, UpdateServiceCommand>.NewConfig().
+                Map(dest => dest.Id, src => id);
+
+            var command = _mapper.Map<UpdateServiceCommand>(request);
+            await _mediator.Send(command);
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteService(Guid id)
+        {
+            await _mediator.Send(new DeleteServiceCommand(id));
+            return NoContent();
         }
     }
 }

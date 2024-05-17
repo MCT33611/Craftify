@@ -25,7 +25,7 @@ namespace Craftify.Infrastructure.Services
 
             var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
-            return uploadResult.SecureUri.AbsoluteUri;
+            return uploadResult.SecureUri.AbsoluteUri ?? "";
         }
     }
 }

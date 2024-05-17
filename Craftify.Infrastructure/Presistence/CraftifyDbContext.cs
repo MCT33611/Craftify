@@ -9,5 +9,7 @@ namespace Craftify.Infrastructure.Presistence
 
         public DbSet<Domain.Entities.Authentication> Authentications { get; set; } = null!;
 
+        public DbSet<Service> Services { get; set; }
+
     }
 }

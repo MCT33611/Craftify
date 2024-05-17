@@ -19,6 +19,8 @@ namespace Craftify.Infrastructure.Presistence.Repository
 
         public IUserRepository User { get; } = new UserRepository(_db,_passwordHasher);
 
+        public IServiceRepository Service => new ServiceRepository(_db);
+
         public void Save()
         {
             _db.SaveChanges();
