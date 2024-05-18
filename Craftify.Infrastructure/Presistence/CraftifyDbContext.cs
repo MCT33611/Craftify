@@ -14,7 +14,7 @@ namespace Craftify.Infrastructure.Presistence
         public DbSet<Category> Categories { get; set; }
 
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        /*protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
@@ -42,6 +42,6 @@ namespace Craftify.Infrastructure.Presistence
                 }
 
                 );
-        }
+        }*/
     }
 }

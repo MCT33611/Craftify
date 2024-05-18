@@ -51,7 +51,7 @@ namespace Craftify.Api.Controllers
             var result = await _mediator.Send(new UploadProfilePictureCommand(id, file));
 
             return result.Match(
-                success => Ok(result),
+                success => Ok(result.Value),
                 error => Problem(error)
             );
         }

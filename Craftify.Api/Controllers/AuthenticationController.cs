@@ -42,7 +42,7 @@ namespace Craftify.Api.Controllers
 
                 if (!result.IsError)
                 {
-                    return Ok(result);
+                    return Ok(result.Value);
                 }
                 else
                 {

@@ -24,26 +24,26 @@ namespace Craftify.Api.Controllers
 
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var result = _mediator.Send(new GetAllCategoryQuery());
-            return Ok(result);
+            var result = await _mediator.Send(new GetAllCategoryQuery());
+            return Ok(result.Value);
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             var query = _mapper.Map<GetCategoryQuery>(new { id });
-            var result = _mediator.Send(query);
-            return Ok(result);
+            var result = await _mediator.Send(query);
+            return Ok(result.Value);
         }
         [HttpPost]
         public async Task<IActionResult> CreateCategory(CategoryRequest request)
         {
 
             var command = _mapper.Map<CreateCategoryCommand>(request);
-            var CategoryId = await _mediator.Send(command);
-            return CreatedAtAction("GetCategory", new { id = CategoryId }, null);
+            var result = await _mediator.Send(command);
+            return Ok( new { id = result.Value });
         }
 
         [HttpPut("{id}")]
