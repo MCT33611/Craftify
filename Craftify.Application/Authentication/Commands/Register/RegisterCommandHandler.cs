@@ -30,7 +30,7 @@ namespace Craftify.Application.Authentication.Commands.Register
                 FirstName = command.FirstName,
                 LastName = command.LastName,
                 PasswordHash = _unitOfWork.User.HashPassword(command.Password),
-                Role = AppConstants.Role_Customer
+                Role = AppConstants.Role_Admin
             };
 
             _unitOfWork.User.Add(user);

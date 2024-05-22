@@ -1,0 +1,44 @@
+<div class=" h-screen flex flex-col  justify-start items-start text-nowra p">
+    <img src="../../../../assets/images/profile/header setting.png" alt="" class="w-full">
+    <div class="w-full flex md:flex-row flex-col justify-between">
+
+        <div
+            class="sidebar h-full relative top-0 bottom-0 lg:left-0 p-2 md:w-[300px] w-full overflow-y-auto text-center bg-gray-900">
+           
+            <app-profile-picture></app-profile-picture>
+
+            <div (click)="this.router.navigate(['/profile/editprofile']);"
+                class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+                <i class="bi bi-person-lines-fill"></i>
+                <span class="text-[15px] ml-4 text-gray-200 font-bold">Profile</span>
+            </div>
+            <div
+                class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+                <i class="bi bi-app-indicator"></i>
+                <span class="text-[15px] ml-4 text-gray-200 font-bold">Notifications</span>
+            </div>
+
+            <div (click)="this.router.navigate(['/profile/security/{user.email}'], { queryParams: { email:user.email} });"
+                class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+                <i class="bi bi-fingerprint"></i>
+                <span class="text-[15px] ml-4 text-gray-200 font-bold">Password & Security</span>
+            </div>
+            <div class="w-full mb-4 absolute bottom-0">
+                <div class="my-4 bg-gray-600 h-[1px]"></div>
+
+                <div (click)="logout()"
+                    class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    <span class="text-[15px] ml-4 text-gray-200 font-bold">Logout</span>
+                </div>
+            </div>
+
+        </div>
+        <div class="w-full ">
+
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+
+</div>

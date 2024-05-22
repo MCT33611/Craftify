@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 namespace Craftify.Contracts.Service
 {
     public record ServiceRequest(
+    Guid ProviderId,
     string Title,
     string Description,
-    string Category,
+    Guid CategoryId,
     decimal? Price,
     bool Availability,
     string ZipCode);

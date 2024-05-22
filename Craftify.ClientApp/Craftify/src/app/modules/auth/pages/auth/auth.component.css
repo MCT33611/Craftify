@@ -1,0 +1,19 @@
+.sign-in-box, .sign-up-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 16px;
+    padding: 16px;
+    border-radius: 8px;
+  }
+  
+  .sign-in-box {
+    height: 100%;
+    width: 100%;
+  }
+  
+  .sign-up-box {
+    height: 100%;
+    width: 100%;
+  }
+  

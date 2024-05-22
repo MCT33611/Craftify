@@ -30,9 +30,9 @@ namespace Craftify.Api.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var query = _mapper.Map<GetAllServiceQuery>(new { });
+            var query = new GetAllServiceQuery();
             var result = _mediator.Send(query);
-            return Ok(result);
+            return Ok(result.Result.Value);
         }
 
         [HttpGet("{id}")]
@@ -40,7 +40,7 @@ namespace Craftify.Api.Controllers
         {
             var query = _mapper.Map<GetServiceQuery>(new { id });
             var result = _mediator.Send(query);
-            return Ok(result);
+            return Ok(result.Result.Value);
         }
 
 

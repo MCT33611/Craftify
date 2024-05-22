@@ -1,0 +1,21 @@
+table {
+    width: 100%;
+  }
+  
+  .mat-mdc-form-field {
+    font-size: 14px;
+    width: 100%;
+  }
+  
+  td, th {
+    width: 25%;
+  }
+
+
+  .cate-button-container {
+    padding-bottom: 16px;
+  }
+  
+  .cate-button + .cate-button {
+    margin-left: 8px;
+  }
