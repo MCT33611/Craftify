@@ -7,6 +7,7 @@ using Craftify.Domain.Common.Errors;
 using ErrorOr;
 using MediatR;
 using Craftify.Application.Common.Interfaces.Persistence.IRepository;
+using Craftify.Domain.Constants;
 
 namespace Craftify.Application.Authentication.Queries.Login
 {

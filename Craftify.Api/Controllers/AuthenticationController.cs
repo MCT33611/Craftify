@@ -4,6 +4,7 @@ using Craftify.Application.Authentication.Commands.Register;
 using Craftify.Application.Authentication.Commands.ResetPasswordCommand;
 using Craftify.Application.Authentication.Common;
 using Craftify.Application.Authentication.Queries.Login;
+using Craftify.Application.Authentication.Queries.SendOtp;
 using Craftify.Contracts.Authentication;
 using Craftify.Domain.Common.Errors;
 using ErrorOr;
@@ -95,6 +96,8 @@ namespace Craftify.Api.Controllers
                 error => NotFound(Errors.User.InvaildCredetial));
         }
 
+        
+
         [HttpPut("ResetPassword")]
         public async Task<IActionResult> ResetPassword(ResetPasswordRequest model)
         {
@@ -114,6 +117,16 @@ namespace Craftify.Api.Controllers
             {
                 return BadRequest("Failed to reset password.");
             }
+        }
+
+        [HttpGet("SendOtp/{email}")]
+        public async Task<IActionResult> SendOtp(string email)
+        {
+            var command = new SendOtpQuery(email);
+            var result = await _mediator.Send(command);
+            return result.Match<IActionResult>(
+                success => Ok(new { ResetToken = success }),
+                error => NotFound(Errors.User.InvaildCredetial));
         }
     }
 }
