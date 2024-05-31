@@ -22,7 +22,7 @@ namespace Craftify.Application.Profile.Commands.DeleteProfile
                 return Errors.User.InvaildCredetial;
 
             _unitOfWork.User.Remove(user);
-
+            _unitOfWork.Save();
             await Task.CompletedTask;
             return Unit.Value;
         }

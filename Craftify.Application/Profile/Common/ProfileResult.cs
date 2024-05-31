@@ -26,5 +26,7 @@ namespace Craftify.Application.Profile.Common
 
 
         public string? ProfilePicture { get; set; }
+
+        
     }
 }

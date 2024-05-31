@@ -15,7 +15,7 @@ namespace Craftify.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles =AppConstants.Role_Customer)]
+    [Authorize]
     public class ProfileController(
         ISender _mediator,
         IMapper _mapper

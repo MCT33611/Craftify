@@ -38,16 +38,16 @@ namespace Craftify.Api.Controllers
         {
             try
             {
-                var command = _mapper.Map<ConfirmEmailCommand>(request);
+                var command = new ConfirmEmailCommand(request.Email, request.OTP);
                 ErrorOr<bool> result = await _mediator.Send(command);
 
                 if (!result.IsError)
                 {
-                    return Ok(result.Value);
+                    return Ok(new { EmailConfirmation = true });
                 }
                 else
                 {
-                    return StatusCode(StatusCodes.Status500InternalServerError,"An error occurred");
+                    return StatusCode(StatusCodes.Status500InternalServerError,$"An error occurred : {result.FirstError}");
                 }
 
             }
@@ -81,7 +81,7 @@ namespace Craftify.Api.Controllers
 
             return result.Match(
                 success => Ok(new { token = success }),
-                error => StatusCode(StatusCodes.Status500InternalServerError, error)
+                error => StatusCode(StatusCodes.Status500InternalServerError,error)
             );
         }
 
@@ -119,13 +119,13 @@ namespace Craftify.Api.Controllers
             }
         }
 
-        [HttpGet("SendOtp/{email}")]
+        [HttpPost("SendOtp/{email}")]
         public async Task<IActionResult> SendOtp(string email)
         {
             var command = new SendOtpQuery(email);
             var result = await _mediator.Send(command);
             return result.Match<IActionResult>(
-                success => Ok(new { ResetToken = success }),
+                success => Ok(new { OtpSent = success }),
                 error => NotFound(Errors.User.InvaildCredetial));
         }
     }

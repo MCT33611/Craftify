@@ -13,5 +13,7 @@ namespace Craftify.Infrastructure.Authentication
         public string? GoogleClientId { get; set; }
 
         public string? Secret { get; set; }
+
+        public string? AppKey { get; set; }
     }
 }

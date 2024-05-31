@@ -15,7 +15,7 @@ namespace Craftify.Infrastructure.Presistence.Repositories
 
         public void Update( User user)
         {
-            db.Users.Add( user );
+            db.Users.Update( user );
         }
 
         public User? GetUserByEmail(string email)
@@ -98,7 +98,7 @@ namespace Craftify.Infrastructure.Presistence.Repositories
 
             // Store the OTP along with the email address (and expiry date if needed)
             // You can decide whether to store OTP in the database or not
-            DateTime expiry = DateTime.UtcNow.AddMinutes(1);
+            DateTime expiry = DateTime.Now.AddMinutes(5);
             db.Authentications.Add(new()
             {
                 Email = email,
@@ -111,35 +111,27 @@ namespace Craftify.Infrastructure.Presistence.Repositories
         }
         public bool IsOTPValid(string email, string otp)
         {
-            // Find the stored OTP in the database based on the email address
-            // You can decide whether to store OTP in the database or not
-
-            // For example, if you're storing OTP in the database
             var storedOTP = db.Authentications.SingleOrDefault(o => o.Email == email);
 
             if (storedOTP != null)
             {
-                // Check if the provided OTP matches the stored OTP
                 if (otp == storedOTP.OTP)
                 {
-                    // Optionally, check for expiry if needed
-                    if (storedOTP.ExpireAt > DateTime.UtcNow)
-                    {
-                        // OTP is valid
-                        // Optionally, remove the OTP from the database if it's single-use
-                        db.Authentications.Remove(storedOTP);
-                        db.SaveChanges();
+                    db.Authentications.Remove(storedOTP);
+                    db.SaveChanges();
+
+
+                    if (storedOTP.ExpireAt > DateTime.Now)
                         return true;
-                    }
+                    else
+                        return false;
                 }
                 else
                 {
-                    // Incorrect OTP
                     return false;
                 }
             }
 
-            // OTP is not valid
             return false;
         }
 

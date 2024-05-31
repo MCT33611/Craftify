@@ -14,6 +14,10 @@ namespace Craftify.Domain.Common.Errors
             public static Error InvalidCredentials => Error.Validation(
                 code: "Authentication.InvalidCredentials",
                 description:"Invalied Credentionals");
+
+            public static Error OtpTimeOut => Error.Validation(
+                code: "Authentication.Otp Time out",
+                description: "otp time out");
         }
     }
 }
