@@ -13,6 +13,9 @@ namespace Craftify.Application.Category.Commands.CreateCategory
 
         string CategoryName ,
 
+        string Picture,
+
+
         Decimal? MinmumPrice ,
 
         Decimal? MaximumPrice 

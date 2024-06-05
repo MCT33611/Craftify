@@ -3,6 +3,7 @@ using Craftify.Application.Common.Interfaces.Persistence.IRepository;
 using Craftify.Domain.Entities;
 using Craftify.Infrastructure.Persistence.Repository;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 
 namespace Craftify.Infrastructure.Presistence.Repositories
@@ -20,7 +21,8 @@ namespace Craftify.Infrastructure.Presistence.Repositories
 
         public User? GetUserByEmail(string email)
         {
-            return db.Users.SingleOrDefault(user => user.Email == email);
+            var user = db.Users.FirstOrDefault(user => user.Email == email);
+            return user;
         }
 
         public User? GetUserById(Guid Id)
@@ -135,9 +137,18 @@ namespace Craftify.Infrastructure.Presistence.Repositories
             return false;
         }
 
+        public void Detach(User user)
+        {
+            var entry = db.Entry(user);
+            if (entry != null)
+            {
+                entry.State = EntityState.Detached;
+            }
+        }
+
         private static string GenerateRandomOTP()
         {
-            const int otpLength = 6; // Length of OTP
+            const int otpLength = 4; // Length of OTP
             const string digits = "0123456789"; // Characters to choose from
             var random = new Random();
             var otp = new string(Enumerable.Repeat(digits, otpLength)

@@ -31,10 +31,11 @@ namespace Craftify.Application.Profile.Commands.UpdateProfile
             user.City = request.Model.City ?? user.City;
             user.State = request.Model.State ?? user.State;
             user.PostalCode = request.Model.PostalCode ?? user.PostalCode;
+            user.ProfilePicture = request.Model.ProfilePicture ?? user.ProfilePicture;
 
             // Update user in repository
             _unitOfWrok.User.Update(user);
-
+            _unitOfWrok.Save();
             return Unit.Value;
 
         }

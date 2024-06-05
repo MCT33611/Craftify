@@ -9,6 +9,9 @@ import { RouterOutlet } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GoogleLoginButtonComponent } from '../../components/google-login-button/google-login-button.component';
 import { OtpComponent } from './components/otp/otp.component';
+import { PasswordResetFormComponent } from '../../components/password-reset-form/password-reset-form.component';
+import { SharedModule } from '../../shared/shared.module';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 
 
 @NgModule({
@@ -16,6 +19,7 @@ import { OtpComponent } from './components/otp/otp.component';
     OtpComponent,
     SignInComponent,
     SignUpComponent,
+    ForgotPasswordComponent,
     LayoutComponent
   ],
   imports: [
@@ -24,7 +28,8 @@ import { OtpComponent } from './components/otp/otp.component';
     RouterOutlet,
     ReactiveFormsModule,
     FormsModule,
-    GoogleLoginButtonComponent
+    GoogleLoginButtonComponent,
+    PasswordResetFormComponent
   ]
 })
 export class AuthenticationModule { }

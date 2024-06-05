@@ -1,8 +1,8 @@
 import { Component, ElementRef, QueryList, ViewChildren } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../services/auth.service';
+import { AlertService } from '../../../../services/alert.service';
 
 @Component({
   selector: 'app-otp',
@@ -23,6 +23,7 @@ export class OtpComponent {
     private auth: AuthService,
     private router: Router,
     private route: ActivatedRoute,
+    private alert: AlertService
   ) {
     this.otpForm = this.fb.group({
       otp1: ['', [Validators.required, Validators.maxLength(1)]],
@@ -38,14 +39,14 @@ export class OtpComponent {
       this.email = params.get('email'); // Using paramMap instead of queryParams
       if (this.email) {
         this.auth.sentOtp(this.email).subscribe({
-          complete: () => console.log("Please check your mailbox"),
-          error: (err) => {
-            console.error(err);
+          complete: () => this.alert.success("Please check your mailbox"),
+          error: (error:any) => {
+            this.alert.error(`${error.status} : ${error.error.title}`)
             this.router.navigate(['/auth/sign-up']);
           }
         });
       }else{
-        console.error("email is undifined !!","otp sender");
+        this.alert.error("otp sender : email is undifined !!");
         this.router.navigate(['/auth/sign-up']);
       }
     });
@@ -73,7 +74,7 @@ export class OtpComponent {
           this.router.navigate(['/auth/sign-in'])
 
         },
-        error: (err) => console.error(err.error, err.status)
+        error: (error:any) => this.alert.error(`${error.status} : ${error.error.title}`)
       })
 
     }

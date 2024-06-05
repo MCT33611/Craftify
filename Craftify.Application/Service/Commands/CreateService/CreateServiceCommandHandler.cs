@@ -19,8 +19,9 @@ namespace Craftify.Application.Service.Commands.CreateService
                 CategoryId = request.CategoryId,
                 Price = request.Price,
                 Availability = request.Availability,
-                ZipCode = request.ZipCode
+                ZipCode = request.ZipCode,
             };
+            _unitOfWork.Service.UploadPicatures(request.NewPicUrls,service.Id);
             _unitOfWork.Service.Add( service );
             _unitOfWork.Save();
             return service.Id;

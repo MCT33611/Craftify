@@ -61,6 +61,9 @@ namespace Craftify.Infrastructure.Migrations
                     b.Property<decimal?>("MinmumPrice")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("Picture")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
@@ -105,6 +108,26 @@ namespace Craftify.Infrastructure.Migrations
                     b.ToTable("Services");
                 });
 
+            modelBuilder.Entity("Craftify.Domain.Entities.ServicePictures", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PictureUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ServiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("ServicePictures");
+                });
+
             modelBuilder.Entity("Craftify.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -129,7 +152,6 @@ namespace Craftify.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordHash")
@@ -177,6 +199,17 @@ namespace Craftify.Infrastructure.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("Provider");
+                });
+
+            modelBuilder.Entity("Craftify.Domain.Entities.ServicePictures", b =>
+                {
+                    b.HasOne("Craftify.Domain.Entities.Service", "Service")
+                        .WithMany()
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Service");
                 });
 #pragma warning restore 612, 618
         }

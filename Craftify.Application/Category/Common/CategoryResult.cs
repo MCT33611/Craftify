@@ -11,6 +11,8 @@ namespace Craftify.Application.Category.Common
 
         string CategoryName,
 
+        string? Picture,
+
         decimal? MinmumPrice,
 
         decimal? MaximumPrice

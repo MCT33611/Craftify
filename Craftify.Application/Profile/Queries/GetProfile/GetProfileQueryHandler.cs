@@ -33,7 +33,8 @@ namespace Craftify.Application.Profile.Queries.GetProfile
                         State = user.State,
                         PostalCode = user.PostalCode,
                         ProfilePicture = user.ProfilePicture,
-                        EmailConfirmed = user.EmailConfirmed
+                        EmailConfirmed = user.EmailConfirmed,
+                        Role = user.Role
                     };
 
 

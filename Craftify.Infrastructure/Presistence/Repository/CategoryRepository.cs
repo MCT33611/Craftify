@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 namespace Craftify.Infrastructure.Presistence.Repository
 {
     public class CategoryRepository(
-        CraftifyDbContext db
-        ) : Repository<Category>(db), ICategoryRepository
+        CraftifyDbContext _db
+        ) : Repository<Category>(_db), ICategoryRepository
     {
         public void Update(Category category)
         {
-           db.Categories.Update(category);
+           _db.Categories.Update(category);
         }
     }
 }

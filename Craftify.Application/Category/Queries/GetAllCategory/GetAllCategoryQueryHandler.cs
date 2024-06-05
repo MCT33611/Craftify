@@ -20,6 +20,7 @@ namespace Craftify.Application.Category.Queries.GetAllCategory
                 (
                     category.Id,
                     category.CategoryName,
+                    category.Picture,
                     category.MaximumPrice,
                     category.MinmumPrice
                 ));

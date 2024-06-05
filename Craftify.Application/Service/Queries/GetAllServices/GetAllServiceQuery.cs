@@ -9,5 +9,5 @@ using System.Threading.Tasks;
 
 namespace Craftify.Application.Service.Queries.GetAllService
 {
-    public record GetAllServiceQuery() : IRequest<ErrorOr<IEnumerable<ServiceResult>>>;
+    public record GetAllProfileQuery() : IRequest<ErrorOr<IEnumerable<ServiceResult>>>;
 }

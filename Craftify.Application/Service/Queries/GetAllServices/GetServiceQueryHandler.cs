@@ -13,10 +13,10 @@ namespace Craftify.Application.Service.Queries.GetAllService
 {
     public class GetAllServiceQueryHandler(
         IUnitOfWork _unitOfWork
-        ) : IRequestHandler<GetAllServiceQuery, ErrorOr<IEnumerable<ServiceResult>>>
+        ) : IRequestHandler<GetAllProfileQuery, ErrorOr<IEnumerable<ServiceResult>>>
     {
 
-        public async Task<ErrorOr<IEnumerable<ServiceResult>>> Handle(GetAllServiceQuery request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<IEnumerable<ServiceResult>>> Handle(GetAllProfileQuery request, CancellationToken cancellationToken)
         {
             await Task.CompletedTask;
             try

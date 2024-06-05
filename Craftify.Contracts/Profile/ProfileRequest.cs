@@ -7,24 +7,16 @@ using System.Threading.Tasks;
 namespace Craftify.Contracts.Profile
 {
     public record ProfileRequest(
-        string FirstName,
+        string? FirstName,
 
-        string LastName ,
+        string? LastName ,
 
-        string Email,
-
-        bool EmailConfirmed,
+        string? ProfilePicture,
         string? StreetAddress ,
         string? City,
         string? State,
-        string? PostalCode,
+        string? PostalCode
 
 
-        //latest updation date
-        DateTime UpdatedDate ,
-
-        string? ProfilePicture ,
-
-        string Role
         );
 }

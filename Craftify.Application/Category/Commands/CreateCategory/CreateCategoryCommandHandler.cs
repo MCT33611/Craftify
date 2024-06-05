@@ -16,6 +16,7 @@ namespace Craftify.Application.Category.Commands.CreateCategory
             {
                 Id = Guid.NewGuid(),
                 CategoryName = request.CategoryName,
+                Picture = request.Picture,
                 MaximumPrice = request.MaximumPrice,
                 MinmumPrice = request.MinmumPrice,
             };

@@ -16,6 +16,7 @@ namespace Craftify.Application.Category.Commands.UpdateCategory
             if (category != null)
             {
                 category.CategoryName = request.CategoryName ?? category.CategoryName;
+                category.Picture = request.Picture ?? category.Picture;
                 category.MinmumPrice = request.MinmumPrice ?? category.MinmumPrice;
                 category.MaximumPrice = request.MaximumPrice ?? category.MaximumPrice;
 

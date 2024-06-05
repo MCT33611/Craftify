@@ -11,6 +11,8 @@ namespace Craftify.Contracts.Category
 
         string CategoryName,
 
+        string Picture,
+
         Decimal? MinmumPrice,
 
         Decimal? MaximumPrice);

@@ -12,6 +12,9 @@ namespace Craftify.Domain.Entities
 
         public string CategoryName { get; set; } = null!;
 
+        public string? Picture {  get; set; }
+
+
         public Decimal? MinmumPrice { get; set; }
 
         public Decimal? MaximumPrice { get; set; }

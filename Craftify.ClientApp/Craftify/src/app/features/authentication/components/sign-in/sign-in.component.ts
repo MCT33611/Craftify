@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { ILogin } from '../../models/ilogin';
-
+import { AlertService } from '../../../../services/alert.service';
+import { ProfileService } from '../../../profile/services/profile.service';
+import { ProfileStore } from '../../../../shared/store/profile.store';
+import { Role_Admin, Role_Customer } from '../../../../core/constants/roles';
 
 @Component({
   selector: 'app-sign-in',
@@ -13,12 +15,14 @@ import { ILogin } from '../../models/ilogin';
 })
 export class SignInComponent {
   loginForm!: FormGroup;
-
+  profileStore = inject(ProfileStore);
   constructor(
     private fb: FormBuilder,
-    private toastr: ToastrService,
     private auth: AuthService,
-    private router: Router
+    private router: Router,
+    private alert: AlertService,
+    private profile: ProfileService,
+
   ) {
 
     this.loginForm = this.fb.group({
@@ -45,16 +49,23 @@ export class SignInComponent {
       }
 
       this.auth.login(user).subscribe({
-        complete:()=>{
-          this.toastr.success("wecome to proportel")
-          this.router.navigate(['/home']);
+        next: (res: any) => {
+          if (res.user.role === Role_Admin) {
+            this.router.navigate(['/admin'])
+          }
+          else if (res.user.role === Role_Customer) {
+            this.router.navigate(['/home'])
+
+          }
+
         },
-        error:()=>this.toastr.error("something went wrong")
+        error: (err) => this.alert.error(`${err.status} : invalid creditials`)
+
 
       });
 
     } else {
-      this.toastr.error("cridentials are not valid")
+      this.alert.warning("form is not valid")
     }
   }
 }

@@ -11,6 +11,6 @@ using System.Threading.Tasks;
 namespace Craftify.Application.Category.Queries.GetCategory
 {
     public record GetCategoryQuery(
-        Guid? Id
+        Guid Id
         ) : IRequest<ErrorOr<CategoryResult>>;
 }

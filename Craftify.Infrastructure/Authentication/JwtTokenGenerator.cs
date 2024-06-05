@@ -26,7 +26,7 @@ namespace Craftify.Infrastructure.Authentication
             {
                 new Claim(JwtRegisteredClaimNames.Sub,user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.GivenName,user.FirstName),
-                new Claim(JwtRegisteredClaimNames.FamilyName,user.LastName),
+                new Claim(JwtRegisteredClaimNames.FamilyName,user.LastName ?? ""),
                 new Claim(JwtRegisteredClaimNames.Email,user.Email),
                 new Claim(ClaimTypes.Role,user.Role),
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())

@@ -9,14 +9,35 @@ using Newtonsoft.Json.Linq;
 namespace Craftify.Infrastructure.Presistence.Repositories
 {
     public class ServiceRepository(
-        CraftifyDbContext db
-        ) :Repository<Service>(db), IServiceRepository
+        CraftifyDbContext _db
+        ) :Repository<Service>(_db), IServiceRepository
     {
 
 
         public void Update(Service user)
         {
-            db.Services.Update(user);
+            _db.Services.Update(user);
+        }
+
+        public void UploadPicatures(string[] picturesUrls, Guid serviceId)
+        {
+            var oldPictures = _db.ServicePictures.Where(pic => pic.ServiceId == serviceId).ToArray();
+            _db.ServicePictures.RemoveRange(oldPictures);
+            var newPictures = new List<ServicePictures>();
+
+            foreach (var url in picturesUrls)
+            {
+                ServicePictures newPic = new()
+                {
+                    ServiceId = serviceId,
+                    PictureUrl = url
+                };
+
+                newPictures.Add(newPic);
+            }
+
+            _db.ServicePictures.AddRange(newPictures);
+
         }
     }
 }

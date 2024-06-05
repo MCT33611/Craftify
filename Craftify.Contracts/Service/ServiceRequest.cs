@@ -13,5 +13,6 @@ namespace Craftify.Contracts.Service
     Guid CategoryId,
     decimal? Price,
     bool Availability,
+    string[] NewPicUrls,
     string ZipCode);
 }

@@ -1,16 +1,16 @@
 export interface IUser {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    emailConfirmed: boolean;
-    passwordHash: string;
+    id?: string;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    emailConfirmed?: boolean;
+    passwordHash?: string;
     streetAddress?: string;
     city?: string;
     state?: string;
     postalCode?: string;
-    joinDate: Date;
-    updatedDate: Date;
+    joinDate?: Date;
+    updatedDate?: Date;
     profilePicture?: string;
-    role: string;
+    role?: string;
 }

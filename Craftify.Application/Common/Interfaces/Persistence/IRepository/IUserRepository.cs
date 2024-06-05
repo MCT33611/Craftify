@@ -18,5 +18,6 @@ namespace Craftify.Application.Common.Interfaces.Persistence.IRepository
         void Update(User user);
         string GenerateOTP(string email);
         bool IsOTPValid(string email, string otp);
+        void Detach(User user);
     }
 }

@@ -30,7 +30,7 @@ namespace Craftify.Api.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var query = new GetAllServiceQuery();
+            var query = new GetAllProfileQuery();
             var result = _mediator.Send(query);
             return Ok(result.Result.Value);
         }

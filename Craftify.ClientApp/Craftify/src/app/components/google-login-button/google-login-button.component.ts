@@ -4,6 +4,8 @@ import { CredentialResponse, PromptMomentNotification } from 'google-one-tap';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../features/authentication/services/auth.service';
+import { AlertService } from '../../services/alert.service';
+import { Role_Admin, Role_Customer } from '../../core/constants/roles';
 
 @Component({
   selector: 'app-google-login-button',
@@ -15,7 +17,8 @@ import { AuthService } from '../../features/authentication/services/auth.service
 export class GoogleLoginButtonComponent implements OnInit {
   constructor(
     private auth: AuthService,
-    private router: Router
+    private router: Router,
+    private alert: AlertService
   ) {
 
   }
@@ -35,10 +38,22 @@ export class GoogleLoginButtonComponent implements OnInit {
   }
   async handleCredentialResponse(response: CredentialResponse) {
     this.auth.LoginWithGoogle(response.credential).subscribe(
-      () => {
-        this.router.navigate(['/home'])
-      },
-      (error: any) => console.error(error)
+      {
+        next: (res: any) => {
+          if(res.user.role === Role_Admin) {
+            this.router.navigate(['/admin'])
+          }
+          else if(res.user.role === Role_Customer){
+            this.router.navigate(['/home'])
+
+          }
+
+        },
+
+        error: (error: any) => {
+          this.alert.error(`${error.status} : ${error.error[0].description}`)
+        }
+      }
     );
   }
 }

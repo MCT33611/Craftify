@@ -6,4 +6,5 @@ export interface IService {
     price?: number;
     availability: boolean;
     zipCode: string;
+    newPicUrls?:string[];
 }

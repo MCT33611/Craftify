@@ -6,6 +6,8 @@ using Craftify.Application.Authentication.Common;
 using Craftify.Application.Common.Interfaces.Persistence.IRepository;
 using static Google.Apis.Auth.GoogleJsonWebSignature;
 using Craftify.Domain.Common.Errors;
+using Craftify.Domain.Constants;
+using Microsoft.Extensions.Options;
 
 namespace Craftify.Application.Authentication.Commands.Register
 {
@@ -29,24 +31,28 @@ namespace Craftify.Application.Authentication.Commands.Register
                     Email = payload.Email,
                     FirstName = payload.Name,
                     ProfilePicture = payload.Picture,
-                    EmailConfirmed = true
+                    Role = AppConstants.Role_Customer,
+                    EmailConfirmed = true,
+                    PasswordHash = Guid.NewGuid().ToString()
                 };
-                string token = _jwtTokenGenerator.GenerateToken(user);
 
                 User? existingUser = _unitOfWork.User.GetUserByEmail(user.Email);
                 if (existingUser != null)
                 {
-                    _unitOfWork.User.Update(user);
+                    user.Id = existingUser.Id;
+                    user.Role = existingUser.Role;
                     return new AuthenticationResult(
                         user,
-                        token
+                        _jwtTokenGenerator.GenerateToken(user)
                         );
                 }
 
                 _unitOfWork.User.Add(user);
+                _unitOfWork.Save();
+
                 return new AuthenticationResult(
                     user,
-                    token
+                    _jwtTokenGenerator.GenerateToken(user)
                     );
             }
             catch (Exception)

@@ -14,5 +14,6 @@ namespace Craftify.Application.Service.Commands.CreateService
         Guid   CategoryId,
         decimal? Price,
         bool Availability,
+        string[] NewPicUrls,
         string ZipCode) : IRequest<ErrorOr<Guid>>;
 }

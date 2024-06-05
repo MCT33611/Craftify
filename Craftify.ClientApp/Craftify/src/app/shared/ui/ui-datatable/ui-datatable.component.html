@@ -1,0 +1,29 @@
+<div class="container mx-auto p-8">
+    <mat-form-field appearance="fill" class="w-full">
+        <mat-label>Filter</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Type to filter">
+    </mat-form-field>
+
+    <mat-table #table [dataSource]="dataSource" class="w-full mt-4">
+        <!-- Data columns -->
+        <ng-container *ngFor="let col of columns" [matColumnDef]="col.key">
+            <mat-header-cell *matHeaderCellDef>{{ col.header }}</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <ng-container [ngSwitch]="col.type">
+                    <span *ngSwitchCase="ColumnType.Text">{{ row[col.key] }}</span>
+                    <img *ngSwitchCase="ColumnType.Image" [src]="row[col.key]" alt="" class="rounded-full w-7" />
+                    <a *ngSwitchCase="ColumnType.Action" class="bg-blue-500 text-white font-bold py-2 px-4 rounded"
+                        [routerLink]="row[col.key]" [title]="row[col.key]">Details</a>
+                </ng-container>
+            </mat-cell>
+        </ng-container>
+
+        <!-- Table rows -->
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+    </mat-table>
+
+    <!-- Pagination -->
+    <mat-paginator #paginator (page)="handlePage($event)" [pageSizeOptions]="[5,10,20]"
+        showFirstLastButtons></mat-paginator>
+</div>

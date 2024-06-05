@@ -6,20 +6,21 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 })
 export class TokenService {
 
-  private readonly TOKEN_KEY = 'auth_token';
+  private readonly AUTH_TOKEN_KEY = 'auth_token';
+  private readonly PASSWORD_RESET_TOKEN_KEY = 'password_reset_token';
 
   constructor(private jwtHelper: JwtHelperService) { }
 
   setToken(token: string): void {
-    localStorage.setItem(this.TOKEN_KEY, token);
+    localStorage.setItem(this.AUTH_TOKEN_KEY, token);
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    return localStorage.getItem(this.AUTH_TOKEN_KEY);
   }
 
   removeToken(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.AUTH_TOKEN_KEY);
   }
 
   isTokenExpired(): boolean {
@@ -46,6 +47,21 @@ export class TokenService {
   }
   getUserRole(): string | null {
     const userInfo = this.getUserInfo();
-    return userInfo ? userInfo.role : null;
+    return userInfo ? userInfo['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] : null;
+  }
+
+
+  setPasswordResetToken(token: string): void {
+    localStorage.setItem(this.PASSWORD_RESET_TOKEN_KEY, token);
+  }
+
+  
+
+  getPasswordResetToken(): string | null {
+    return localStorage.getItem(this.PASSWORD_RESET_TOKEN_KEY);
+  }
+
+  removePasswordResetToken(): void {
+    localStorage.removeItem(this.PASSWORD_RESET_TOKEN_KEY);
   }
 }

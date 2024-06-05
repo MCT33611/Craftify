@@ -11,6 +11,8 @@ namespace Craftify.Infrastructure.Presistence
 
         public DbSet<Service> Services { get; set; }
 
+        public DbSet<ServicePictures> ServicePictures { get; set; }
+
         public DbSet<Category> Categories { get; set; }
 
     }

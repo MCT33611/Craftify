@@ -8,12 +8,14 @@ namespace Craftify.Application.Profile.Common
 {
     public class ProfileResult
     {
-        public Guid Id { get; set; } 
-        public string FirstName { get; set; } = null!;
 
-        public string LastName { get; set; } = null!;
 
-        public string Email { get; set; } = null!;
+        public Guid Id { get; set; }
+        public string? FirstName { get; set; } = null!;
+
+        public string? LastName { get; set; } = null!;
+
+        public string? Email { get; set; } = null!;
 
         public bool EmailConfirmed { get; set; }
 
@@ -26,7 +28,8 @@ namespace Craftify.Application.Profile.Common
 
 
         public string? ProfilePicture { get; set; }
+        public string? Role { get; set; }
 
-        
+
     }
 }

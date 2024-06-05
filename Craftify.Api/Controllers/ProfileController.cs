@@ -2,7 +2,9 @@
 using Craftify.Application.Profile.Commands.UpdateProfile;
 using Craftify.Application.Profile.Commands.UploadProfilePicture;
 using Craftify.Application.Profile.Common;
+using Craftify.Application.Profile.Queries.GetAllProfiles;
 using Craftify.Application.Profile.Queries.GetProfile;
+using Craftify.Application.Service.Queries.GetAllService;
 using Craftify.Contracts.Profile;
 using Craftify.Domain.Constants;
 using Craftify.Domain.Entities;
@@ -31,6 +33,19 @@ namespace Craftify.Api.Controllers
             return result.Match(
                 result => Ok(_mapper.Map<ProfileResult>(result)),
                                 error => Problem(error));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _mediator.Send(new GetAllProfilesQuery());
+
+            if (result.IsError)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok(result.Value);
         }
 
 

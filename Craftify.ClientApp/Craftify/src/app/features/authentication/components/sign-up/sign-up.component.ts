@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { IRegistration } from '../../models/iregistration';
 import { matchPasswords } from '../../../../shared/utils/matchPasswordsValidator'
 import { noNumbersOrSpecialCharacters } from '../../../../shared/utils/noNumbersOrSpecialCharacters';
 import { passwordStrengthValidator } from '../../../../shared/utils/passwordStrengthValidator';
+import { AlertService } from '../../../../services/alert.service';
 @Component({
   selector: 'app-sign-up',
   templateUrl: './sign-up.component.html',
@@ -17,7 +17,7 @@ export class SignUpComponent {
   constructor(
     private fb: FormBuilder,
     private auth: AuthService,
-    private toastr: ToastrService,
+    private alert: AlertService,
     private router: Router) {
     this.registrationForm = this.fb.group({
       email: [
@@ -58,15 +58,14 @@ export class SignUpComponent {
         complete: () => {
           this.router.navigate([`/auth/otp/${user.email}`])
         },
-        error: err => {
-          console.error(err);
-          this.toastr.error(err.error, err.status);
+        error: (error:any) => {
+          this.alert.error(`${error.status} : ${error.error.title}`)
         }
 
       })
 
     } else {
-      console.error('Form is not valid');
+      this.alert.warning('Form is not valid');
     }
   }
 }

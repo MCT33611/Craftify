@@ -4,26 +4,33 @@ import { LayoutComponent } from './pages/layout/layout.component';
 import { SignInComponent } from './components/sign-in/sign-in.component';
 import { SignUpComponent } from './components/sign-up/sign-up.component';
 import { OtpComponent } from './components/otp/otp.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 
 const routes: Routes = [
   {
-    path:"",
-    component:LayoutComponent,
-    children:[
+    path: "",
+    component: LayoutComponent,
+    children: [
       {
-        path:'sign-in',
-        component:SignInComponent
+        path: 'sign-in',
+        component: SignInComponent
       },
       {
-        path:'sign-up',
-        component:SignUpComponent
+        path: 'sign-up',
+        component: SignUpComponent
       },
       {
-        path:'otp/:email',
-        component:OtpComponent
+        path: 'otp/:email',
+        component: OtpComponent
+      },
+      {
+        path: 'forgot-password',
+        component: ForgotPasswordComponent
       }
+
     ]
-  }
+  },
+
 ];
 
 @NgModule({

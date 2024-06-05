@@ -80,15 +80,15 @@ namespace Craftify.Api.Controllers
             var result = await _mediator.Send(command);
 
             return result.Match(
-                success => Ok(new { token = success }),
+                Ok,
                 error => StatusCode(StatusCodes.Status500InternalServerError,error)
             );
         }
 
         [HttpPost("ForgotPassword/{Email}")]
-        public async Task<IActionResult> ForgotPassword(string email)
+        public async Task<IActionResult> ForgotPassword(string Email)
         {
-            var command = new ForgotPasswordCommand(email);
+            var command = new ForgotPasswordCommand(Email);
             var result = await _mediator.Send(command);
 
             return result.Match<IActionResult>(

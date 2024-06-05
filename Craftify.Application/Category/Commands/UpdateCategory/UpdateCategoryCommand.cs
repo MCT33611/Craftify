@@ -12,6 +12,7 @@ namespace Craftify.Application.Category.Commands.UpdateCategory
         Guid Id,
 
         string CategoryName,
+        string Picture,
 
         Decimal? MinmumPrice,
 

@@ -31,10 +31,14 @@ namespace Craftify.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get(Guid id)
         {
-            var query = _mapper.Map<GetCategoryQuery>(new { id });
+            var query = new GetCategoryQuery(id);
             var result = await _mediator.Send(query);
+            if(result.IsError)
+            {
+                return BadRequest(result.Errors);
+            }
             return Ok(result.Value);
         }
         [HttpPost]
@@ -43,6 +47,8 @@ namespace Craftify.Api.Controllers
 
             var command = _mapper.Map<CreateCategoryCommand>(request);
             var result = await _mediator.Send(command);
+            if (result.IsError)
+                return BadRequest(result.Errors);
             return Ok( new { id = result.Value });
         }
 
