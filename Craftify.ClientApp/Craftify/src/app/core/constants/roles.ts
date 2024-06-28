@@ -1,5 +1,6 @@
 
-
-export const Role_Admin = "ADMIN";
-export const Role_Customer = "CUSTOMER";
-export const Role_Worker = "WORKER";
+export enum IRoles{
+    Role_Admin = "ADMIN",
+    Role_Customer = "CUSTOMER",
+    Role_Worker = "WORKER"
+}

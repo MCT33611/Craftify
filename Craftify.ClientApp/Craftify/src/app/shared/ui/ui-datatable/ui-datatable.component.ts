@@ -47,7 +47,6 @@ export class UiDatatableComponent implements OnInit, AfterViewInit {
         this.paginator.length = this.dataSource.data.length;
       }
     }
-    console.log(this.data);
 
   }
 
@@ -56,9 +55,6 @@ export class UiDatatableComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  handlePage(event: any): void {
-    console.log('Page event:', event);
-  }
 
   getColumnType(key: string): ColumnType | undefined {
     return this.columns.find(col => col.key === key)?.type;

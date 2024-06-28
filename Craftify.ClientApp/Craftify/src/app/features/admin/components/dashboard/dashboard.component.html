@@ -1,18 +1,52 @@
-<h1 class="text-5xl text-green-900">Admin</h1>
-<h1 class="text-5xl">Dashboard</h1>
-{{profileStore.user() | json}}
-Token Role:{{tokenService.getUserRole() + ','}}
+<div class="main-content">
+    <header class="topbar">
+        <h1>Dashboard</h1>
+    </header>
+    <div class="content">
 
+        <div class="card">
+            <h3>Total Customers</h3>
+            <p>{{customersStore.users()?.length}}</p>
+        </div>
+        <div class="cards">
+            <div class="card">
+                <h3>Workers</h3>
+                <p>{{approvedWorkers().length}}</p>
+            </div>
+            <div class="card">
+                <h3>Tasks</h3>
+                <p>50 tasks completed</p>
+            </div>
+            <div class="card">
+                <h3>Resources</h3>
+                <p>30 resources used</p>
+            </div>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Profile</th>
+                    <th>Nom</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (user of customersStore.users()?.slice(0, 3); track user.id) {
+                    <tr>
+                        <td><img [src]="user.profilePicture" alt=""  class="rounded-full w-5"></td>
+                        <td>{{ user.firstName }}</td>
+                        <td>{{ user.email }}</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr >
+                    <td class="w-full flex justify-center">
+                        <a routerLink="../profiles">view more <span class="hover:ms-2">>></span></a> 
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
 
-
-<app-ui-datatable [data]="data" [columns]="columns"></app-ui-datatable>
-
-
-<app-ui-upsert-form
-[isDetails]="false"
-[title]="'User Form'"
-[description]="'Please fill out the form below'"
-[labels]="['name', 'email']"
-[data]="{ name: 'John Doe', email: 'john@example.com', profilePicture: 'https://s3.amazonaws.com/images.wealthyaffiliate.com/uploads/1441732/sitecontent/7a021dbfc309db7dbec17b5ce656cf041533880338_cropped.jpg?1533880350', imageUrls: ['https://s3.amazonaws.com/images.wealthyaffiliate.com/uploads/1441732/sitecontent/7a021dbfc309db7dbec17b5ce656cf041533880338_cropped.jpg?1533880350'] }"
-(formSubmit)="handleFormSubmit($event)"
-></app-ui-upsert-form>
+    </div>
+</div>

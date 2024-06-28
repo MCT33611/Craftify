@@ -34,98 +34,107 @@ namespace Craftify.Infrastructure.Migrations
                     b.Property<DateTime>("ExpireAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("bit");
+
                     b.Property<string>("OTP")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ResetToken")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Token")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.ToTable("Authentications");
                 });
 
-            modelBuilder.Entity("Craftify.Domain.Entities.Category", b =>
+            modelBuilder.Entity("Craftify.Domain.Entities.Booking", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CategoryName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("MaximumPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("MinmumPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Picture")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("Craftify.Domain.Entities.Service", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Availability")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("CategoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("Price")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid>("ProviderId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("WorkingTime")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProviderId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Bookings");
+                });
+
+            modelBuilder.Entity("Craftify.Domain.Entities.Plan", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Duration")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Price")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ZipCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("ProviderId");
-
-                    b.ToTable("Services");
+                    b.ToTable("Plans");
                 });
 
-            modelBuilder.Entity("Craftify.Domain.Entities.ServicePictures", b =>
+            modelBuilder.Entity("Craftify.Domain.Entities.Subscription", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("PictureUrl")
+                    b.Property<DateTime>("ExpireAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ServiceId")
+                    b.Property<Guid>("PlanId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("WorkerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ServiceId");
+                    b.HasIndex("PlanId");
 
-                    b.ToTable("ServicePictures");
+                    b.HasIndex("WorkerId");
+
+                    b.ToTable("Subscriptions");
                 });
 
             modelBuilder.Entity("Craftify.Domain.Entities.User", b =>
@@ -133,6 +142,9 @@ namespace Craftify.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Blocked")
+                        .HasColumnType("bit");
 
                     b.Property<string>("City")
                         .HasColumnType("nvarchar(max)");
@@ -180,36 +192,111 @@ namespace Craftify.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("e0143948-7b2a-4f1a-9c8a-7420b633bb55"),
+                            Blocked = false,
+                            Email = "craftify.onion0.122@gmail.com",
+                            EmailConfirmed = true,
+                            FirstName = "ADMIN",
+                            JoinDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PasswordHash = "pass@FY04",
+                            Role = "ADMIN",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
-            modelBuilder.Entity("Craftify.Domain.Entities.Service", b =>
+            modelBuilder.Entity("Craftify.Domain.Entities.Worker", b =>
                 {
-                    b.HasOne("Craftify.Domain.Entities.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasOne("Craftify.Domain.Entities.User", "Provider")
+                    b.Property<bool>("Approved")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("CertificationUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("HireDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LogoUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("PerHourPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ServiceTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Skills")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Workers");
+                });
+
+            modelBuilder.Entity("Craftify.Domain.Entities.Booking", b =>
+                {
+                    b.HasOne("Craftify.Domain.Entities.Worker", "Provider")
                         .WithMany()
                         .HasForeignKey("ProviderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Category");
+                    b.HasOne("Craftify.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Provider");
+
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Craftify.Domain.Entities.ServicePictures", b =>
+            modelBuilder.Entity("Craftify.Domain.Entities.Subscription", b =>
                 {
-                    b.HasOne("Craftify.Domain.Entities.Service", "Service")
+                    b.HasOne("Craftify.Domain.Entities.Plan", "Plan")
                         .WithMany()
-                        .HasForeignKey("ServiceId")
+                        .HasForeignKey("PlanId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Service");
+                    b.HasOne("Craftify.Domain.Entities.Worker", "Worker")
+                        .WithMany()
+                        .HasForeignKey("WorkerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Plan");
+
+                    b.Navigation("Worker");
+                });
+
+            modelBuilder.Entity("Craftify.Domain.Entities.Worker", b =>
+                {
+                    b.HasOne("Craftify.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

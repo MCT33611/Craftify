@@ -17,10 +17,25 @@ export class SidebarComponent {
       route: 'profiles',
       iconSrc: 'assets/icons/profiles.svg'
     },
+    // {
+    //   title: "Category Management",
+    //   route: 'category/list',
+    //   iconSrc: 'assets/icons/category.svg'
+    // },
     {
-      title: "Category Management",
-      route: 'category/list',
-      iconSrc: 'assets/icons/category.svg'
+      title: "Plan Management",
+      route: 'plan/list',
+      iconSrc: 'assets/icons/subscriptions-plan.svg'
+    },
+    {
+      title: "Service Management",
+      route: 'service/list',
+      iconSrc: 'assets/icons/service.svg'
+    },
+    {
+      title: "Bookings Management",
+      route: 'bookings/list',
+      iconSrc: 'assets/icons/service.svg'
     },
     {
       title: "Settings",

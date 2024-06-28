@@ -6,18 +6,26 @@ import { UsersListComponent } from './components/users-list/users-list.component
 import { UserDetailsComponent } from './components/user-details/user-details.component';
 import { UiDatatableComponent } from '../../../../shared/ui/ui-datatable/ui-datatable.component';
 import { UiUpsertFormComponent } from '../../../../shared/ui/ui-upsert-form/ui-upsert-form.component';
+import { WorkersListComponent } from './components/workers-list/workers-list.component';
+import { RouterLink } from '@angular/router';
+import { WorkerDetailsComponent } from './components/worker-details/worker-details.component';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 
 @NgModule({
   declarations: [
     UsersListComponent,
-    UserDetailsComponent
+    UserDetailsComponent,
+    WorkersListComponent,
+    WorkerDetailsComponent
   ],
   imports: [
     CommonModule,
     ProfilesRoutingModule,
     UiDatatableComponent,
-    UiUpsertFormComponent
+    UiUpsertFormComponent,
+    RouterLink,
+    PdfViewerModule
   ]
 })
 export class ProfilesModule { }

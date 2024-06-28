@@ -3,7 +3,7 @@ import { HomeComponent } from './components/home/home.component';
 import { authGuard } from './core/guards/auth.guard';
 import { loggedInGuard } from './core/guards/logged-in.guard';
 import { roleGuard } from './core/guards/role.guard';
-import { Role_Admin } from './core/constants/roles';
+import { IRoles } from './core/constants/roles';
 
 export const routes: Routes = [
     {
@@ -29,9 +29,21 @@ export const routes: Routes = [
     {
         path:"admin",
         canActivate: [authGuard,roleGuard] ,
-        data:{role:Role_Admin},
+        data:{role:IRoles.Role_Admin},
         loadChildren:()=>import("../app/features/admin/admin.module").then(m => m.AdminModule)
-    }
+    },
+    {
+        path:"worker",
+        canActivate: [authGuard,roleGuard] ,
+        data:{role:IRoles.Role_Worker},
+        loadChildren:()=>import("../app/features/worker/worker.module").then(m => m.WorkerModule)
+    },
+    {
+        path:"booking-flow",
+        canActivate: [authGuard,roleGuard] ,
+        data:{role:IRoles.Role_Customer},
+        loadChildren:()=>import("../app/features/booking-flow/booking-flow.module").then(m => m.BookingFlowModule)
+    },
 
 
 ];

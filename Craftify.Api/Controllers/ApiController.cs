@@ -1,13 +1,24 @@
-﻿using ErrorOr;
+﻿using Azure.Identity;
+using Craftify.Application.Common.Interfaces.Authentication;
+using Craftify.Application.Common.Interfaces.Persistence.IRepository;
+using Craftify.Contracts.Authentication;
+using Craftify.Infrastructure.Authentication;
+using Craftify.Infrastructure.Presistence;
+using ErrorOr;
+using Google.Apis.Auth.OAuth2.Requests;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Options;
 
 namespace Craftify.Api.Controllers
 {
     [ApiController]
     public class ApiController : ControllerBase
     {
+        
+
+
         protected IActionResult Problem(List<Error> errors)
         {
             if (errors.Count is 0)
@@ -47,5 +58,8 @@ namespace Craftify.Api.Controllers
             }
             return ValidationProblem(modelStateDictionary);
         }
+
+
+
     }
 }

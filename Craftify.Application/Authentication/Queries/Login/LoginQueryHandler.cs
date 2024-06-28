@@ -31,7 +31,8 @@ namespace Craftify.Application.Authentication.Queries.Login
                 return Errors.Authentication.InvalidCredentials;
             }
             //3. Create JWT token
-            string token = _jwtTokenGenerator.GenerateToken(user);
+            Worker worker = _unitOfWork.Worker.Get(w => w.UserId == user.Id);
+            string token = _jwtTokenGenerator.GenerateToken(user, worker?.Id);
 
 
             await Task.CompletedTask;

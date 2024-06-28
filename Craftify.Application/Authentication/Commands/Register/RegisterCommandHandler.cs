@@ -7,12 +7,14 @@ using MediatR;
 using Craftify.Application.Authentication.Common;
 using Craftify.Application.Common.Interfaces.Persistence.IRepository;
 using Craftify.Domain.Constants;
+using Craftify.Application.Common.Interfaces.Service;
 
 namespace Craftify.Application.Authentication.Commands.Register
 {
     public class ConfirmEmailCommandHandler(
         IJwtTokenGenerator _jwtTokenGenerator,
-        IUnitOfWork _unitOfWork
+        IUnitOfWork _unitOfWork,
+        IDateTimeProvider _date
         ) : 
         IRequestHandler<RegisterCommand, ErrorOr<AuthenticationResult>>
     {
@@ -30,13 +32,14 @@ namespace Craftify.Application.Authentication.Commands.Register
                 FirstName = command.FirstName,
                 LastName = command.LastName,
                 PasswordHash = _unitOfWork.User.HashPassword(command.Password),
-                Role = AppConstants.Role_Customer
+                Role = AppConstants.Role_Customer,
+                JoinDate = _date.UtcNow
             };
 
             _unitOfWork.User.Add(user);
             _unitOfWork.Save();
             //3. Create JWT token
-            string token = _jwtTokenGenerator.GenerateToken(user);
+            string token = _jwtTokenGenerator.GenerateToken(user,null);
             await Task.CompletedTask;
 
             return new AuthenticationResult(

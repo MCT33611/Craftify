@@ -1,7 +1,10 @@
-﻿using Craftify.Application.Authentication.Commands.Register;
+﻿using CloudinaryDotNet.Actions;
+using Craftify.Application.Authentication.Commands.Register;
 using Craftify.Application.Common.Interfaces.Persistence.IRepository;
+using Craftify.Domain.Constants;
 using Craftify.Domain.Entities;
 using Craftify.Infrastructure.Persistence.Repository;
+using Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
@@ -9,25 +12,43 @@ using Newtonsoft.Json.Linq;
 namespace Craftify.Infrastructure.Presistence.Repositories
 {
     public class UserRepository(
-        CraftifyDbContext db,
+        CraftifyDbContext _db,
         IPasswordHasher<object> _passwordHasher
-        ) :Repository<User>(db), IUserRepository
+        ) :Repository<User>(_db), IUserRepository
     {
+
+
+
 
         public void Update( User user)
         {
-            db.Users.Update( user );
+            _db.Users.Update( user );
+        }
+
+        public void Subscribe(Subscription subscription,Worker worker)
+        {
+            _db.Workers.Add(worker);
+            _db.Subscriptions.Add(subscription);
+        }
+
+        public bool ChangeUserRole(User user,string role = AppConstants.Role_Customer)
+        {
+            if (role != AppConstants.Role_Customer && role != AppConstants.Role_Worker) return false;
+            if(_db.Users.FirstOrDefault(u => u.Id == user.Id) == null) return false;
+            user.Role = role;
+            _db.Users.Update(user);
+            return true;
         }
 
         public User? GetUserByEmail(string email)
         {
-            var user = db.Users.FirstOrDefault(user => user.Email == email);
+            var user = _db.Users.FirstOrDefault(user => user.Email == email);
             return user;
         }
 
         public User? GetUserById(Guid Id)
         {
-            return db.Users.SingleOrDefault(user => user.Id == Id);
+            return _db.Users.SingleOrDefault(user => user.Id == Id);
         }
 
         public string HashPassword(string providedPassword)
@@ -54,20 +75,20 @@ namespace Craftify.Infrastructure.Presistence.Repositories
             DateTime expiry = DateTime.UtcNow.AddHours(24);
 
             // Store the token along with the email address and expiry date
-            db.Authentications.Add(new()
+            _db.Authentications.Add(new()
             {
                 Email = email,
                 ExpireAt = expiry,
                 ResetToken = token
             });
-            db.SaveChanges();
+            _db.SaveChanges();
             return token;
         }
         // Check if the token is valid for the given email address
         public bool IsTokenValid(string email, string token)
         {
             // Find the authentication record in the database based on the email and token
-            var authentication = db.Authentications
+            var authentication = _db.Authentications
                 .SingleOrDefault(a => a.Email == email && a.ResetToken == token);
 
             // If authentication record is found
@@ -77,16 +98,16 @@ namespace Craftify.Infrastructure.Presistence.Repositories
                 if (authentication.ExpireAt > DateTime.UtcNow)
                 {
                     // Token has used, remove it from the database
-                    db.Authentications.Remove(authentication);
+                    _db.Authentications.Remove(authentication);
                     // Token is valid
                     return true;
                 }
                 else
                 {
                     // Token has expired, remove it from the database
-                    db.Authentications.Remove(authentication);
+                    _db.Authentications.Remove(authentication);
                 }
-                db.SaveChanges();
+                _db.SaveChanges();
             }
 
             // Token is not valid
@@ -101,26 +122,26 @@ namespace Craftify.Infrastructure.Presistence.Repositories
             // Store the OTP along with the email address (and expiry date if needed)
             // You can decide whether to store OTP in the database or not
             DateTime expiry = DateTime.Now.AddMinutes(5);
-            db.Authentications.Add(new()
+            _db.Authentications.Add(new()
             {
                 Email = email,
                 ExpireAt = expiry,
                 OTP = otp
             });
-            db.SaveChanges();
+            _db.SaveChanges();
 
             return otp;
         }
         public bool IsOTPValid(string email, string otp)
         {
-            var storedOTP = db.Authentications.SingleOrDefault(o => o.Email == email);
+            var storedOTP = _db.Authentications.SingleOrDefault(o => o.Email == email);
 
             if (storedOTP != null)
             {
                 if (otp == storedOTP.OTP)
                 {
-                    db.Authentications.Remove(storedOTP);
-                    db.SaveChanges();
+                    _db.Authentications.Remove(storedOTP);
+                    _db.SaveChanges();
 
 
                     if (storedOTP.ExpireAt > DateTime.Now)
@@ -137,23 +158,34 @@ namespace Craftify.Infrastructure.Presistence.Repositories
             return false;
         }
 
+
+
+        public async Task<Domain.Entities.Authentication?> GetByTokenAsync(string token)
+        {
+            return await _db.Authentications
+                .FirstOrDefaultAsync(rt => rt.Token == token);
+        }
+
+        public async Task AddAsync(Domain.Entities.Authentication refreshToken)
+        {
+            await _db.Authentications.AddAsync(refreshToken);
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(Domain.Entities.Authentication refreshToken)
+        {
+            _db.Authentications.Update(refreshToken);
+            await _db.SaveChangesAsync();
+        }
+
+
         public void Detach(User user)
         {
-            var entry = db.Entry(user);
+            var entry = _db.Entry(user);
             if (entry != null)
             {
                 entry.State = EntityState.Detached;
             }
-        }
-
-        private static string GenerateRandomOTP()
-        {
-            const int otpLength = 4; // Length of OTP
-            const string digits = "0123456789"; // Characters to choose from
-            var random = new Random();
-            var otp = new string(Enumerable.Repeat(digits, otpLength)
-                .Select(s => s[random.Next(s.Length)]).ToArray());
-            return otp;
         }
         private static string GenerateRandomToken()
         {
@@ -164,5 +196,17 @@ namespace Craftify.Infrastructure.Presistence.Repositories
               .Select(s => s[random.Next(s.Length)]).ToArray());
             return token;
         }
+        private static string GenerateRandomOTP()
+        {
+            const int otpLength = 4; // Length of OTP
+            const string digits = "0123456789"; // Characters to choose from
+            var random = new Random();
+            var otp = new string(Enumerable.Repeat(digits, otpLength)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+            return otp;
+        }
+
+
+
     }
 }

@@ -33,6 +33,8 @@ namespace Craftify.Domain.Entities
 
         public string Role { get; set; } = null!;
 
+        public bool Blocked { get; set; } = false;
+
 
     }
 }

@@ -1,11 +1,12 @@
-<app-header/>
+<app-header />
 <section id="home">
-    <div class=" h-screen flex flex-col justify-center items-center text-center font-bold w-full">
-        <h1 class="text-5xl">Book Trusted</h1>
-        <h1 class="text-5xl">Help For Home Tasks</h1>
-        <h1 class="text-5xl text-green-900">Life of Joy</h1>
-        {{profileStore.user() | json}}
-        Token Role:{{tokenService.getUserRole() + ','}}
+    <div class="w-full lg:h-screen md:h-full flex flex-col justify-center items-center gap-2">
+        <div class=" max-h-screen flex flex-col justify-center items-center text-center font-bold w-full">
+            <h1 class="text-5xl">Book Trusted</h1>
+            <h1 class="text-5xl">Help For Home Tasks</h1>
+            <h1 class="text-5xl text-green-900">Life of Joy</h1>
+        </div>
+        <a routerLink="/booking-flow" class="flex justify-center items-center m-5 glow-on-hover text-2xl font-bold">Get Start</a>
     </div>
 </section>
-<app-footer/>
+<app-footer />

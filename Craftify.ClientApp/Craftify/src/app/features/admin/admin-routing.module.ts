@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { LayoutComponent } from './pages/layout/layout.component';
+import { LayoutComponent } from './layout/layout.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 const routes: Routes = [
@@ -20,9 +20,10 @@ const routes: Routes = [
       {
         path:"profiles",
         loadChildren:()=>import("./modules/profiles/profiles.module").then(m => m.ProfilesModule)
-      },      {
-        path:"category",
-        loadChildren:()=>import("./modules/category-management/category-management.module").then(m => m.CategoryManagementModule)
+      },     
+      {
+        path:"plan",
+        loadChildren:()=>import("./modules/plan-management/plan-management.module").then(m => m.PlanManagementModule)
       }
     ]
   }

@@ -8,11 +8,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Craftify.Application.Common.Interfaces.Service;
 
 namespace Craftify.Application.Profile.Commands.UpdateProfile
 {
     public class UpdateProfileCommandHandler(
-        IUnitOfWork _unitOfWrok
+        IUnitOfWork _unitOfWrok,
+        IDateTimeProvider _date
         ) : IRequestHandler<UpdateProfileCommand, ErrorOr<Unit>>
     {
         public async Task<ErrorOr<Unit>> Handle(UpdateProfileCommand request, CancellationToken cancellationToken)
@@ -32,7 +34,7 @@ namespace Craftify.Application.Profile.Commands.UpdateProfile
             user.State = request.Model.State ?? user.State;
             user.PostalCode = request.Model.PostalCode ?? user.PostalCode;
             user.ProfilePicture = request.Model.ProfilePicture ?? user.ProfilePicture;
-
+            user.UpdatedDate = _date.UtcNow;
             // Update user in repository
             _unitOfWrok.User.Update(user);
             _unitOfWrok.Save();

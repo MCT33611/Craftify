@@ -6,13 +6,14 @@
 
     <div class="previews">
         <div *ngFor="let file of files; track: file" class="preview">
-            <img class="preview-image" [src]="file.cdnUrl + '/-/preview/-/resize/x200/'"
+            <img class="preview-image" [src]="file.cdnUrl + '/-/preview/-/resize/x200/'" 
                 alt="{{file?.fileInfo?.originalFilename}}" [title]="file?.fileInfo?.originalFilename" />
             <button class="preview-remove-button" type="button" (click)="handleRemoveClick(file.uuid)">×</button>
         </div>
         <div *ngIf="data?.profilePicture" class="preview">
-            <img class="preview-image" [src]="data?.profilePicture + '/-/preview/-/resize/x200/'" alt="Profile Picture"
+            <img class="preview-image" [src]="data?.profilePicture " alt="Profile Picture"
                 [title]="data?.profilePicture" />
+                <!-- + '/-/preview/-/resize/x200/' -->
         </div>
     </div>
 

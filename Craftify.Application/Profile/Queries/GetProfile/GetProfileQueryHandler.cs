@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Craftify.Application.Profile.Queries.GetProfile
 {
@@ -34,8 +35,9 @@ namespace Craftify.Application.Profile.Queries.GetProfile
                         PostalCode = user.PostalCode,
                         ProfilePicture = user.ProfilePicture,
                         EmailConfirmed = user.EmailConfirmed,
-                        Role = user.Role
-                    };
+                        Role = user.Role,
+                        Blocked = user.Blocked
+            };
 
 
         }

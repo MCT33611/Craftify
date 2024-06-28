@@ -39,11 +39,12 @@ namespace Craftify.Application.Authentication.Commands.Register
                 User? existingUser = _unitOfWork.User.GetUserByEmail(user.Email);
                 if (existingUser != null)
                 {
+                    Worker worker = _unitOfWork.Worker.Get(w => w.UserId == existingUser.Id);
                     user.Id = existingUser.Id;
                     user.Role = existingUser.Role;
                     return new AuthenticationResult(
                         user,
-                        _jwtTokenGenerator.GenerateToken(user)
+                        _jwtTokenGenerator.GenerateToken(user, worker?.Id)
                         );
                 }
 
@@ -52,7 +53,7 @@ namespace Craftify.Application.Authentication.Commands.Register
 
                 return new AuthenticationResult(
                     user,
-                    _jwtTokenGenerator.GenerateToken(user)
+                    _jwtTokenGenerator.GenerateToken(user,null)
                     );
             }
             catch (Exception)

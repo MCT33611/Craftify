@@ -1,4 +1,5 @@
-﻿using Craftify.Domain.Entities;
+﻿using Craftify.Domain.Constants;
+using Craftify.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,5 +20,10 @@ namespace Craftify.Application.Common.Interfaces.Persistence.IRepository
         string GenerateOTP(string email);
         bool IsOTPValid(string email, string otp);
         void Detach(User user);
+        public bool ChangeUserRole(User user, string role = AppConstants.Role_Customer);
+        public void Subscribe(Subscription subscription, Worker worker);
+        Task UpdateAsync(Domain.Entities.Authentication refreshToken);
+        Task AddAsync(Domain.Entities.Authentication refreshToken);
+        Task<Domain.Entities.Authentication?> GetByTokenAsync(string token);
     }
 }

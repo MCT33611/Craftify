@@ -13,4 +13,5 @@ export interface IUser {
     updatedDate?: Date;
     profilePicture?: string;
     role?: string;
+    blocked?:boolean;
 }

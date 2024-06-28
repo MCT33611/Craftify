@@ -1,27 +1,46 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { TokenService } from '../../../../../services/token.service';
-import { Observable } from 'rxjs';
+import { Observable, catchError } from 'rxjs';
 import { IUser } from '../../../../../models/iuser';
 import { environment } from '../../../../../../environments/environment.prod';
-
+import { IRoles } from '../../../../../core/constants/roles';
+import { handleError } from '../../../../../shared/utils/handleError';
+import { IWorker } from '../../../../../models/iworker';
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
 
-  private headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+  
 
   constructor(
-    private tokenService: TokenService,
-    private http: HttpClient
+    private _http: HttpClient
   ) { }
 
   get(userId:string): Observable<IUser> {
-    return this.http.get<IUser>(`${environment.API_BASE_URL}/Profile/${userId}`, { headers: this.headers });
+    return this._http.get<IUser>(`${environment.API_BASE_URL}/Profile/${userId}`);
   }
 
-  getAll(): Observable<IUser[]> {
-    return this.http.get<IUser[]>(`${environment.API_BASE_URL}/Profile`, { headers: this.headers });
+  getWorker(workerId:string): Observable<IWorker> {
+    return this._http.get<IWorker>(`${environment.API_BASE_URL}/Profile/Worker/${workerId}`);
+  }
+
+  getAllCustomers(): Observable<IUser[]> {
+    return this._http.get<IUser[]>(`${environment.API_BASE_URL}/Profile/Custormers`)
+    .pipe(catchError(handleError));
+  }
+  
+  getAllWorkers(): Observable<IWorker[]> {
+    return this._http.get<IWorker[]>(`${environment.API_BASE_URL}/Profile/Workers`)
+    .pipe(catchError(handleError));
+  }
+
+  AccessChange(userId:string): Observable<Object> {
+    return this._http.patch(`${environment.API_BASE_URL}/Profile/AccessChange/${userId}`,null);
+  }
+
+  ApprovalChange(userId:string): Observable<Object> {
+    return this._http.patch(`${environment.API_BASE_URL}/Profile/Worker/ApprovalChange/${userId}`,null);
   }
 }

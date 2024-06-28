@@ -25,7 +25,6 @@ export const ProfileStore = signalStore(
                 // Fetch user data asynchronously
                 let user: IUser | undefined | null = await profileService.get().toPromise();
                 if(!user){
-                    console.log(user);
                     
                     user = store.user();
                 }

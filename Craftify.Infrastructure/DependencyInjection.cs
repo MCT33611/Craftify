@@ -66,6 +66,11 @@ namespace Craftify.Infrastructure
             services.AddSingleton(Options.Create(googleSettings));
             services.AddSingleton<IGooglePayloadGenerator, GooglePayloadGenerator>();
 
+            var razorpaySettings = new RazorpaySettings();
+            _config.Bind(RazorpaySettings.SectionName, razorpaySettings);
+            services.AddSingleton(Options.Create(razorpaySettings));
+            services.AddScoped<IRazorpayService, RazorpayService>();
+
             services.AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {

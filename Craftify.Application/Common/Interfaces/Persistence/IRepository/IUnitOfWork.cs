@@ -4,9 +4,11 @@
     {
         IUserRepository User {  get; }
 
-        IServiceRepository Service { get; }
+        IPlanRepository Plan { get; }
 
-        ICategoryRepository Category { get; }
+        IWorkerRepository Worker { get; }
+
+        IBookingRepository Booking { get; }
 
         void Save();
     }

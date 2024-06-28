@@ -1,46 +1,49 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { AlertService } from '../../../../services/alert.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-forgot-password',
   templateUrl: './forgot-password.component.html',
   styleUrl: './forgot-password.component.css'
 })
-export class ForgotPasswordComponent {
+export class ForgotPasswordComponent implements OnDestroy {
   isEmailValid = false;
-  forgotForm!: FormGroup;
-  constructor(
-    private fb: FormBuilder,
-    private alert : AlertService,
-    private auth: AuthService,
-  ) {
+  forgotForm: FormGroup;
+  private destroy$ = new Subject<void>();
 
-    this.forgotForm = this.fb.group({
-      email: [
-        '',
-        [Validators.required, Validators.email]
-      ],
+  constructor(
+    private _fb: FormBuilder,
+    private _alert: AlertService,
+    private _auth: AuthService,
+  ) {
+    this.forgotForm = this._fb.group({
+      email: ['', [Validators.required, Validators.email]],
     });
   }
 
   onEmailSubmit() {
-
     if (this.forgotForm.valid) {
-
-      this.auth.forgetPassword(this.forgotForm.value.email).subscribe({
-        complete:()=>{
+      this._auth.forgetPassword(this.forgotForm.value.email).pipe(
+        takeUntil(this.destroy$)
+      ).subscribe({
+        complete: () => {
           this.isEmailValid = true;
+          this._alert.success('Password reset email sent successfully');
         },
-        error:(error:any)=>this.alert.error(`${error.status} : ${error.error.title}`)
+        error: (error: HttpErrorResponse) => 
+          this._alert.error(`${error.status}: ${error.error.title || 'An error occurred'}`)
       });
-
     } else {
-      this.alert.error("cridentials are not valid")
+      this._alert.error("Credentials are not valid");
     }
   }
 
-
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 }

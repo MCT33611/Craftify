@@ -21,7 +21,11 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import {MatTabsModule} from '@angular/material/tabs';
-
+import { MatAutocompleteModule} from '@angular/material/autocomplete';
+import { MatChipsModule} from '@angular/material/chips';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 @NgModule({
   exports: [
     MatButtonModule,
@@ -42,7 +46,12 @@ import {MatTabsModule} from '@angular/material/tabs';
     MatSnackBarModule,
     MatTooltipModule,
     MatSlideToggleModule,
-    MatTabsModule
+    MatTabsModule,
+    MatAutocompleteModule,
+    MatChipsModule,
+    MatMenuModule,
+    MatDatepickerModule,
+    CanvasJSAngularChartsModule
   ]
 })
 export class MaterialModule { }

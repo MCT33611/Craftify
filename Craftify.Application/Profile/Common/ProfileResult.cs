@@ -29,6 +29,7 @@ namespace Craftify.Application.Profile.Common
 
         public string? ProfilePicture { get; set; }
         public string? Role { get; set; }
+        public bool Blocked { get; set; } = false;
 
 
     }

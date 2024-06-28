@@ -17,4 +17,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Craftify.Domain\Craftify.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

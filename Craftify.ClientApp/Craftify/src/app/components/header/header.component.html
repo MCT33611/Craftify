@@ -5,18 +5,22 @@
             <span class="text-3xl font-bold">Craftify</span>
         </a>
         <span class="spacer"></span>
-
+        @if(profileStore.user()?.role ==admin){
+        <div class="flex items-center bg-[#382F32] mx-5 py-1 px-2 rounded-full shadow-md gap-2 overflow-ellipsis text-white cursor-pointer">
+            <a routerLink="/admin/dashboard" class="font-thin text-xl mx-3">dashboard</a>
+        </div>
+        }
         @if(authService.isLoggedIn()){
 
         <div class="flex gap-5">
+
             <a routerLink='/profile'>
 
                 <div class="flex justify-center items-center">
-                    <div class="flex items-center bg-[#382F32] p-1 px-2 rounded-full shadow-md gap-2 overflow-ellipsis">
-                        <img [src]="profileStore.user()?.profilePicture" alt="profile picture"
-                            class="rounded-full w-7" />
+                    <div class="flex items-center bg-[#382F32] py-1 px-2 rounded-full shadow-md gap-2 overflow-ellipsis cursor-pointer">
+                        <img *ngIf="profileStore.user()?.profilePicture" [src]="profileStore.user()?.profilePicture" alt="." class="rounded-full w-7" />
 
-                        <mat-icon *ngIf="!profileStore.user()?.profilePicture">account_circle</mat-icon>
+                        <mat-icon *ngIf="!profileStore.user()?.profilePicture" >account_circle</mat-icon>
 
                         <p class="text-sm text-center  font-thin text-white ">
                             {{profileStore.user()?.firstName}}
@@ -24,8 +28,9 @@
                     </div>
                 </div>
             </a>
-
-            <span (click)="logout()">logout</span>
+            <div class="flex items-center bg-red-700  px-5  rounded-full shadow-md gap-2 overflow-ellipsis text-white cursor-pointer">
+                <span (click)="logout()">logout</span>
+            </div>
         </div>
 
         }

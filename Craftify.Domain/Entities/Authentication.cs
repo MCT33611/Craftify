@@ -14,6 +14,10 @@ namespace Craftify.Domain.Entities
         public string? Email { get; set; }
         public string? OTP { get; set; }
         public string? ResetToken { get; set; }
+        public string? Token { get; set; }
+        public Guid UserId { get; set; }
+        public DateTime ExpiryDate { get; set; }
+        public bool IsRevoked { get; set; }
 
     }
 }

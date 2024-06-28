@@ -21,8 +21,9 @@ import { MaterialModule } from '../../material/material.module';
   templateUrl: './ui-upsert-form.component.html',
   styleUrls: ['./ui-upsert-form.component.css']
 })
-export class UiUpsertFormComponent implements OnInit, OnChanges {
+export class UiUpsertFormComponent implements  OnChanges {
   @Input() isDetails!: boolean;
+  @Input() showUploader: boolean = true;
   @Input({ required: true }) title!: string;
   @Input({ required: true }) description!: string;
   @Input({ required: true }) labels!: string[];
@@ -34,14 +35,14 @@ export class UiUpsertFormComponent implements OnInit, OnChanges {
 
   @ViewChild('ctxProvider', { static: true }) ctxProviderRef!: ElementRef<InstanceType<LR.UploadCtxProvider>>;
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private _fb: FormBuilder) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     let controls: any = {};
     this.labels.forEach((label) => {
       controls[label] = new FormControl({ value: this.data ? this.data[label] : "", disabled: this.isDetails }, [Validators.required]);
     });
-    this.form = this.fb.group(controls);
+    this.form = this._fb.group(controls);
 
     if (this.data?.imageUrls) {
       this.data.imageUrls.forEach((url: string, index: number) => {
@@ -49,17 +50,13 @@ export class UiUpsertFormComponent implements OnInit, OnChanges {
         this.files.push(file);
       });
     }
-  }
-
-  ngOnInit(): void {
-    if (!this.isDetails) {
+    if (!this.isDetails && this.showUploader) {
       LR.registerBlocks(LR);
       this.ctxProviderRef.nativeElement.addEventListener('change', this.handleChangeEvent);
     }
-
-
-
   }
+
+
 
   ngOnDestroy() {
     this.ctxProviderRef.nativeElement.removeEventListener('change', this.handleChangeEvent);
@@ -74,6 +71,6 @@ export class UiUpsertFormComponent implements OnInit, OnChanges {
   }
 
   onSubmit() {
-    this.formSubmit.emit({ ...this.form.value, imagesUrl: this.files.map(file => file.cdnUrl) });
+    this.formSubmit.emit({ ...this.form.value, imageUrls: this.files.map(file => file.cdnUrl) });
   }
 }

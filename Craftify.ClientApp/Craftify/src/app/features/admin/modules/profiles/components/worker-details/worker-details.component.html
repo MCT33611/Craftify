@@ -1,0 +1,8 @@
+<div class="w-full -z-10 flex justify-center">
+    <app-ui-upsert-form [isDetails]="true" [title]="'Worker Details'" [description]="''" [labels]="labels"
+    [data]="dataSource"></app-ui-upsert-form>
+
+    <pdf-viewer [src]="dataSource['certificationUrl']" [render-text]="true" [original-size]="false"
+         class="w-[400px] h-[400]"></pdf-viewer>
+
+</div>
