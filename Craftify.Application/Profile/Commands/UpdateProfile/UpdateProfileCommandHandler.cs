@@ -37,7 +37,7 @@ namespace Craftify.Application.Profile.Commands.UpdateProfile
             user.UpdatedDate = _date.UtcNow;
             // Update user in repository
             _unitOfWrok.User.Update(user);
-            _unitOfWrok.Save();
+            await _unitOfWrok.Save();
             return Unit.Value;
 
         }

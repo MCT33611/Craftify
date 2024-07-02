@@ -22,17 +22,14 @@ namespace Craftify.Application.Authentication.Commands.ResetPasswordCommand
             var user = _unitOfWork.User.GetUserByEmail(querry.Email);
 
             if (user == null)
-                return false; // User not found
+                return false; 
 
-            // Check if the token is valid
-            if (!_unitOfWork.User.IsTokenValid(querry.Email, querry.Token))
-                return false; // Invalid token
+            if (!_unitOfWork.User.IsPasswordResetTokenValid(querry.Email, querry.Token))
 
 
             user.PasswordHash = _unitOfWork.User.HashPassword(querry.NewPassword);
-            // Reset the user's password
             _unitOfWork.User.Update(user);
-            _unitOfWork.Save();
+            await _unitOfWork.Save();
 
             await Task.CompletedTask;
             return true;

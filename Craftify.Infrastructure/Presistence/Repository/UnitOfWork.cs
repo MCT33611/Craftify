@@ -22,9 +22,9 @@ namespace Craftify.Infrastructure.Presistence.Repository
         public IBookingRepository Booking => new BookingRepository(_db);
 
 
-        public void Save()
+        public async Task Save()
         {
-            _db.SaveChanges();
+           await _db.SaveChangesAsync();
         }
     }
 }

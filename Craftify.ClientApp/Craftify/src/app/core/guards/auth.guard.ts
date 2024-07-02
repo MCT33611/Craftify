@@ -6,6 +6,7 @@ import { IUser } from '../../models/iuser';
 import { AlertService } from '../../services/alert.service';
 import { handleError } from '../../shared/utils/handleError';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { lastValueFrom } from 'rxjs';
 
 export const authGuard: CanActivateFn = async (route, state) => {
   const authService = inject(AuthService);
@@ -16,7 +17,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
 
   if (authService.isLoggedIn()) {
     try {
-      const res: IUser | undefined = await profileService.get().toPromise();
+      const res: IUser | undefined = await lastValueFrom(profileService.get());
       if (res) {
         if (!res.emailConfirmed) {
           router.navigate([`/auth/otp/${res.email}`]);

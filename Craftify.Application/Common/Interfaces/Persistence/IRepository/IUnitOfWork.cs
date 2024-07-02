@@ -10,6 +10,6 @@
 
         IBookingRepository Booking { get; }
 
-        void Save();
+        Task Save();
     }
 }

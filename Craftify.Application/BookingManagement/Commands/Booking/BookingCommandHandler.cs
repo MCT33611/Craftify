@@ -18,7 +18,7 @@ namespace Craftify.Application.BookingManagement.Commands.Booking
                 
             };
             _unitOfWork.Booking.Add(booking);
-            _unitOfWork.Save();
+            await _unitOfWork.Save();
             return booking.Id;
         }
     }

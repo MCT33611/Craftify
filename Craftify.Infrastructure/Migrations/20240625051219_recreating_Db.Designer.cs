@@ -40,7 +40,7 @@ namespace Craftify.Infrastructure.Migrations
                     b.Property<string>("OTP")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ResetToken")
+                    b.Property<string>("PasswordResetToken")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

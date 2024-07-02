@@ -2,9 +2,9 @@
 using ErrorOr;
 using MediatR;
 
-namespace Craftify.Application.Authentication.Commands.Register
+namespace Craftify.Application.Authentication.Commands.LoginWithGoogle
 {
     public record LoginWithGoogleCommand(
             string Credential
-        ) :IRequest<ErrorOr<AuthenticationResult>>;
+        ) : IRequest<ErrorOr<AuthenticationResult>>;
 }

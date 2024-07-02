@@ -58,7 +58,7 @@ namespace Craftify.Application.Profile.Commands.SubscribeProfile
             // Update user in repository
             _unitOfWrok.User.Subscribe(subscription,worker);
             _unitOfWrok.User.ChangeUserRole(user,AppConstants.Role_Worker);
-            _unitOfWrok.Save();
+            await _unitOfWrok.Save();
             return Unit.Value;
 
         }

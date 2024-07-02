@@ -25,7 +25,7 @@ namespace Craftify.Application.Authentication.Commands.Register
             {
                 return  Errors.User.DuplicateEmail;
             }
-            //2. Create user (generat unique ID) & Presist to DB
+
             User user = new()
             {
                 Email = command.Email,
@@ -36,15 +36,15 @@ namespace Craftify.Application.Authentication.Commands.Register
                 JoinDate = _date.UtcNow
             };
 
-            _unitOfWork.User.Add(user);
-            _unitOfWork.Save();
-            //3. Create JWT token
-            string token = _jwtTokenGenerator.GenerateToken(user,null);
-            await Task.CompletedTask;
+            string accessToken = _jwtTokenGenerator.GenerateToken(user,null);
+            string refreshToken = _unitOfWork.User.GenerateRefreshToken(user.Email);
 
+            _unitOfWork.User.Add(user);
+            await _unitOfWork.Save();
             return new AuthenticationResult(
                 user,
-                token
+                accessToken,
+                refreshToken
                 );
         }
 

@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Craftify.Application.Authentication.Commands.Register
+namespace Craftify.Application.Authentication.Commands.LoginWithGoogle
 {
     public class LoginWithGoogleCommandValidator : AbstractValidator<LoginWithGoogleCommand>
     {

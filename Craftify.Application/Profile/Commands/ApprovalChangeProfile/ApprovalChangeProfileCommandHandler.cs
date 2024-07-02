@@ -27,7 +27,7 @@ public class ApprovalChangeProfileCommandHandler(
         worker.Approved = !worker.Approved;
 
         _unitOfWrok.Worker.Update(worker);
-        _unitOfWrok.Save();
+        await _unitOfWrok.Save();
         return Unit.Value;
 
     }

@@ -87,6 +87,8 @@ namespace Craftify.Application.Authentication.Queries.SendOtp
 
                 string messageBody = htmlTemplate.Replace("{{OTP}}", otpCode);
                 await _emailSender.SendEmailAsync(user.Email, "Confirm your email", messageBody);
+
+                await _unitOfWork.Save();
                 return true;
             }
             return false;

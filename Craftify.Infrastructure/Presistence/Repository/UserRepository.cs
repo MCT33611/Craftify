@@ -12,13 +12,13 @@ using Newtonsoft.Json.Linq;
 namespace Craftify.Infrastructure.Presistence.Repositories
 {
     public class UserRepository(
-        CraftifyDbContext _db,
+        CraftifyDbContext db,
         IPasswordHasher<object> _passwordHasher
-        ) :Repository<User>(_db), IUserRepository
+        ) :Repository<User>(db), IUserRepository
     {
 
 
-
+        private readonly CraftifyDbContext _db = db;
 
         public void Update( User user)
         {
@@ -66,7 +66,7 @@ namespace Craftify.Infrastructure.Presistence.Repositories
         }
 
 
-        public string GenerateResetToken(string email)
+        public string GeneratePasswordResetToken(string email)
         {
             // Generate a random token
             string token = GenerateRandomToken();
@@ -78,24 +78,23 @@ namespace Craftify.Infrastructure.Presistence.Repositories
             _db.Authentications.Add(new()
             {
                 Email = email,
-                ExpireAt = expiry,
-                ResetToken = token
+                PasswordResetTokenExpireAt = expiry,
+                PasswordResetToken = token,
+                AuthType = Domain.Enums.AuthType.PasswordResetting
             });
-            _db.SaveChanges();
             return token;
         }
-        // Check if the token is valid for the given email address
-        public bool IsTokenValid(string email, string token)
+        public bool IsPasswordResetTokenValid(string email, string token)
         {
             // Find the authentication record in the database based on the email and token
             var authentication = _db.Authentications
-                .SingleOrDefault(a => a.Email == email && a.ResetToken == token);
+                .SingleOrDefault(a => a.Email == email && a.PasswordResetToken == token);
 
             // If authentication record is found
             if (authentication != null)
             {
                 // Check if the token has not expired
-                if (authentication.ExpireAt > DateTime.UtcNow)
+                if (authentication.OTPExpireAt > DateTime.UtcNow)
                 {
                     // Token has used, remove it from the database
                     _db.Authentications.Remove(authentication);
@@ -107,12 +106,14 @@ namespace Craftify.Infrastructure.Presistence.Repositories
                     // Token has expired, remove it from the database
                     _db.Authentications.Remove(authentication);
                 }
-                _db.SaveChanges();
+
             }
 
             // Token is not valid
             return false;
         }
+
+
 
         public string GenerateOTP(string email)
         {
@@ -125,10 +126,11 @@ namespace Craftify.Infrastructure.Presistence.Repositories
             _db.Authentications.Add(new()
             {
                 Email = email,
-                ExpireAt = expiry,
-                OTP = otp
+                OTPExpireAt = expiry,
+                OTP = otp,
+                AuthType = Domain.Enums.AuthType.AuthEmailConfrimation
+
             });
-            _db.SaveChanges();
 
             return otp;
         }
@@ -141,10 +143,9 @@ namespace Craftify.Infrastructure.Presistence.Repositories
                 if (otp == storedOTP.OTP)
                 {
                     _db.Authentications.Remove(storedOTP);
-                    _db.SaveChanges();
 
 
-                    if (storedOTP.ExpireAt > DateTime.Now)
+                    if (storedOTP.OTPExpireAt > DateTime.Now)
                         return true;
                     else
                         return false;
@@ -158,25 +159,43 @@ namespace Craftify.Infrastructure.Presistence.Repositories
             return false;
         }
 
-
-
-        public async Task<Domain.Entities.Authentication?> GetByTokenAsync(string token)
+        public string GenerateRefreshToken(string email)
         {
-            return await _db.Authentications
-                .FirstOrDefaultAsync(rt => rt.Token == token);
+            string token = GenerateRandomToken();
+
+            DateTime expiry = DateTime.Now.AddMonths(1);
+
+            _db.Authentications.Add(new()
+            {
+                Email = email,
+                RefreshTokenExpiryDate = expiry,
+                RefreshToken = token,
+                AuthType = Domain.Enums.AuthType.RefreshTokenManagement
+            });
+            return token;
+        }
+        public bool IsRefreshTokenValid(string email, string token)
+        {
+            var authentication = _db.Authentications
+                .SingleOrDefault(a => a.Email == email && a.RefreshToken == token);
+
+            if (authentication != null)
+            {
+                if (authentication.RefreshTokenExpiryDate > DateTime.Now)
+                {
+                    _db.Authentications.Remove(authentication);
+                    return true;
+                }
+                else
+                {
+                    _db.Authentications.Remove(authentication);
+                }
+            }
+
+            // Token is not valid
+            return false;
         }
 
-        public async Task AddAsync(Domain.Entities.Authentication refreshToken)
-        {
-            await _db.Authentications.AddAsync(refreshToken);
-            await _db.SaveChangesAsync();
-        }
-
-        public async Task UpdateAsync(Domain.Entities.Authentication refreshToken)
-        {
-            _db.Authentications.Update(refreshToken);
-            await _db.SaveChangesAsync();
-        }
 
 
         public void Detach(User user)

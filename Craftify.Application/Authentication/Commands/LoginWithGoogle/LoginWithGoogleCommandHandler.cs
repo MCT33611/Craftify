@@ -9,7 +9,7 @@ using Craftify.Domain.Common.Errors;
 using Craftify.Domain.Constants;
 using Microsoft.Extensions.Options;
 
-namespace Craftify.Application.Authentication.Commands.Register
+namespace Craftify.Application.Authentication.Commands.LoginWithGoogle
 {
     public class LoginWithGoogleCommandHandler(
         IJwtTokenGenerator _jwtTokenGenerator,
@@ -37,23 +37,28 @@ namespace Craftify.Application.Authentication.Commands.Register
                 };
 
                 User? existingUser = _unitOfWork.User.GetUserByEmail(user.Email);
+                string refreshToken = _unitOfWork.User.GenerateRefreshToken(user.Email);
                 if (existingUser != null)
                 {
                     Worker worker = _unitOfWork.Worker.Get(w => w.UserId == existingUser.Id);
                     user.Id = existingUser.Id;
                     user.Role = existingUser.Role;
+
+
                     return new AuthenticationResult(
                         user,
-                        _jwtTokenGenerator.GenerateToken(user, worker?.Id)
+                        _jwtTokenGenerator.GenerateToken(user, worker?.Id),
+                        refreshToken
                         );
                 }
 
                 _unitOfWork.User.Add(user);
-                _unitOfWork.Save();
+                await _unitOfWork.Save();
 
                 return new AuthenticationResult(
                     user,
-                    _jwtTokenGenerator.GenerateToken(user,null)
+                    _jwtTokenGenerator.GenerateToken(user, null),
+                    refreshToken
                     );
             }
             catch (Exception)

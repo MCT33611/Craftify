@@ -4,6 +4,7 @@ using Craftify.Infrastructure.Presistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Craftify.Infrastructure.Migrations
 {
     [DbContext(typeof(CraftifyDbContext))]
-    partial class CraftifyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240702043212_auth_Tb_Modifications")]
+    partial class auth_Tb_Modifications
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,9 +30,6 @@ namespace Craftify.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("AuthType")
-                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
@@ -46,14 +46,14 @@ namespace Craftify.Infrastructure.Migrations
                     b.Property<string>("PasswordResetToken")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("PasswordResetTokenExpireAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("RefreshToken")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("RefreshTokenExpiryDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -199,7 +199,7 @@ namespace Craftify.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("c70b8092-58a1-423e-899b-18755c0a1bd3"),
+                            Id = new Guid("5356ce2d-71ea-471e-80de-c57595a8f749"),
                             Blocked = false,
                             Email = "craftify.onion0.122@gmail.com",
                             EmailConfirmed = true,

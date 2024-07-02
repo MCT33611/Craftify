@@ -30,7 +30,7 @@ namespace Craftify.Application.Authentication.Commands.ConfirmEmail
             user.EmailConfirmed = true;
 
             _unitOfWork.User.Update(user);
-            _unitOfWork.Save();
+            await _unitOfWork.Save();
 
             await Task.CompletedTask;
 

@@ -23,7 +23,7 @@ namespace Craftify.Application.Plan.Commands.DeletePlan
                 return Errors.User.InvaildCredetial;
             }
             _unitOfWork.Plan.Remove(plan);
-            _unitOfWork.Save();
+            await _unitOfWork.Save();
 
             return Unit.Value;
         }

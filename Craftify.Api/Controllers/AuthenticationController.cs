@@ -1,21 +1,18 @@
 ﻿using Craftify.Application.Authentication.Commands.ConfirmEmail;
 using Craftify.Application.Authentication.Commands.ForgotPassword;
 using Craftify.Application.Authentication.Commands.Register;
+using Craftify.Application.Authentication.Commands.LoginWithGoogle;
 using Craftify.Application.Authentication.Commands.ResetPasswordCommand;
 using Craftify.Application.Authentication.Common;
 using Craftify.Application.Authentication.Queries.Login;
 using Craftify.Application.Authentication.Queries.SendOtp;
-using Craftify.Application.Common.Interfaces.Authentication;
-using Craftify.Application.Common.Interfaces.Persistence.IRepository;
 using Craftify.Contracts.Authentication;
 using Craftify.Domain.Common.Errors;
-using Craftify.Infrastructure.Authentication;
 using ErrorOr;
-using Google.Apis.Auth.OAuth2.Requests;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
+using Craftify.Application.Authentication.Commands.Refresh;
 
 namespace Craftify.Api.Controllers
 {
@@ -23,13 +20,20 @@ namespace Craftify.Api.Controllers
     [ApiController]
     public class AuthenticationController(
         ISender _mediator,
-        IMapper _mapper, 
-        IUnitOfWork _unitOfWork,
-        IJwtTokenGenerator _jwtTokenGenerator,
-        IOptions<JwtSettings> jwtOptions
+        IMapper _mapper
         ) : ApiController
     {
-        private readonly JwtSettings _jwtSettings = jwtOptions.Value;
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh(RefreshRequest request)
+        {
+            var query = _mapper.Map<RefreshCommand>(request);
+            var authResult = await _mediator.Send(query);
+            return authResult.Match(
+                authResult => Ok(_mapper.Map<AuthenticationResult>(authResult)),
+                Problem
+                );
+        }
+
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterRequest request)
@@ -79,20 +83,20 @@ namespace Craftify.Api.Controllers
             }
             return authResult.Match(
                 authResult => Ok(_mapper.Map<AuthenticationResult>(authResult)),
-                errors => Problem(errors)
+                Problem
                 );
         }
 
         [HttpPost("LoginWithGoogle")]
-        public async Task<IActionResult> LoginWithGoogle([FromBody] string credential)
+        public async Task<IActionResult> LoginWithGoogle([FromBody] GoogleCredentialRequest request)
         {
-            var command = new LoginWithGoogleCommand(credential);
-            var result = await _mediator.Send(command);
+            var command = new LoginWithGoogleCommand(request.IdToken);
+            var authResult = await _mediator.Send(command);
 
-            return result.Match(
-                Ok,
-                error => StatusCode(StatusCodes.Status500InternalServerError,error)
-            );
+            return authResult.Match(
+                authResult => Ok(_mapper.Map<AuthenticationResult>(authResult)),
+                Problem
+                );
         }
 
         [HttpPost("ForgotPassword/{Email}")]
@@ -102,7 +106,7 @@ namespace Craftify.Api.Controllers
             var result = await _mediator.Send(command);
 
             return result.Match<IActionResult>(
-                success => Ok(new { ResetToken = success }),
+                success => Ok(new { passwordResetToken = success }),
                 error => NotFound(Errors.User.InvaildCredetial));
         }
 
@@ -137,44 +141,6 @@ namespace Craftify.Api.Controllers
             return result.Match<IActionResult>(
                 success => Ok(new { OtpSent = success }),
                 error => NotFound(Errors.User.InvaildCredetial));
-        }
-
-
-        [HttpPost("refresh")]
-        public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest request)
-        {
-            var refreshToken = await _unitOfWork.User.GetByTokenAsync(request.RefreshToken);
-
-            if (refreshToken == null || refreshToken.IsRevoked || refreshToken.ExpiryDate <= DateTime.UtcNow)
-            {
-                return Unauthorized();
-            }
-
-            var user = _unitOfWork.User.GetUserById(refreshToken.UserId);
-
-            if (user == null)
-            {
-                return Unauthorized();
-            }
-
-            var newJwtToken = _jwtTokenGenerator.GenerateToken(user, null);
-            var newRefreshToken = _jwtTokenGenerator.GenerateRefreshToken();
-
-            refreshToken.Token = newRefreshToken;
-            refreshToken.ExpiryDate = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpiryDays);
-            refreshToken.IsRevoked = false;
-
-            await _unitOfWork.User.UpdateAsync(refreshToken);
-
-            return Ok(new AuthenticationResponse
-            (
-                user.Id,
-                user.FirstName,
-                user.LastName,
-                user.Email,
-                newJwtToken,
-                newRefreshToken
-            ));
         }
 
 

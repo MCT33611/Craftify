@@ -24,7 +24,7 @@ namespace Craftify.Application.Plan.Commands.UpdatePlan
                 Plan.Duration = request.Duration;
 
                 _unitOfWork.Plan.Update(Plan);
-                _unitOfWork.Save();
+                await _unitOfWork.Save();
             }
             else
             {

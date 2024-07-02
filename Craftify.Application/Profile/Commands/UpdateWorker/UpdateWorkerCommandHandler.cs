@@ -32,14 +32,14 @@ namespace Craftify.Application.Profile.Commands.UpdateWorker
             worker.Description = request.Model.Description ?? worker.Description;
             worker.CertificationUrl = request.Model.CertificationUrl ?? worker.CertificationUrl;
             worker.Skills = request.Model.Skills ?? worker.Skills;
-            worker.HireDate = request.Model.HireDate != default(DateTime) ? request.Model.HireDate : worker.HireDate;
-            worker.PerHourPrice = request.Model.PerHourPrice != default(decimal) ? request.Model.PerHourPrice : worker.PerHourPrice;
+            worker.HireDate = request.Model.HireDate != default ? request.Model.HireDate : worker.HireDate;
+            worker.PerHourPrice = request.Model.PerHourPrice != default? request.Model.PerHourPrice : worker.PerHourPrice;
             worker.Approved = request.Model.Approved;
 
 
             // Update worker in repository
             _unitOfWrok.Worker.Update(worker);
-            _unitOfWrok.Save();
+            await _unitOfWrok.Save();
             return Unit.Value;
 
         }

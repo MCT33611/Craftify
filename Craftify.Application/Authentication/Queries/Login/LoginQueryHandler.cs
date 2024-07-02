@@ -31,14 +31,16 @@ namespace Craftify.Application.Authentication.Queries.Login
                 return Errors.Authentication.InvalidCredentials;
             }
             //3. Create JWT token
-            Worker worker = _unitOfWork.Worker.Get(w => w.UserId == user.Id);
-            string token = _jwtTokenGenerator.GenerateToken(user, worker?.Id);
+            Worker? worker = _unitOfWork.Worker.Get(w => w.UserId == user.Id);
 
+            string accessToken = _jwtTokenGenerator.GenerateToken(user, worker?.Id);
+            string refreshToken = _unitOfWork.User.GenerateRefreshToken(user.Email);
 
-            await Task.CompletedTask;
+            await _unitOfWork.Save();
             return new AuthenticationResult(
                 user,
-                token
+                accessToken,
+                refreshToken
                 );
         }
     }

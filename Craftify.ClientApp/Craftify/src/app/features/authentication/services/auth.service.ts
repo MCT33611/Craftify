@@ -6,9 +6,7 @@ import { environment } from '../../../../environments/environment.prod';
 import { ILogin } from '../../../models/ilogin';
 import { TokenService } from '../../../services/token.service';
 import { handleError } from '../../../shared/utils/handleError';
-import { IUser } from '../../../models/iuser';
 import { AuthResponse } from '../../../models/auth-response';
-import { JsonPipe } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -30,25 +28,25 @@ export class AuthService {
       tap((res: AuthResponse) => {
         this._tokenService.setToken(res.token);
       }),
-      catchError((error:HttpErrorResponse) => {
+      catchError((error: HttpErrorResponse) => {
         console.error(error);
-        throw error;
+        return throwError(() => error);
       })
     );
   }
-
-  LoginWithGoogle(credential: string): Observable<AuthResponse> {
+  
+  loginWithGoogle(credential: string): Observable<AuthResponse> {
     return this._http.post<AuthResponse>(
       `${environment.API_BASE_URL}/Authentication/LoginWithGoogle`,
-      JSON.stringify(credential),
-      {headers:new HttpHeaders({'Content-Type': 'application/json'})}
+      { idToken: credential },
+      { headers: new HttpHeaders({'Content-Type': 'application/json'}) }
     ).pipe(
       tap((res: AuthResponse) => {
         this._tokenService.setToken(res.token);
       }),
-      catchError(error => {
+      catchError((error: HttpErrorResponse) => {
         console.error(error);
-        return throwError(()=>error);
+        return throwError(() => error);
       })
     );
   }
@@ -65,10 +63,10 @@ export class AuthService {
     );
   }
 
-  forgetPassword(email: string): Observable<{resetToken: string}> {
-    return this._http.post<{resetToken: string}>(`${environment.API_BASE_URL}/Authentication/ForgotPassword/${email}`,null).pipe(
-      tap((res: { resetToken: string }) => {
-        this._tokenService.setPasswordResetToken(res.resetToken);
+  forgetPassword(email: string): Observable<{resetPasswordToken: string}> {
+    return this._http.post<{resetPasswordToken: string}>(`${environment.API_BASE_URL}/Authentication/ForgotPassword/${email}`,null).pipe(
+      tap((res: { resetPasswordToken: string }) => {
+        this._tokenService.setPasswordResetToken(res.resetPasswordToken);
       }),
       catchError(error => {
         console.error(error);
@@ -78,15 +76,15 @@ export class AuthService {
   }
 
   resetPassword(email: string, password: string): Observable<Object> {
-    const resetToken = this._tokenService.getPasswordResetToken();
+    const resetPasswordToken = this._tokenService.getPasswordResetToken();
 
-    if (!resetToken) {
-      return throwError(new Error('Reset token not found'));
+    if (!resetPasswordToken) {
+      return throwError(()=>new Error('Reset token not found'));
     }
 
     const body = {
       email: email,
-      token: resetToken,
+      token: resetPasswordToken,
       newPassword: password
     };
 

@@ -25,12 +25,12 @@ namespace Craftify.Infrastructure.Authentication
 
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub,user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.GivenName,user.FirstName),
-                new Claim(JwtRegisteredClaimNames.FamilyName,user.LastName ?? ""),
-                new Claim(JwtRegisteredClaimNames.Email,user.Email),
-                new Claim(ClaimTypes.Role,user.Role),
-                new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
+                new (JwtRegisteredClaimNames.Sub,user.Id.ToString()),
+                new (JwtRegisteredClaimNames.GivenName,user.FirstName),
+                new (JwtRegisteredClaimNames.FamilyName,user.LastName ?? ""),
+                new (JwtRegisteredClaimNames.Email,user.Email),
+                new (ClaimTypes.Role,user.Role),
+                new (JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
             };
             if (workerId.HasValue && workerId != null)
             {
@@ -40,21 +40,14 @@ namespace Craftify.Infrastructure.Authentication
             var securityToken = new JwtSecurityToken(
                 issuer: _jwtSettings.Issuer,
                 audience: _jwtSettings.Audience,
-                expires: _dateTimeProvider.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes),
+                //expires: _dateTimeProvider.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes),
+                expires: _dateTimeProvider.UtcNow.AddSeconds(3),
                 claims: claims,
                 signingCredentials: siginingCredentials);
                             
             return new JwtSecurityTokenHandler().WriteToken(securityToken);
         }
 
-        public string GenerateRefreshToken()
-        {
-            var randomNumber = new byte[32];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(randomNumber);
-                return Convert.ToBase64String(randomNumber);
-            }
-        }
+
     }
 }

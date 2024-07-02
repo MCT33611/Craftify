@@ -24,7 +24,7 @@ namespace Craftify.Application.BookingManagement.Commands.UpdateBookingDetails
             booking.Status = request.Status;
 
             _unitOfWork.Booking.Update(booking);
-            _unitOfWork.Save();
+            await _unitOfWork.Save();
             return booking.Id;
         }
     }

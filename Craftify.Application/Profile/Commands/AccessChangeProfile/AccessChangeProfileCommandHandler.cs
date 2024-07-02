@@ -27,7 +27,7 @@ namespace Craftify.Application.Profile.Commands.AccessChangeProfile
             user.Blocked = !user.Blocked;
 
             _unitOfWrok.User.Update(user);
-            _unitOfWrok.Save();
+            await _unitOfWrok.Save();
             return Unit.Value;
 
         }

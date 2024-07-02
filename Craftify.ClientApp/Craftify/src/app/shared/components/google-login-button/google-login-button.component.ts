@@ -40,17 +40,10 @@ export class GoogleLoginButtonComponent implements OnInit {
   }
   async handleCredentialResponse(response: CredentialResponse) {
     
-    this._auth.LoginWithGoogle(response.credential).subscribe(
+    this._auth.loginWithGoogle(response.credential).subscribe(
       {
-        next: (res: AuthResponse) => {
-          if(res.user.role === IRoles.Role_Admin) {
-            this._router.navigate(['/admin'])
-          }
-          else if(res.user.role === IRoles.Role_Customer){
-            this._router.navigate(['/home'])
-
-          }
-
+        next: (res:AuthResponse) => {
+          this.navigateBasedOnRole(res.user.role);
         },
 
         error: (error: HttpErrorResponse) => {
@@ -60,5 +53,21 @@ export class GoogleLoginButtonComponent implements OnInit {
         }
       }
     );
+  }
+
+  private navigateBasedOnRole(role: string = IRoles.Role_Customer) {
+    switch (role) {
+      case IRoles.Role_Admin:
+        this._router.navigate(['/admin']);
+        break;
+      case IRoles.Role_Customer:
+        this._router.navigate(['/home']);
+        break;
+      case IRoles.Role_Worker:
+        this._router.navigate(['/worker']);
+        break;
+      default:
+        this._router.navigate(['/home']);
+    }
   }
 }

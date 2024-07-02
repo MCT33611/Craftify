@@ -22,9 +22,10 @@ namespace Craftify.Application.Authentication.Commands.ForgotPassword
                 return Errors.User.EmailNotConfirmed;
             }
 
-            var resetToken = _unitOfWork.User.GenerateResetToken(command.Email);
+            var passwordResetToken = _unitOfWork.User.GeneratePasswordResetToken(command.Email);
+            await _unitOfWork.Save();
             await Task.CompletedTask;
-            return resetToken;
+            return passwordResetToken;
         }
     }
 }

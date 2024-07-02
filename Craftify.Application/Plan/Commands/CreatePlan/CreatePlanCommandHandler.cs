@@ -21,7 +21,7 @@ namespace Craftify.Application.Plan.Commands.CreatePlan
                 Duration = request.Duration,
             };
             _unitOfWork.Plan.Add(plan);
-            _unitOfWork.Save();
+            await _unitOfWork.Save();
             return plan.Id;
         }
     }

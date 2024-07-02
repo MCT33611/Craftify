@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpEvent, HttpHandler, HttpHeaders, HttpRequest, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
-import { catchError, switchMap, filter, take } from 'rxjs/operators';
+import { catchError, switchMap, filter, take, map } from 'rxjs/operators';
 import { TokenService } from '../../services/token.service';
 
 @Injectable({
@@ -23,10 +23,12 @@ export class AuthInterceptorService {
 
     return next.handle(request).pipe(
       catchError(error => {
+        console.log("hadiling:"+error);
+        
         if (error instanceof HttpErrorResponse && error.status === 401) {
           return this.handle401Error(request, next);
         } else {
-          return throwError(error);
+          return throwError(() =>error);
         }
       })
     );
@@ -52,7 +54,7 @@ export class AuthInterceptorService {
     if (!this.isRefreshing) {
       this.isRefreshing = true;
       this.refreshTokenSubject.next(null);
-
+  
       return this.tokenService.refreshToken().pipe(
         switchMap((tokenResponse: any) => {
           this.isRefreshing = false;
@@ -76,4 +78,5 @@ export class AuthInterceptorService {
       );
     }
   }
+
 }
