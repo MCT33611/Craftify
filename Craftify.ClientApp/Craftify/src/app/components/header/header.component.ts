@@ -5,6 +5,7 @@ import { AuthService } from '../../features/authentication/services/auth.service
 import { ProfileStore } from '../../shared/store/profile.store';
 import { CommonModule } from '@angular/common';
 import { IRoles} from '../../core/constants/roles';
+import { TokenService } from '../../services/token.service';
 
 @Component({
   selector: 'app-header',
@@ -21,10 +22,17 @@ export class HeaderComponent implements OnInit {
   authService = inject(AuthService);
   router = inject(Router);
   profileStore = inject(ProfileStore)
+  tokenSevice = inject(TokenService)
   admin = IRoles.Role_Admin;
+  role_based_home_route = "/home";
   ngOnInit(): void {
     this.profileStore.loadAll();
-    setTimeout(()=>this.profileStore.loadAll(),3000)
+    setTimeout(()=>this.profileStore.loadAll(),1000)
+    switch(this.tokenSevice.getUserRole()){
+      case IRoles.Role_Worker: this.role_based_home_route = '/worker';break;
+      case IRoles.Role_Admin: this.role_based_home_route = '/admin';break;
+      default:break;
+    }
   }
 
 

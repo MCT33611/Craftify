@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { JwtPayload } from '../models/jwt-payload';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { AuthResponse } from '../models/auth-response';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
@@ -32,6 +32,9 @@ export class TokenService {
   setRefreshToken(token: string): void {
     localStorage.setItem(this._REFRESH_TOKEN_KEY, token);
   }
+  removeRefreshToken(): void {
+    localStorage.removeItem(this._REFRESH_TOKEN_KEY);
+  }
   getRefreshToken(): string | null {
     return localStorage.getItem(this._REFRESH_TOKEN_KEY);
   }
@@ -39,7 +42,10 @@ export class TokenService {
 
   isTokenExpired(): boolean {
     const token = this.getToken();
-    return token ? this._jwtHelper.isTokenExpired(token) : true;
+    if (!token) return true;
+    
+    const expiry = (JSON.parse(atob(token.split('.')[1]))).exp;
+    return (Math.floor((new Date).getTime() / 1000)) >= expiry;
   }
 
   getUserInfo(): JwtPayload | null {
@@ -90,6 +96,17 @@ export class TokenService {
 
   refreshToken(): Observable<AuthResponse> {
     const refreshToken = this.getRefreshToken();
-    return this._http.post<AuthResponse>(`${environment.API_BASE_URL}/Authentication/refresh`, { refreshToken });
+    const accessToken = this.getToken();
+    const email = this.getUserEmail();
+    
+    if (!refreshToken || !email) {
+      console.log("No refresh token or email available");
+      return throwError(() => new Error('No refresh token or email available'));
+    }
+  
+    return this._http.post<AuthResponse>(
+      `${environment.API_BASE_URL}/Authentication/refresh`, 
+      { email,accessToken, refreshToken }
+    );
   }
 }

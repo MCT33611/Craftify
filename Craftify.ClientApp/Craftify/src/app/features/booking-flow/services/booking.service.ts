@@ -12,7 +12,7 @@ export class BookingService {
 
   constructor(private _http : HttpClient) { }
   getAllWorkers(): Observable<IWorker[]> {
-    return this._http.get<IWorker[]>(`${environment.API_BASE_URL}/Profile/Workers`)
+    return this._http.get<IWorker[]>(`${environment.API_BASE_URL}/Profile/workers`)
     .pipe(catchError(handleError));
   }
 }

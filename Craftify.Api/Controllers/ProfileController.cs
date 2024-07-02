@@ -13,16 +13,18 @@ using Craftify.Application.Profile.Queries.GetAllWorkers;
 using Craftify.Application.Profile.Queries.GetProfile;
 using Craftify.Application.Profile.Queries.GetWorker;
 using Craftify.Contracts.Profile;
+using Craftify.Domain.Constants;
 using Craftify.Domain.Entities;
 using MapsterMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Craftify.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class ProfileController(
         ISender _mediator,
         IMapper _mapper
@@ -41,7 +43,7 @@ namespace Craftify.Api.Controllers
         }
 
 
-        [HttpGet("Worker/{id}")]
+        [HttpGet("worker/{id}")]
         public async Task<IActionResult> GetWorker(Guid id)
         {
             var result = await _mediator.Send(new GetWorkerQuery(id));
@@ -51,7 +53,8 @@ namespace Craftify.Api.Controllers
                                 
         }
 
-        [HttpGet("Custormers")]
+        [Authorize(Roles =AppConstants.Role_Admin)]
+        [HttpGet("custormers")]
         public async Task<IActionResult> GetAllCustomers()
         {
             var result = await _mediator.Send(new GetAllCustomersQuery());
@@ -64,8 +67,8 @@ namespace Craftify.Api.Controllers
             return Ok(result.Value);
         }
 
-
-        [HttpGet("Workers")]
+        [Authorize(Roles = AppConstants.Role_Admin)]
+        [HttpGet("workers")]
         public async Task<IActionResult> GetAllWorkers()
         {
             var result = await _mediator.Send(new GetAllWorkersQuery());
@@ -78,7 +81,7 @@ namespace Craftify.Api.Controllers
             return Ok(result.Value);
         }
 
-        [HttpGet("Payment/Init")]
+        [HttpGet("payment/init")]
         public async Task<IActionResult> InitSubscribe([FromQuery] Guid userId, [FromQuery] Guid planId)
         {
             try
@@ -92,7 +95,7 @@ namespace Craftify.Api.Controllers
             }
         }
 
-        [HttpPost("Subscribe")]
+        [HttpPost("subscribe")]
         public async Task<IActionResult> Subscribe(SubscriptionRequest request)
         {
             var commant = _mapper.Map<SubscribeProfileCommand>(request);
@@ -106,7 +109,7 @@ namespace Craftify.Api.Controllers
             return Ok(result.Value);
         }
 
-        [HttpPatch("AccessChange/{Id}")]
+        [HttpPatch("accessChange/{Id}")]
         public async Task<IActionResult> AccessChange(Guid Id)
         {
             var commant = new AccessChangeProfileCommand(Id);
@@ -120,7 +123,7 @@ namespace Craftify.Api.Controllers
             return Ok(result.Value);
         }
 
-        [HttpPatch("Worker/ApprovalChange/{Id}")]
+        [HttpPatch("worker/approvalChange/{Id}")]
         public async Task<IActionResult> ApprovalChange(Guid Id)
         {
             var commant = new ApprovalChangeProfileCommand(Id);
@@ -145,7 +148,7 @@ namespace Craftify.Api.Controllers
             );
         }
 
-        [HttpPut("Worker/{Id}")]
+        [HttpPut("worker/{Id}")]
         public async Task<IActionResult> UpdateWorker(Guid Id, WorkerRequest model)
         {
             var result = await _mediator.Send(new UpdateWorkerCommand(Id, _mapper.Map<Worker>(model)));
@@ -166,7 +169,7 @@ namespace Craftify.Api.Controllers
             );
         }
 
-        [HttpPut("Worker/Upload/Doc")]
+        [HttpPut("worker/upload/doc")]
         public async Task<IActionResult> UploadWorkerDoc(IFormFile file)
         {
             var result = await _mediator.Send(new UploadWorkerDocCommand(file));

@@ -43,7 +43,7 @@ namespace Craftify.Api.Controllers
             return Ok(result.Value);
         }
 
-        [HttpPost("Booking")]
+        [HttpPost("booking")]
         public async Task<IActionResult> Booking (BookingRequest request)
         {
             var command = _mapper.Map<BookingCommand>(request);

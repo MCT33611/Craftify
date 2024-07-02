@@ -9,6 +9,7 @@ import { IRoles } from '../../../../core/constants/roles';
 import { IUser } from '../../../../models/iuser';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Subject, takeUntil } from 'rxjs';
+import { AuthResponse } from '../../../../models/auth-response';
 
 @Component({
   selector: 'app-sign-in',
@@ -39,7 +40,7 @@ export class SignInComponent implements OnDestroy {
       this._auth.login(user).pipe(
         takeUntil(this.destroy$)
       ).subscribe({
-        next: (res: {user: IUser, token: string}) => {
+        next: (res: AuthResponse) => {
           this.navigateBasedOnRole(res.user.role);
         },
         error: (err: HttpErrorResponse) => {

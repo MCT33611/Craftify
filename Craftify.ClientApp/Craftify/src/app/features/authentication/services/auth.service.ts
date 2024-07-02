@@ -20,13 +20,14 @@ export class AuthService {
   ) { }
 
   register(user: IRegistration): Observable<AuthResponse> {
-    return this._http.post<AuthResponse>(`${environment.API_BASE_URL}/Authentication/Register/`, user)
+    return this._http.post<AuthResponse>(`${environment.API_BASE_URL}/Authentication/register/`, user)
   }
 
   login(user: ILogin): Observable<AuthResponse> {
-    return this._http.post<AuthResponse>(`${environment.API_BASE_URL}/Authentication/Login/`, user).pipe(
+    return this._http.post<AuthResponse>(`${environment.API_BASE_URL}/Authentication/login/`, user).pipe(
       tap((res: AuthResponse) => {
-        this._tokenService.setToken(res.token);
+        this._tokenService.setToken(res.accessToken);
+        this._tokenService.setRefreshToken(res.refreshToken);
       }),
       catchError((error: HttpErrorResponse) => {
         console.error(error);
@@ -37,12 +38,13 @@ export class AuthService {
   
   loginWithGoogle(credential: string): Observable<AuthResponse> {
     return this._http.post<AuthResponse>(
-      `${environment.API_BASE_URL}/Authentication/LoginWithGoogle`,
-      { idToken: credential },
+      `${environment.API_BASE_URL}/Authentication/loginWithGoogle`,
+      { idToken: credential }, 
       { headers: new HttpHeaders({'Content-Type': 'application/json'}) }
     ).pipe(
       tap((res: AuthResponse) => {
-        this._tokenService.setToken(res.token);
+        this._tokenService.setToken(res.accessToken);
+        this._tokenService.setRefreshToken(res.refreshToken);
       }),
       catchError((error: HttpErrorResponse) => {
         console.error(error);
@@ -52,21 +54,23 @@ export class AuthService {
   }
 
   sentOtp(email: string): Observable<AuthResponse> {
-    return this._http.post<AuthResponse>(`${environment.API_BASE_URL}/Authentication/SendOtp/${encodeURIComponent(email)}`,null).pipe(
+    return this._http.post<AuthResponse>(`${environment.API_BASE_URL}/Authentication/sendOtp/${encodeURIComponent(email)}`,null).pipe(
       catchError(handleError)
     )
   }
 
   confirmEmail(otp: string, email: string): Observable<boolean> {
-    return this._http.put<boolean>(`${environment.API_BASE_URL}/Authentication/ConfirmEmail`, { otp, email }).pipe(
+    return this._http.put<boolean>(`${environment.API_BASE_URL}/Authentication/confirmEmail`, { otp, email }).pipe(
       catchError(handleError)
     );
   }
 
-  forgetPassword(email: string): Observable<{resetPasswordToken: string}> {
-    return this._http.post<{resetPasswordToken: string}>(`${environment.API_BASE_URL}/Authentication/ForgotPassword/${email}`,null).pipe(
-      tap((res: { resetPasswordToken: string }) => {
-        this._tokenService.setPasswordResetToken(res.resetPasswordToken);
+  forgetPassword(email: string): Observable<{passwordResetToken: string}> {
+    return this._http.post<{passwordResetToken: string}>(`${environment.API_BASE_URL}/Authentication/forgotPassword/${email}`,null).pipe(
+      tap((res: { passwordResetToken: string }) => {
+        console.log(res);
+        
+        this._tokenService.setPasswordResetToken(res.passwordResetToken);
       }),
       catchError(error => {
         console.error(error);
@@ -89,7 +93,7 @@ export class AuthService {
     };
 
     return this._http.put(
-      `${environment.API_BASE_URL}/Authentication/ResetPassword`,
+      `${environment.API_BASE_URL}/Authentication/resetPassword`,
       body
     ).pipe(
       tap(() => {
@@ -101,12 +105,12 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     const token = this._tokenService.getToken();
-    return token !== null && !this._tokenService.isTokenExpired();
+    return token !== null 
   }
 
   logout(): void {
     this._tokenService.removeToken();
-    
+    this._tokenService.removeRefreshToken();
   }
 
 

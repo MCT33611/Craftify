@@ -39,7 +39,7 @@ export class UpgradeComponent implements OnInit {
   ServiceOptions: string[] = [];
   @ViewChild('skillInput') skillInput!: ElementRef<HTMLInputElement>;
   subscriptionForm: FormGroup;
-
+  showPlans: boolean = false;
   skillsInputCrl : FormControl;
   
   constructor() {
@@ -148,6 +148,15 @@ export class UpgradeComponent implements OnInit {
         });
       }
     }
+  }
+  onContinue() {
+    if (this.subscriptionForm.valid) {
+      this.showPlans = true;
+    }
+  }
+
+  goBack() {
+    this.showPlans = false;
   }
 
   private skills_filter(value: string): string[] {

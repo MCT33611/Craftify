@@ -82,7 +82,8 @@ namespace Craftify.Infrastructure
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = jwtSettings.Issuer,
                         ValidAudience = jwtSettings.Audience,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret!))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret!)),
+                        ClockSkew = TimeSpan.Zero
                     };
                 });
             services.AddAuthorizationBuilder()
@@ -94,9 +95,9 @@ namespace Craftify.Infrastructure
                 {
                     policy.RequireRole(AppConstants.Role_Customer);
                 })
-                .AddPolicy(AppConstants.Role_Admin, policy =>
+                .AddPolicy(AppConstants.Role_Worker, policy =>
                 {
-                    policy.RequireRole(AppConstants.Role_Customer);
+                    policy.RequireRole(AppConstants.Role_Worker);
                 });
             return services;
         }

@@ -31,6 +31,7 @@ namespace Craftify.Infrastructure.Authentication
                 new (JwtRegisteredClaimNames.Email,user.Email),
                 new (ClaimTypes.Role,user.Role),
                 new (JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
+                new (JwtRegisteredClaimNames.Exp, DateTimeOffset.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes).ToUnixTimeSeconds().ToString())
             };
             if (workerId.HasValue && workerId != null)
             {
@@ -40,8 +41,7 @@ namespace Craftify.Infrastructure.Authentication
             var securityToken = new JwtSecurityToken(
                 issuer: _jwtSettings.Issuer,
                 audience: _jwtSettings.Audience,
-                //expires: _dateTimeProvider.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes),
-                expires: _dateTimeProvider.UtcNow.AddSeconds(3),
+                expires: _dateTimeProvider.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes),
                 claims: claims,
                 signingCredentials: siginingCredentials);
                             

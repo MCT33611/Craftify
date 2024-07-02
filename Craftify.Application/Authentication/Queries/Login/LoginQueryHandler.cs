@@ -1,13 +1,10 @@
-﻿using Craftify.Application.Authentication.Commands.Register;
-using Craftify.Application.Common.Interfaces.Authentication;
-using Craftify.Application.Common.Interfaces.Persistence;
+﻿using Craftify.Application.Common.Interfaces.Authentication;
 using Craftify.Application.Authentication.Common;
 using Craftify.Domain.Entities;
 using Craftify.Domain.Common.Errors;
 using ErrorOr;
 using MediatR;
 using Craftify.Application.Common.Interfaces.Persistence.IRepository;
-using Craftify.Domain.Constants;
 
 namespace Craftify.Application.Authentication.Queries.Login
 {

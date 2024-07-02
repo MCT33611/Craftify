@@ -47,7 +47,7 @@ namespace Craftify.Api.Controllers
                 );
         }
 
-        [HttpPut("ConfirmEmail")]
+        [HttpPut("confirmEmail")]
         public async Task<IActionResult> ConfirmEmail(ConfirmEmailRequest request)
         {
             try
@@ -87,7 +87,7 @@ namespace Craftify.Api.Controllers
                 );
         }
 
-        [HttpPost("LoginWithGoogle")]
+        [HttpPost("loginWithGoogle")]
         public async Task<IActionResult> LoginWithGoogle([FromBody] GoogleCredentialRequest request)
         {
             var command = new LoginWithGoogleCommand(request.IdToken);
@@ -99,7 +99,7 @@ namespace Craftify.Api.Controllers
                 );
         }
 
-        [HttpPost("ForgotPassword/{Email}")]
+        [HttpPost("forgotPassword/{Email}")]
         public async Task<IActionResult> ForgotPassword(string Email)
         {
             var command = new ForgotPasswordCommand(Email);
@@ -112,7 +112,7 @@ namespace Craftify.Api.Controllers
 
         
 
-        [HttpPut("ResetPassword")]
+        [HttpPut("resetPassword")]
         public async Task<IActionResult> ResetPassword(ResetPasswordRequest model)
         {
             if (model == null)
@@ -133,7 +133,7 @@ namespace Craftify.Api.Controllers
             }
         }
 
-        [HttpPost("SendOtp/{email}")]
+        [HttpPost("sendOtp/{email}")]
         public async Task<IActionResult> SendOtp(string email)
         {
             var command = new SendOtpQuery(email);

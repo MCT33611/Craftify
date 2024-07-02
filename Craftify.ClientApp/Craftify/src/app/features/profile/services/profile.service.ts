@@ -66,7 +66,7 @@ export class ProfileService {
   }
 
   Subscribe(subscription: ISubscription) {
-    return this._http.post(environment.API_BASE_URL + `/Profile/Subscribe`, subscription).pipe(
+    return this._http.post(environment.API_BASE_URL + `/Profile/subscribe`, subscription).pipe(
       catchError(handleError)
     );
   }
@@ -78,7 +78,7 @@ export class ProfileService {
       'accept': '*/*'
     });
     return this._http.put<uploadWorkerDocResponse>(
-      `${environment.API_BASE_URL}/Profile/Worker/Upload/Doc`,
+      `${environment.API_BASE_URL}/Profile/worker/upload/doc`,
       formData,
       { headers: headers }
     ).pipe(

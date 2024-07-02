@@ -7,12 +7,14 @@ import { AlertService } from '../../services/alert.service';
 import { handleError } from '../../shared/utils/handleError';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
+import { TokenService } from '../../services/token.service';
 
 export const authGuard: CanActivateFn = async (route, state) => {
   const authService = inject(AuthService);
   const profileService = inject(ProfileService)
   const router = inject(Router);
   const alertService = inject(AlertService)
+  const tokenService = inject(TokenService)
 
 
   if (authService.isLoggedIn()) {

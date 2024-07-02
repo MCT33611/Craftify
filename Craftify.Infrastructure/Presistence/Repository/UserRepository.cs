@@ -1,13 +1,9 @@
-﻿using CloudinaryDotNet.Actions;
-using Craftify.Application.Authentication.Commands.Register;
-using Craftify.Application.Common.Interfaces.Persistence.IRepository;
+﻿using Craftify.Application.Common.Interfaces.Persistence.IRepository;
 using Craftify.Domain.Constants;
 using Craftify.Domain.Entities;
 using Craftify.Infrastructure.Persistence.Repository;
-using Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Linq;
 
 namespace Craftify.Infrastructure.Presistence.Repositories
 {
@@ -136,7 +132,10 @@ namespace Craftify.Infrastructure.Presistence.Repositories
         }
         public bool IsOTPValid(string email, string otp)
         {
-            var storedOTP = _db.Authentications.SingleOrDefault(o => o.Email == email);
+            var storedOTP = _db.Authentications
+                .Where(o => o.Email == email && o.AuthType == Domain.Enums.AuthType.AuthEmailConfrimation)
+                .OrderByDescending(o => o.OTPExpireAt)
+                .FirstOrDefault();
 
             if (storedOTP != null)
             {

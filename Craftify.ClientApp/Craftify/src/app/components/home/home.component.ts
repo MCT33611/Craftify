@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ProfileStore } from '../../shared/store/profile.store';
+import { ProfileService } from '../../features/profile/services/profile.service';
 
 @Component({
   selector: 'app-home',
@@ -21,5 +22,9 @@ import { ProfileStore } from '../../shared/store/profile.store';
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
-
+  _profile =inject(ProfileService);
+  constructor(){
+    this._profile.get().subscribe(res => console.log(res)
+    )
+  }
 }
