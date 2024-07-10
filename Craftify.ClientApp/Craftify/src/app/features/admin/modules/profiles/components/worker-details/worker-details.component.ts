@@ -23,28 +23,17 @@ export class WorkerDetailsComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   labels: string[] = [
+    "firstName",
+    "lastName",
+    "email",
+    "profilePicture",
     "serviceTitle",
     "logoUrl",
     "description",
-    "certificationUrl",
     "skills",
     "hireDate",
     "perHourPrice",
     "approved",
-    "firstName",
-    "lastName",
-    "email",
-    "emailConfirmed",
-    "passwordHash",
-    "streetAddress",
-    "city",
-    "state",
-    "postalCode",
-    "joinDate",
-    "updatedDate",
-    "profilePicture",
-    "role",
-    "blocked"
   ];
 
   ngOnInit(): void {

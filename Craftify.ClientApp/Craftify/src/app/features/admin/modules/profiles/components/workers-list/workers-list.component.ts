@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
-import { ColumnConfig, ColumnType } from '../../../../../../shared/ui/ui-datatable/column-config.model';
+import { ColumnConfig, ColumnType } from '../../../../../../shared/components/ui-datatable/column-config.model';
 import { UserService } from '../../services/user.service';
 import { AlertService } from '../../../../../../services/alert.service';
 import { IWorker } from '../../../../../../models/iworker';
@@ -17,11 +17,7 @@ export class WorkersListComponent implements OnInit, OnDestroy {
   data: IWorker[] = [];
   columns: ColumnConfig[] = [
     { key: 'profilePicture', type: ColumnType.Image, header: 'Profile' },
-    { key: 'firstName', type: ColumnType.Text, header: 'First Name' },
     { key: 'email', type: ColumnType.Text, header: 'Email' },
-    { key: 'state', type: ColumnType.Text, header: 'State' },
-    { key: 'postalCode', type: ColumnType.Text, header: 'Postal Code' },
-    { key: 'role', type: ColumnType.Text, header: 'Role' },
     { key: 'approved', type: ColumnType.Text, header: 'Access' },
     { key: 'approvalChange', type: ColumnType.Action, header: 'Approval' },
     { key: 'blocked', type: ColumnType.Text, header: 'Access' },

@@ -61,13 +61,13 @@ export class GoogleLoginButtonComponent implements OnInit {
         this._router.navigate(['/admin']);
         break;
       case IRoles.Role_Customer:
-        this._router.navigate(['/home']);
+        this._router.navigate(['/customer']);
         break;
       case IRoles.Role_Worker:
         this._router.navigate(['/worker']);
         break;
       default:
-        this._router.navigate(['/home']);
+        this._router.navigate(['/customer']);
     }
   }
 }

@@ -37,7 +37,6 @@ export class ProfileService {
       "postalCode": user.postalCode,
       "profilePicture": user.profilePicture
     }
-    console.log(requestBody);
 
     return this._http.put(`${environment.API_BASE_URL}/Profile/${userId}`, requestBody).pipe(
       catchError(handleError)

@@ -33,6 +33,7 @@ export class EditProfileComponent implements OnDestroy {
       state: [''],
       city: [''],
     });
+    this.profileStore.loadAll();
   }
 
   ngOnInit(): void {
@@ -80,9 +81,25 @@ export class EditProfileComponent implements OnDestroy {
     }
   }
 
+  fileUploadSeccessHandler(cdnUrl : string){
+    const user: IUser = {
+      profilePicture: cdnUrl ?? ''
+    };
+    this.profile.update(user).subscribe({
+      complete: () => {
+        console.log("checked:");
+        
+        this.alert.success("Profile picture updated successfully");
+        this.profileStore.loadAll();
+      },
+      error: (error: HttpErrorResponse) => this.alert.error(`${error.status} : ${error.error[0].title}`)
+    });
+  }
+
   ngOnDestroy(): void {
     if (this.profileSubscription) {
       this.profileSubscription.unsubscribe();
     }
   }
+
 }

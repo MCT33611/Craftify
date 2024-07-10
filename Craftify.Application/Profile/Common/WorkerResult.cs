@@ -21,7 +21,6 @@ namespace Craftify.Application.Profile.Common
 
         public string? ServiceTitle { get; set; }
 
-        public string? LogoUrl { get; set; }
 
         public string? Description { get; set; }
 
@@ -35,6 +34,11 @@ namespace Craftify.Application.Profile.Common
 
         public bool Approved { get; set; } = false;
 
+
+        public string? LogoUrl { get; set; }
+        public string? SmallPreviewImageUrl { get; set; }
+        public string? MediumPreviewImageUrl { get; set; }
+        public string? LargePreviewImageUrl { get; set; }
 
     }
 }

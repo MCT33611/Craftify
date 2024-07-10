@@ -16,7 +16,6 @@ namespace Craftify.Application.Profile.Commands.SubscribeProfile
     {
         public async Task<ErrorOr<Unit>> Handle(SubscribeProfileCommand request, CancellationToken cancellationToken)
         {
-            await Task.CompletedTask;
 
 
             var paymentIdValidation = razorpay.ValidatePaymentIdAsync(request.PaymentId);
@@ -48,7 +47,6 @@ namespace Craftify.Application.Profile.Commands.SubscribeProfile
                 Id = WorkerId,
                 UserId = request.UserId,
                 ServiceTitle = request.ServiceTitle!,
-                LogoUrl = request.LogoUrl,
                 Description = request.Description,
                 CertificationUrl = request.CertificationUrl,
                 Skills = request.Skills,

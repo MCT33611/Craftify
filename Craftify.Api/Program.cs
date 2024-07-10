@@ -3,9 +3,6 @@ using Craftify.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 {
-
-
-
     builder.Services
         .AddPresentation()
         .AddApplication()
@@ -22,7 +19,8 @@ var app = builder.Build();
         app.UseSwaggerUI();
     }
 
-    app.UseCors("AllowAllOrigins");
+    app.UseCors();
+
 
     app.UseHttpsRedirection();
 
@@ -32,6 +30,7 @@ var app = builder.Build();
     app.UseAuthorization();
 
     app.MapControllers();
+
 
     app.Run();
 

@@ -11,6 +11,7 @@ namespace Craftify.Domain.Enums
         Pending,
         Rejected,
         Accepted,
-        Completed
+        Completed,
+        Cancelled
     }
 }

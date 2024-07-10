@@ -13,7 +13,15 @@ namespace Craftify.Application.BookingManagement.Commands.UpdateBookingDetails
     public record UpdateBookingCommand(
      Guid Id,
 
-     BookingStatus Status
+     int WorkingTime,
+
+     BookingStatus Status,
+
+     DateTime Date,
+
+     string Location,
+
+     string LocationName
 
      ) : IRequest<ErrorOr<Guid>>;
 }

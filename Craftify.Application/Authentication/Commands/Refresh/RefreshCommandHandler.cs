@@ -30,7 +30,15 @@ namespace Craftify.Application.Authentication.Commands.Refresh
                 User user = _unitOfWork.User.Get(u => u.Email == command.Email);
                 if (user == null) return Error.NotFound("User not found");
 
-                string newAccessToken = _jwtTokenGenerator.GenerateToken(user,null);
+                string newAccessToken = _jwtTokenGenerator.GenerateToken(user, null); 
+                if(user.Role == AppConstants.Role_Worker)
+                {
+                    Worker worker = _unitOfWork.Worker.Get(w => w.UserId == user.Id);
+
+                    newAccessToken = _jwtTokenGenerator.GenerateToken(user, worker.Id);
+
+                }
+
 
                 string newRefreshToken = _unitOfWork.User.GenerateRefreshToken(command.Email);
 

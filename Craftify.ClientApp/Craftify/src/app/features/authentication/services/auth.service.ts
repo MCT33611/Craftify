@@ -111,6 +111,7 @@ export class AuthService {
   logout(): void {
     this._tokenService.removeToken();
     this._tokenService.removeRefreshToken();
+    this._tokenService.clearRememberMe();
   }
 
 

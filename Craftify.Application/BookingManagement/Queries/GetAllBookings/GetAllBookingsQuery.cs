@@ -5,5 +5,5 @@ using MediatR;
 
 namespace Craftify.Application.BookingManagement.Queries.GetAllBookings
 {
-    public record GetAllBookingsQuery() : IRequest<ErrorOr<IEnumerable<BookingResult>>>;
+    public record GetAllBookingsQuery(Guid userId) : IRequest<ErrorOr<IEnumerable<BookingResult>>>;
 }

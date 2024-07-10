@@ -1,10 +1,11 @@
-﻿using Craftify.Application.Profile.Commands.AccessChangeProfile;
+﻿using CloudinaryDotNet.Actions;
+using Craftify.Application.Profile.Commands.AccessChangeProfile;
 using Craftify.Application.Profile.Commands.ApprovalChangeProfile;
 using Craftify.Application.Profile.Commands.DeleteProfile;
 using Craftify.Application.Profile.Commands.InitSubscribeProfile;
 using Craftify.Application.Profile.Commands.SubscribeProfile;
 using Craftify.Application.Profile.Commands.UpdateProfile;
-using Craftify.Application.Profile.Commands.UpdateWorker;
+using Craftify.Application.Profile.Commands.UpdateServiceProvider;
 using Craftify.Application.Profile.Commands.UploadProfilePicture;
 using Craftify.Application.Profile.Commands.UploadWorkerDoc;
 using Craftify.Application.Profile.Common;
@@ -67,7 +68,7 @@ namespace Craftify.Api.Controllers
             return Ok(result.Value);
         }
 
-        [Authorize(Roles = AppConstants.Role_Admin)]
+        [Authorize(Roles = $"{AppConstants.Role_Admin},{AppConstants.Role_Customer}")]
         [HttpGet("workers")]
         public async Task<IActionResult> GetAllWorkers()
         {
@@ -151,10 +152,10 @@ namespace Craftify.Api.Controllers
         [HttpPut("worker/{Id}")]
         public async Task<IActionResult> UpdateWorker(Guid Id, WorkerRequest model)
         {
-            var result = await _mediator.Send(new UpdateWorkerCommand(Id, _mapper.Map<Worker>(model)));
+            var result = await _mediator.Send(new UpdateServiceProviderCommand(Id, _mapper.Map<Worker>(model)));
 
             return result.Match(
-                success => Ok(),Problem
+                success => Ok(), Problem
             );
         }
 

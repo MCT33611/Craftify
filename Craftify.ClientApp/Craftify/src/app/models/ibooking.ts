@@ -1,14 +1,19 @@
-import { IUser } from "./iuser"
-import { IWorker } from "./iworker"
+import { IBookingStatus } from "./ibooking-status";
+import { IUser } from "./iuser";
+import { IWorker } from "./iworker";
+
+
 
 export interface IBooking {
-    id?: string
-    workerId?: string
-    worker?: IWorker
-    customerId?: string
-    customer?: IUser
-    workDuration?: number
-    startAt?: string
-    endAt?: string
-    status?: number
+    id?: string;
+    status: IBookingStatus;
+    workingTime: number;
+    date: string;
+    bookedAt?: string;
+    location: string;
+    locationName: string;
+    customerId: string;
+    customer?: IUser;
+    providerId: string;
+    provider?: IWorker;
 }

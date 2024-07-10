@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 // Angular Material Components
@@ -22,10 +22,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import {MatTabsModule} from '@angular/material/tabs';
 import { MatAutocompleteModule} from '@angular/material/autocomplete';
-import { MatChipsModule} from '@angular/material/chips';
+import { MatChipListbox, MatChipsModule} from '@angular/material/chips';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatDatepickerModule} from '@angular/material/datepicker';
-import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
+import { MatNativeDateModule } from '@angular/material/core';
 @NgModule({
   exports: [
     MatButtonModule,
@@ -51,7 +51,7 @@ import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
     MatChipsModule,
     MatMenuModule,
     MatDatepickerModule,
-    CanvasJSAngularChartsModule
+    MatNativeDateModule
   ]
 })
 export class MaterialModule { }

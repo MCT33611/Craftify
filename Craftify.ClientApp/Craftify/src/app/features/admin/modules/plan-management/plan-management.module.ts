@@ -4,8 +4,8 @@ import { CommonModule } from '@angular/common';
 import { ListComponent } from './components/list/list.component';
 import { EditComponent } from './components/edit/edit.component';
 import { CreateComponent } from './components/create/create.component';
-import { UiDatatableComponent } from '../../../../shared/ui/ui-datatable/ui-datatable.component';
-import { UiUpsertFormComponent } from '../../../../shared/ui/ui-upsert-form/ui-upsert-form.component';
+import { UiDatatableComponent } from '../../../../shared/components/ui-datatable/ui-datatable.component';
+import { UiUpsertFormComponent } from '../../../../shared/components/ui-upsert-form/ui-upsert-form.component';
 import { RouterLink } from '@angular/router';
 import { PlanManagementRoutingModule } from './plan-management-routing.module';
 

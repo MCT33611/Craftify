@@ -21,7 +21,11 @@ namespace Craftify.Application.BookingManagement.Commands.UpdateBookingDetails
             }
 
             // Update properties
+            booking.WorkingTime = request.WorkingTime != 0 ? request.WorkingTime:booking.WorkingTime;
             booking.Status = request.Status;
+            booking.Date = request.Date;
+            booking.Location = request.Location;
+            booking.LocationName = request.LocationName;
 
             _unitOfWork.Booking.Update(booking);
             await _unitOfWork.Save();

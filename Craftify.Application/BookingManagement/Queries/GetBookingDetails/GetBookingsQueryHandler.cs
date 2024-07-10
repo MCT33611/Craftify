@@ -1,5 +1,6 @@
 ﻿using Craftify.Application.BookingManagement.Common;
 using Craftify.Application.Common.Interfaces.Persistence.IRepository;
+using Craftify.Domain.Entities;
 using ErrorOr;
 using MediatR;
 
@@ -14,13 +15,17 @@ namespace Craftify.Application.BookingManagement.Queries.GetBookingDetails
         {
             await Task.CompletedTask;
 
-            var Bookings = _unitOfWork.Booking.Get(s => s.Id == query.Id);
+            var Bookings = _unitOfWork.Booking.Get(s => s.Id == query.Id,includedProperties: "Customer,Provider");
             return new BookingResult(
                     Bookings.Id,
                     Bookings.WorkingTime,
                     Bookings.Status,
-                    Bookings.UserId,
-                    Bookings.User,
+                    Bookings.Date,
+                    Bookings.BookedAt,
+                    Bookings.Location,
+                    Bookings.LocationName,
+                    Bookings.CustomerId,
+                    Bookings.Customer,
                     Bookings.ProviderId,
                     Bookings.Provider
                 );

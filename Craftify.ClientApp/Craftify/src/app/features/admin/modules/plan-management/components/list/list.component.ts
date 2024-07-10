@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ColumnConfig, ColumnType } from '../../../../../../shared/ui/ui-datatable/column-config.model';
+import { ColumnConfig, ColumnType } from '../../../../../../shared/components/ui-datatable/column-config.model';
 import { PlanService } from '../../services/plan.service';
 import { IPlan } from '../../../../../../models/iplan';
 import { Subject, takeUntil } from 'rxjs';

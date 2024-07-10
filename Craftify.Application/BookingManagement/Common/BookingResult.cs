@@ -18,9 +18,17 @@ namespace Craftify.Application.BookingManagement.Common
 
      BookingStatus Status ,
 
-     Guid UserId ,
+     DateTime Date,
 
-     User User ,
+     DateTime BookedAt,
+
+     string Location,
+
+     string LocationName,
+
+     Guid CustomerId ,
+
+     User Customer,
 
      Guid ProviderId ,
 

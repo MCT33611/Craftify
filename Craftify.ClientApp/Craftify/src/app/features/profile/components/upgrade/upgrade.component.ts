@@ -100,7 +100,7 @@ export class UpgradeComponent implements OnInit {
     this.profileService.Subscribe(subscription).subscribe({
       complete: () => {
         this.alert.success("Payment successfully completed");
-        this.alert.warning("Please log in again");
+        this.alert.warning("Please login again");
         this.authService.logout();
         this.router.navigate(['/auth/sign-in']);
       },
@@ -112,7 +112,11 @@ export class UpgradeComponent implements OnInit {
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
     if (value) {
-      this.skills.push(value);
+      if(value.includes(','))
+        this.skills.push(...value.split(','))
+      else
+        this.skills.push(value);
+    
     }
     event.chipInput!.clear();
     this.subscriptionForm.get('skillCtrl')?.setValue(null);

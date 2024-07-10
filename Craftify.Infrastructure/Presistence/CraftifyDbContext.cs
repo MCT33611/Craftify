@@ -19,8 +19,6 @@ namespace Craftify.Infrastructure.Presistence
 
         public DbSet<Booking> Bookings { get; set; }
 
-
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
@@ -47,6 +45,7 @@ namespace Craftify.Infrastructure.Presistence
                 .WithMany()
                 .HasForeignKey(b => b.ProviderId)
                 .OnDelete(DeleteBehavior.NoAction);
+
 
             base.OnModelCreating(modelBuilder);
         }

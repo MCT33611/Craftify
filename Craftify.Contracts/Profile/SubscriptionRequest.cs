@@ -15,7 +15,6 @@ namespace Craftify.Contracts.Profile
          string? Skills,
          string? ServiceTitle,
          decimal PerHourPrice,
-         string? LogoUrl,
          string? Description
 
     );

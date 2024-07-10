@@ -24,6 +24,10 @@ const routes: Routes = [
       {
         path:"plan",
         loadChildren:()=>import("./modules/plan-management/plan-management.module").then(m => m.PlanManagementModule)
+      },
+      {
+        path:"request",
+        loadChildren:()=>import("./modules/request-management/request-management.module").then(m => m.RequestManagementModule)
       }
     ]
   }

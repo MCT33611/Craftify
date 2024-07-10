@@ -5,19 +5,18 @@ namespace Craftify.Contracts.Profile
 
         string ServiceTitle,
 
-        string? LogoUrl,
-
         string? Description,
 
-        string? CertificationUrl,
 
         string? Skills,
 
-        DateTime HireDate,
 
         decimal PerHourPrice,
 
-        bool Approved
 
+        string? LogoUrl ,
+        string? SmallPreviewImageUrl ,
+        string? MediumPreviewImageUrl ,
+        string? LargePreviewImageUrl 
         );
 }

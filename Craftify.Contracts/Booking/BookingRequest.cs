@@ -12,18 +12,21 @@ using System.Threading.Tasks;
 namespace Craftify.Contracts.Booking
 {
     public record BookingRequest(
-     Guid Id,
 
      int WorkingTime,
 
      BookingStatus Status,
 
-     Guid UserId,
+     DateTime Date,
 
-     User User,
+     string Location,
 
-     Guid ProviderId,
+     string LocationName,
 
-     Worker Provider
+     Guid CustomerId,
+
+
+     Guid ProviderId
+
      );
 }

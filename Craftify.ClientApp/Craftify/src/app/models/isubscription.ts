@@ -6,6 +6,5 @@ export interface ISubscription {
     skills: string
     serviceTitle: string
     perHourPrice: number
-    logoUrl: string
     description: string
 }

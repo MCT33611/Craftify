@@ -4,6 +4,7 @@ using Craftify.Domain.Constants;
 using Craftify.Domain.Entities;
 using ErrorOr;
 using MediatR;
+using Razorpay.Api;
 
 namespace Craftify.Application.Profile.Queries.GetAllWorkers
 {
@@ -22,11 +23,17 @@ namespace Craftify.Application.Profile.Queries.GetAllWorkers
                     Id = w.Id,
                     UserId = w.UserId,
                     User = w.User,
+                    ServiceTitle = w.ServiceTitle,
+                    Description = w.Description,
                     CertificationUrl = w.CertificationUrl,
                     Skills = w.Skills,
                     HireDate = w.HireDate,
                     PerHourPrice =  w.PerHourPrice,
-                    Approved = w.Approved
+                    Approved = w.Approved,
+                    LogoUrl = w.LogoUrl,
+                    SmallPreviewImageUrl = w.SmallPreviewImageUrl,
+                    MediumPreviewImageUrl = w.MediumPreviewImageUrl,
+                    LargePreviewImageUrl = w.LargePreviewImageUrl
                 }).ToList();
 
                 return result;

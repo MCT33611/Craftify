@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { AlertService } from '../../../../../../services/alert.service';
-import { ColumnConfig, ColumnType } from '../../../../../../shared/ui/ui-datatable/column-config.model';
+import { ColumnConfig, ColumnType } from '../../../../../../shared/components/ui-datatable/column-config.model';
 import { IRoles } from '../../../../../../core/constants/roles';
 import { IUser } from '../../../../../../models/iuser';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -21,9 +21,6 @@ export class UsersListComponent implements OnInit, OnDestroy {
     { key: 'profilePicture', type: ColumnType.Image, header: 'Profile' },
     { key: 'firstName', type: ColumnType.Text, header: 'First Name' },
     { key: 'email', type: ColumnType.Text, header: 'Email' },
-    { key: 'state', type: ColumnType.Text, header: 'State' },
-    { key: 'postalCode', type: ColumnType.Text, header: 'Postal Code' },
-    { key: 'role', type: ColumnType.Text, header: 'Role' },
     { key: 'blocked', type: ColumnType.Text, header: 'Access' },
     { key: 'accessChange', type: ColumnType.Action, header: 'Change' },
     { key: 'details', type: ColumnType.Action, header: 'Details' }

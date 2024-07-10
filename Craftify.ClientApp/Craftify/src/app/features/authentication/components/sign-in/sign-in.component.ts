@@ -10,6 +10,7 @@ import { IUser } from '../../../../models/iuser';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Subject, takeUntil } from 'rxjs';
 import { AuthResponse } from '../../../../models/auth-response';
+import { TokenService } from '../../../../services/token.service';
 
 @Component({
   selector: 'app-sign-in',
@@ -25,11 +26,13 @@ export class SignInComponent implements OnDestroy {
     private _fb: FormBuilder,
     private _auth: AuthService,
     private _router: Router,
-    private _alert: AlertService
+    private _alert: AlertService,
+    private _token: TokenService
   ) {
     this.loginForm = this._fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
+      password: ['', Validators.required],
+      rememberMe: [false]
     });
   }
 
@@ -41,6 +44,7 @@ export class SignInComponent implements OnDestroy {
         takeUntil(this.destroy$)
       ).subscribe({
         next: (res: AuthResponse) => {
+
           this.navigateBasedOnRole(res.user.role);
         },
         error: (err: HttpErrorResponse) => {
@@ -58,16 +62,20 @@ export class SignInComponent implements OnDestroy {
         this._router.navigate(['/admin']);
         break;
       case IRoles.Role_Customer:
-        this._router.navigate(['/home']);
+        this._router.navigate(['/customer']);
         break;
       case IRoles.Role_Worker:
         this._router.navigate(['/worker']);
         break;
       default:
-        this._router.navigate(['/home']);
+        this._router.navigate(['/customer']);
     }
   }
 
+  onRememberMeToggle(event: Event) {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    this._token.setRememberMe(isChecked.toString() as 'true'|'false');
+}
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();

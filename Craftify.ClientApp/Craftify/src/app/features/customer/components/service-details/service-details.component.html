@@ -1,0 +1,12 @@
+<section id="service-details">
+    <div class="container">
+        <app-service-card [worker]="worker" size="large" (bookNow)="showBookingForm = true"></app-service-card>
+    </div>
+</section>
+
+<div [@slideInOut] *ngIf="showBookingForm"
+    class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <app-booking-form [provider]="worker" (close)="showBookingForm = false;"></app-booking-form>
+    </div>
+</div>

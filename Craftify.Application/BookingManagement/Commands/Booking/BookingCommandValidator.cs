@@ -7,9 +7,12 @@ namespace Craftify.Application.BookingManagement.Commands.Booking
     {
         public BookingCommandValidator()
         {
-            RuleFor(x => x.UserId).NotEmpty();
+            RuleFor(x => x.CustomerId).NotEmpty();
             RuleFor(x => x.WorkingTime).NotEmpty();
             RuleFor(x => x.ProviderId).NotEmpty();
+            RuleFor(x => x.Location).NotEmpty();
+            RuleFor(x => x.LocationName).NotEmpty();
+            RuleFor(x => x.Date).NotEmpty();
         }
     }
 

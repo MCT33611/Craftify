@@ -5,6 +5,24 @@
         <!-- Part 1: Subscription Form -->
         <div [ngClass]="{'hidden': showPlans}" class="transition-all duration-500">
           <form [formGroup]="subscriptionForm" (ngSubmit)="onContinue()">
+
+
+            <mat-form-field class="w-full">
+              <mat-label>Service Title</mat-label>
+              <input matInput formControlName="serviceTitle" placeholder="Enter service title" />
+              <mat-error *ngIf="subscriptionForm.get('serviceTitle')?.hasError('required')">Service title is
+                required</mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="w-full">
+              <mat-label>Price / Hour</mat-label>
+              <input type="number" matInput formControlName="perHourPrice" placeholder="Enter price per hour" />
+              <mat-error *ngIf="subscriptionForm.get('perHourPrice')?.hasError('required')">Price per hour is
+                required</mat-error>
+              <mat-error *ngIf="subscriptionForm.get('perHourPrice')?.hasError('min')">Price per hour cannot be less
+                than 0</mat-error>
+            </mat-form-field>
+
             <mat-form-field class="w-full">
               <mat-label>Skills</mat-label>
               <mat-chip-grid #chipGrid aria-label="Enter your skills">
@@ -24,23 +42,7 @@
                 </mat-option>
               </mat-autocomplete>
             </mat-form-field>
-
-            <mat-form-field class="w-full">
-              <mat-label>Service Title</mat-label>
-              <input matInput formControlName="serviceTitle" placeholder="Enter service title" />
-              <mat-error *ngIf="subscriptionForm.get('serviceTitle')?.hasError('required')">Service title is
-                required</mat-error>
-            </mat-form-field>
-
-            <mat-form-field class="w-full">
-              <mat-label>Price / Hour</mat-label>
-              <input type="number" matInput formControlName="perHourPrice" placeholder="Enter price per hour" />
-              <mat-error *ngIf="subscriptionForm.get('perHourPrice')?.hasError('required')">Price per hour is
-                required</mat-error>
-              <mat-error *ngIf="subscriptionForm.get('perHourPrice')?.hasError('min')">Price per hour cannot be less
-                than 0</mat-error>
-            </mat-form-field>
-
+            
             <mat-form-field class="w-full">
               <mat-label>Description</mat-label>
               <textarea matInput formControlName="description" placeholder="Enter description"></textarea>
@@ -48,6 +50,7 @@
                 required</mat-error>
             </mat-form-field>
 
+            <h2 class="text-xl font-semibold text-blue-900">Upload your resume here (optional)</h2>
             <app-file-drop class="w-full" (fileSelected)="onFileSelected($event)"></app-file-drop>
 
             <div class="mt-4 flex justify-end">

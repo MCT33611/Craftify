@@ -6,20 +6,19 @@ import { LayoutComponent } from './layout/layout.component';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { MaterialModule } from '../../shared/material/material.module';
-import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { SidebarComponent } from '../../shared/components/sidebar/sidebar.component';
 import { ContentComponent } from './components/content/content.component';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { UiDatatableComponent } from '../../shared/ui/ui-datatable/ui-datatable.component';
-import { UiUpsertFormComponent } from '../../shared/ui/ui-upsert-form/ui-upsert-form.component';
+import { UiDatatableComponent } from '../../shared/components/ui-datatable/ui-datatable.component';
+import { UiUpsertFormComponent } from '../../shared/components/ui-upsert-form/ui-upsert-form.component';
 
 
 @NgModule({
   declarations: [
     LayoutComponent,
-    SidebarComponent,
     ContentComponent,
-    DashboardComponent
+    DashboardComponent,
   ],
   imports: [
     CommonModule,
@@ -30,7 +29,8 @@ import { UiUpsertFormComponent } from '../../shared/ui/ui-upsert-form/ui-upsert-
     RouterOutlet,
     RouterLink,
     UiDatatableComponent,
-    UiUpsertFormComponent
+    UiUpsertFormComponent,
+    SidebarComponent
   ]
 })
 export class AdminModule { }

@@ -2,5 +2,6 @@ export enum IBookingStatus {
     Pending,
     Rejected,
     Accepted,
-    Delivered
+    Completed,
+    Cancelled
 }

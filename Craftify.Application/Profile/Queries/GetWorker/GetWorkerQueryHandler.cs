@@ -23,13 +23,16 @@ namespace Craftify.Application.Profile.Queries.GetWorker
                 UserId = worker.UserId,
                 User = worker.User,
                 ServiceTitle =worker.ServiceTitle,
-                LogoUrl = worker.LogoUrl,
                 Description = worker.Description,
                 CertificationUrl = worker.CertificationUrl,
                 Skills = worker.Skills,
                 HireDate = worker.HireDate,
                 PerHourPrice = worker.PerHourPrice,
-                Approved = worker.Approved
+                Approved = worker.Approved,
+                LogoUrl = worker.LogoUrl,
+                SmallPreviewImageUrl = worker.SmallPreviewImageUrl,
+                MediumPreviewImageUrl = worker.MediumPreviewImageUrl,
+                LargePreviewImageUrl = worker.LargePreviewImageUrl
             };
 
 

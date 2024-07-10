@@ -66,25 +66,67 @@ namespace Craftify.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("BookedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LocationName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("ProviderId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("WorkingTime")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CustomerId");
+
                     b.HasIndex("ProviderId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("Bookings");
+                });
+
+            modelBuilder.Entity("Craftify.Domain.Entities.Message", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BookingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("Content")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ReceiverId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SenderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookingId");
+
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("Craftify.Domain.Entities.Plan", b =>
@@ -199,7 +241,7 @@ namespace Craftify.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("c70b8092-58a1-423e-899b-18755c0a1bd3"),
+                            Id = new Guid("551f2cfc-4c5b-4fe3-8677-3247936f4548"),
                             Blocked = false,
                             Email = "craftify.onion0.122@gmail.com",
                             EmailConfirmed = true,
@@ -229,7 +271,13 @@ namespace Craftify.Infrastructure.Migrations
                     b.Property<DateTime>("HireDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("LargePreviewImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("LogoUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MediumPreviewImageUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("PerHourPrice")
@@ -241,6 +289,9 @@ namespace Craftify.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Skills")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SmallPreviewImageUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("UserId")
@@ -255,21 +306,32 @@ namespace Craftify.Infrastructure.Migrations
 
             modelBuilder.Entity("Craftify.Domain.Entities.Booking", b =>
                 {
+                    b.HasOne("Craftify.Domain.Entities.User", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("Craftify.Domain.Entities.Worker", "Provider")
                         .WithMany()
                         .HasForeignKey("ProviderId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Craftify.Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
+                    b.Navigation("Customer");
+
+                    b.Navigation("Provider");
+                });
+
+            modelBuilder.Entity("Craftify.Domain.Entities.Message", b =>
+                {
+                    b.HasOne("Craftify.Domain.Entities.Booking", "ServiceRequest")
+                        .WithMany("Messages")
+                        .HasForeignKey("BookingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Provider");
-
-                    b.Navigation("User");
+                    b.Navigation("ServiceRequest");
                 });
 
             modelBuilder.Entity("Craftify.Domain.Entities.Subscription", b =>
@@ -300,6 +362,11 @@ namespace Craftify.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Craftify.Domain.Entities.Booking", b =>
+                {
+                    b.Navigation("Messages");
                 });
 #pragma warning restore 612, 618
         }

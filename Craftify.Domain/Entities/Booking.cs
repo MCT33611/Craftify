@@ -12,13 +12,22 @@ namespace Craftify.Domain.Entities
 
         public int WorkingTime { get; set; }
 
+        public DateTime Date { get; set; }
+
+        public DateTime BookedAt { get; set; }
+
+
         public BookingStatus Status { get; set; }
 
-        [ForeignKey(nameof(User))]
-        public Guid UserId { get; set; }
+        public string Location { get; set; } = null!;
+        public string LocationName { get; set; } = null!;
+
+        [ForeignKey(nameof(Customer))]
+        public Guid CustomerId { get; set; }
 
         [AllowNull]
-        public User User { get; set; }
+        [DeleteBehavior(DeleteBehavior.NoAction)]
+        public User Customer { get; set; }
 
         [ForeignKey(nameof(Provider))]
         public Guid ProviderId { get; set; }
@@ -26,5 +35,6 @@ namespace Craftify.Domain.Entities
         [AllowNull]
         [DeleteBehavior(DeleteBehavior.NoAction)]
         public Worker Provider {  get; set; }
+
     }
 }

@@ -16,10 +16,12 @@ namespace Craftify.Infrastructure.Presistence.Repository
 
         public IPlanRepository Plan => new PlanRepository(_db);
 
+        public IChatRepository Chat => new ChatRepository(_db);
 
         public IWorkerRepository Worker => new WorkerRepository(_db);
 
         public IBookingRepository Booking => new BookingRepository(_db);
+
 
 
         public async Task Save()

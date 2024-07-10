@@ -11,10 +11,11 @@ import { MaterialModule } from '../../shared/material/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
-import { UploaderComponent } from './components/uploader/uploader.component';
+import { UploaderComponent } from '../../shared/components/uploader/uploader.component';
 import { UpgradeComponent } from './components/upgrade/upgrade.component';
-import { UiUpsertFormComponent } from '../../shared/ui/ui-upsert-form/ui-upsert-form.component';
+import { UiUpsertFormComponent } from '../../shared/components/ui-upsert-form/ui-upsert-form.component';
 import { FileDropComponent } from '../../shared/components/file-drop/file-drop.component';
+import { IonicModule } from '@ionic/angular';
 
 
 @NgModule({
@@ -39,7 +40,8 @@ import { FileDropComponent } from '../../shared/components/file-drop/file-drop.c
     DatePipe,
     AsyncPipe,
     UiUpsertFormComponent,
-    FileDropComponent
+    FileDropComponent,
+    IonicModule
   ],
 })
 export class ProfileModule { }

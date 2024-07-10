@@ -41,17 +41,16 @@ namespace Craftify.Infrastructure
             });
             services.AddCors(options =>
             {
-
-
-                options.AddPolicy("AllowAllOrigins", builder =>
+                options.AddDefaultPolicy(builder =>
                 {
-                    builder
-                        .AllowAnyOrigin()
-                        .AllowAnyHeader()
-                        .AllowAnyMethod();
+                    builder.WithOrigins("http://localhost:4200")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials();
                 });
             });
             services.AddMappings();
+            services.AddSignalR();
             return services;
         }
     }

@@ -11,7 +11,6 @@ namespace Craftify.Application.Profile.Commands.SubscribeProfile
          string? Skills,
          string? ServiceTitle,
          decimal PerHourPrice,
-         string? LogoUrl,
          string? Description
         ) : IRequest<ErrorOr<Unit>>;
 }
