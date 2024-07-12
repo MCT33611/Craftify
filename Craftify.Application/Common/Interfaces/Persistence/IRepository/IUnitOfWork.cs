@@ -8,6 +8,7 @@
 
         IChatRepository Chat { get; }
 
+
         IWorkerRepository Worker { get; }
 
         IBookingRepository Booking { get; }

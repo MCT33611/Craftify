@@ -101,30 +101,52 @@ namespace Craftify.Infrastructure.Migrations
                     b.ToTable("Bookings");
                 });
 
+            modelBuilder.Entity("Craftify.Domain.Entities.Conversation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PeerOneId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PeerTwoId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PeerOneId");
+
+                    b.HasIndex("PeerTwoId");
+
+                    b.ToTable("Conversations");
+                });
+
             modelBuilder.Entity("Craftify.Domain.Entities.Message", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("BookingId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("Content")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("ReceiverId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RoomId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("SenderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("Timestamp")
+                    b.Property<DateTime>("TimeSpan")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BookingId");
+                    b.HasIndex("RoomId");
 
                     b.ToTable("Messages");
                 });
@@ -241,7 +263,7 @@ namespace Craftify.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("551f2cfc-4c5b-4fe3-8677-3247936f4548"),
+                            Id = new Guid("ce02bb62-f928-4a50-874b-b2402fe62b03"),
                             Blocked = false,
                             Email = "craftify.onion0.122@gmail.com",
                             EmailConfirmed = true,
@@ -323,15 +345,34 @@ namespace Craftify.Infrastructure.Migrations
                     b.Navigation("Provider");
                 });
 
+            modelBuilder.Entity("Craftify.Domain.Entities.Conversation", b =>
+                {
+                    b.HasOne("Craftify.Domain.Entities.User", "PeerOne")
+                        .WithMany()
+                        .HasForeignKey("PeerOneId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Craftify.Domain.Entities.User", "PeerTwo")
+                        .WithMany()
+                        .HasForeignKey("PeerTwoId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("PeerOne");
+
+                    b.Navigation("PeerTwo");
+                });
+
             modelBuilder.Entity("Craftify.Domain.Entities.Message", b =>
                 {
-                    b.HasOne("Craftify.Domain.Entities.Booking", "ServiceRequest")
-                        .WithMany("Messages")
-                        .HasForeignKey("BookingId")
+                    b.HasOne("Craftify.Domain.Entities.Conversation", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ServiceRequest");
+                    b.Navigation("Room");
                 });
 
             modelBuilder.Entity("Craftify.Domain.Entities.Subscription", b =>
@@ -362,11 +403,6 @@ namespace Craftify.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Craftify.Domain.Entities.Booking", b =>
-                {
-                    b.Navigation("Messages");
                 });
 #pragma warning restore 612, 618
         }

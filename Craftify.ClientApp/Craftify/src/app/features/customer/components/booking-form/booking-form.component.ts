@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { IWorker } from '../../../../models/iworker';
@@ -9,19 +9,29 @@ import { MapDialogComponent } from '../../../../shared/components/map/map-dialog
 import { HttpClient } from '@angular/common/http';
 import { IBookingStatus } from '../../../../models/ibooking-status';
 import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
+
+interface Location {
+  lat: number;
+  lng: number;
+}
+
+interface LocationResponse {
+  display_name: string;
+}
 
 @Component({
   selector: 'app-booking-form',
   templateUrl: './booking-form.component.html',
   styleUrls: ['./booking-form.component.css']
 })
-export class BookingFormComponent implements OnInit {
+export class BookingFormComponent implements OnInit, OnDestroy {
   @Input() provider!: IWorker;
-  @Output() close = new EventEmitter();
+  @Output() close = new EventEmitter<void>();
   bookingForm!: FormGroup;
-  currentLocation: any;
-  isLocationLoading: boolean = true;
-  minDate: Date = new Date(); // Set minimum date to today
+  currentLocation: Location | null = null;
+  isLocationLoading = true;
+  minDate: Date = new Date();
 
   private fb = inject(FormBuilder);
   private tokenService = inject(TokenService);
@@ -30,7 +40,10 @@ export class BookingFormComponent implements OnInit {
   private dialog = inject(MatDialog);
   private http = inject(HttpClient);
   private _router = inject(Router);
-  dialogRef !:MatDialogRef<MapDialogComponent,any>;
+  dialogRef!: MatDialogRef<MapDialogComponent, Location>;
+
+  private destroy$ = new Subject<void>();
+
   ngOnInit() {
     this.initForm();
     this.getCurrentLocation();
@@ -44,7 +57,7 @@ export class BookingFormComponent implements OnInit {
       locationName: ['', Validators.required],
       customerId: [this.tokenService.getUserId(), Validators.required],
       providerId: [this.provider.id, Validators.required],
-      status: [IBookingStatus.Pending] // Assuming 'Pending' is the initial status
+      status: [IBookingStatus.Pending]
     });
   }
 
@@ -59,7 +72,7 @@ export class BookingFormComponent implements OnInit {
           };
           this.setLocation(this.currentLocation.lat, this.currentLocation.lng);
         },
-        (error) => {
+        () => {
           this.alertService.error('Unable to get current location. Please enter manually.');
           this.isLocationLoading = false;
         }
@@ -76,13 +89,17 @@ export class BookingFormComponent implements OnInit {
   }
 
   getLocationName(lat: number, lng: number) {
-    this.http.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
-      .subscribe((result: any) => {
-        this.bookingForm.patchValue({ locationName: result.display_name });
-        this.isLocationLoading = false;
-      }, error => {
-        this.alertService.error('Failed to get location name. Please enter manually.');
-        this.isLocationLoading = false;
+    this.http.get<LocationResponse>(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          this.bookingForm.patchValue({ locationName: result.display_name });
+          this.isLocationLoading = false;
+        },
+        error: () => {
+          this.alertService.error('Failed to get location name. Please enter manually.');
+          this.isLocationLoading = false;
+        }
       });
   }
 
@@ -93,33 +110,36 @@ export class BookingFormComponent implements OnInit {
       data: { currentLocation: this.currentLocation, locationName: this.bookingForm.get('locationName')?.value }
     });
 
-    this.dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.setLocation(result.lat, result.lng);
-      }
-    });
-    
+    this.dialogRef.afterClosed()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(result => {
+        if (result) {
+          this.setLocation(result.lat, result.lng);
+        }
+      });
   }
 
   onSubmit() {
     if (this.bookingForm.valid) {
       const bookingData = this.bookingForm.value;
-
-      // Format the date as a string (assuming you want ISO format)
       bookingData.date = new Date(bookingData.date).toISOString().split('T')[0];
 
-      // bookedAt will be set by the server, so we don't include it here
-
-      this.customerService.book(bookingData).subscribe({
-        next: (response) => {
-          this.alertService.success('Booking created successfully!');
-          this._router.navigate(['/customer/services']);
-          // Handle successful booking (e.g., navigate to confirmation page)
-        },
-        error: (error) => {
-          this.alertService.error('Failed to create booking. Please try again.');
-        }
-      });
+      this.customerService.book(bookingData)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: () => {
+            this.alertService.success('Booking created successfully!');
+            this._router.navigate(['/customer/services']);
+          },
+          error: () => {
+            this.alertService.error('Failed to create booking. Please try again.');
+          }
+        });
     }
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

@@ -13,15 +13,15 @@ import { Subject, takeUntil } from 'rxjs';
 })
 export class OtpComponent implements OnInit, OnDestroy {
   countdown: number = 60;
-  isCountdownActive: boolean = false;
-  canResendOTP: boolean = false;
-  isInValid: boolean = false;
+  isCountdownActive = false;
+  canResendOTP = false;
+  isInValid = false;
   otpForm: FormGroup;
-  email!: string | null;
-  @ViewChildren('otpInput') otpInputs !: QueryList<ElementRef>;
+  email: string | null = null;
+  @ViewChildren('otpInput') otpInputs!: QueryList<ElementRef>;
 
   private destroy$ = new Subject<void>();
-  private countdownInterval: any;
+  private countdownInterval: number | undefined;
 
   constructor(
     private _fb: FormBuilder,
@@ -53,19 +53,21 @@ export class OtpComponent implements OnInit, OnDestroy {
     });
   }
 
-  sendOtp() {
-    this._auth.sentOtp(this.email!).pipe(
-      takeUntil(this.destroy$)
-    ).subscribe({
-      complete: () => this._alert.success("Please check your mailbox"),
-      error: (error: HttpErrorResponse) => {
-        this._alert.error(`${error.status}: ${error.error.title}`);
-        this._router.navigate(['/auth/sign-up']);
-      }
-    });
+  sendOtp(): void {
+    if (this.email) {
+      this._auth.sentOtp(this.email).pipe(
+        takeUntil(this.destroy$)
+      ).subscribe({
+        complete: () => this._alert.success("Please check your mailbox"),
+        error: (error: HttpErrorResponse) => {
+          this._alert.error(`${error.status}: ${error.error.title}`);
+          this._router.navigate(['/auth/sign-up']);
+        }
+      });
+    }
   }
 
-  onInputChange(event: KeyboardEvent, index: number) {
+  onInputChange(event: KeyboardEvent, index: number): void {
     const target = event.target as HTMLInputElement;
     const value = target.value;
 
@@ -79,10 +81,10 @@ export class OtpComponent implements OnInit, OnDestroy {
     this.isInValid = false;
   }
 
-  onSubmit() {
-    if (this.otpForm.valid) {
+  onSubmit(): void {
+    if (this.otpForm.valid && this.email) {
       const otp = Object.values(this.otpForm.value).join('');
-      this._auth.confirmEmail(otp, this.email!).pipe(
+      this._auth.confirmEmail(otp, this.email).pipe(
         takeUntil(this.destroy$)
       ).subscribe({
         complete: () => {
@@ -93,13 +95,13 @@ export class OtpComponent implements OnInit, OnDestroy {
     }
   }
 
-  startCountdown() {
+  startCountdown(): void {
     this.countdown = 60;
     this.isCountdownActive = true;
     this.canResendOTP = false;
 
     this.clearCountdownInterval();
-    this.countdownInterval = setInterval(() => {
+    this.countdownInterval = window.setInterval(() => {
       if (this.countdown > 0) {
         this.countdown--;
       } else {
@@ -110,13 +112,13 @@ export class OtpComponent implements OnInit, OnDestroy {
     }, 1000);
   }
 
-  clearCountdownInterval() {
+  clearCountdownInterval(): void {
     if (this.countdownInterval) {
       clearInterval(this.countdownInterval);
     }
   }
 
-  resendOTP() {
+  resendOTP(): void {
     if (this.canResendOTP) {
       this.startCountdown();
       this.sendOtp();
@@ -128,7 +130,7 @@ export class OtpComponent implements OnInit, OnDestroy {
     return characterRegex.test(otpValue);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
     this.clearCountdownInterval();

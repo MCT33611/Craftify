@@ -19,8 +19,14 @@ namespace Craftify.Infrastructure.Presistence
 
         public DbSet<Booking> Bookings { get; set; }
 
+        public DbSet<Message> Messages { get; set; }
+
+        public DbSet<Conversation> Conversations { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+
 
             modelBuilder.Entity<User>().HasData(
                 new User { Id = Guid.NewGuid(), FirstName="ADMIN",Role=AppConstants.Role_Admin,EmailConfirmed=true,Email= "craftify.onion0.122@gmail.com",PasswordHash="pass@FY04"}

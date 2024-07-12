@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpEvent, HttpHandler, HttpHeaders, HttpRequest, HttpErrorResponse } from '@angular/common/http';
+import { HttpEvent, HttpHandler, HttpHeaders, HttpRequest, HttpErrorResponse, HttpInterceptor } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
-import { catchError, switchMap, filter, take } from 'rxjs/operators';
+import { catchError, switchMap } from 'rxjs/operators';
 import { TokenService } from '../../services/token.service';
 import { AuthResponse } from '../../models/auth-response';
 import { AuthService } from '../../features/authentication/services/auth.service';
@@ -9,16 +9,16 @@ import { AuthService } from '../../features/authentication/services/auth.service
 @Injectable({
   providedIn: 'root'
 })
-export class AuthInterceptorService {
+export class AuthInterceptorService implements HttpInterceptor {
   private isRefreshing = false;
-  private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  private refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
 
   constructor(
     private tokenService: TokenService,
     private _authService: AuthService
   ) { }
 
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const token = this.tokenService.getToken();
   
     if (token) {
@@ -37,7 +37,7 @@ export class AuthInterceptorService {
     );
   }
   
-  private handle401Error(request: HttpRequest<any>, next: HttpHandler) {
+  private handle401Error(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return this.tokenService.refreshToken().pipe(
       switchMap((res: AuthResponse) => {
         this.tokenService.setToken(res.accessToken);
@@ -45,8 +45,6 @@ export class AuthInterceptorService {
         return next.handle(this.addToken(request, res.accessToken));
       }),
       catchError(err => {
-
-        
         this.tokenService.removeToken();
         this.tokenService.removeRefreshToken();
         this._authService.logout();
@@ -55,7 +53,7 @@ export class AuthInterceptorService {
     );
   }
 
-  private addToken(request: HttpRequest<any>, token: string) {
+  private addToken(request: HttpRequest<unknown>, token: string): HttpRequest<unknown> {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
       'accept': '*/*'
@@ -67,6 +65,4 @@ export class AuthInterceptorService {
 
     return request.clone({ headers });
   }
-
-
 }

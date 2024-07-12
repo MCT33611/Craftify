@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { IBooking } from '../../../../models/ibooking';
 import { CustomerService } from '../../services/customer.service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
@@ -7,21 +7,32 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AlertService } from '../../../../services/alert.service';
 import { MapDialogComponent } from '../../../../shared/components/map/map-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { Subject, takeUntil } from 'rxjs';
+
+interface Location {
+  lat: number;
+  lng: number;
+}
+
+interface LocationResponse {
+  display_name: string;
+}
 
 @Component({
   selector: 'app-request-list',
   templateUrl: './request-list.component.html',
   styleUrl: './request-list.component.css',
 })
-export class RequestListComponent {
+export class RequestListComponent implements OnInit, OnDestroy {
   bookings: IBooking[] = [];
   showRescheduleForm = false;
-  rescheduleForm!: FormGroup;
-  selectedBooking: any;
+  rescheduleForm: FormGroup;
+  selectedBooking: IBooking | null = null;
   minDate = new Date();
   isLocationLoading = false;
-  currentLocation!: { lat: number, lng: number };
+  currentLocation: Location | null = null;
   private dialog = inject(MatDialog);
+  private destroy$ = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
@@ -35,40 +46,43 @@ export class RequestListComponent {
       locationName: ['', Validators.required]
     });
   }
+
   ngOnInit(): void {
     this.loadBookings();
   }
 
   loadBookings(): void {
-    this.customerService.getAllRequest().subscribe(
-      (bookings: IBooking[]) => {
+    this.customerService.getAllRequest().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (bookings: IBooking[]) => {
         this.bookings = bookings;
       },
-      (error: HttpErrorResponse) => {
+      error: (error: HttpErrorResponse) => {
         console.error('Error loading bookings:', error);
       }
-    );
+    });
   }
 
   openMessageDialog(booking: IBooking): void {
-    // Implement message functionality here
     console.log('Open message dialog for booking:', booking);
   }
 
-  getColorStatus(status: IBookingStatus) {
+  getColorStatus(status: IBookingStatus): string {
     switch (status) {
-      case 0: return 'bg-yellow-200';
-      case 1: return 'bg-red-200';
-      case 2: return 'bg-green-200';
-      case 3: return 'bg-blue-200';
+      case IBookingStatus.Pending: return 'bg-yellow-200';
+      case IBookingStatus.Cancelled: return 'bg-red-200';
+      case IBookingStatus.Completed: return 'bg-green-200';
+      case IBookingStatus.Accepted: return 'bg-blue-200';
       default: return "bg-white";
     }
   }
-  getStatus(status: IBookingStatus) {
-    return IBookingStatus[status]
+
+  getStatus(status: IBookingStatus): string {
+    return IBookingStatus[status];
   }
 
-  openRescheduleDialog(booking: IBooking) {
+  openRescheduleDialog(booking: IBooking): void {
     this.selectedBooking = booking;
     this.rescheduleForm.patchValue({
       workingTime: booking.workingTime,
@@ -78,60 +92,65 @@ export class RequestListComponent {
     this.showRescheduleForm = true;
   }
 
-  onCancel(booking: IBooking) {
-    const updatedBooking = {
+  onCancel(booking: IBooking): void {
+    const updatedBooking: IBooking = {
       ...booking,
       status: IBookingStatus.Cancelled
     };
-    this.customerService.rescheduleBooking(updatedBooking).subscribe(
-      response => {
+    this.customerService.rescheduleBooking(updatedBooking).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: () => {
         this.showRescheduleForm = false;
         this.loadBookings();
       },
-      error => {
+      error: (error) => {
         console.error('Error rescheduling booking', error);
       }
-    );
+    });
   }
 
-
-  onRescheduleSubmit() {
-    if (this.rescheduleForm.valid) {
-      const updatedBooking = {
+  onRescheduleSubmit(): void {
+    if (this.rescheduleForm.valid && this.selectedBooking) {
+      const updatedBooking: IBooking = {
         ...this.selectedBooking,
         ...this.rescheduleForm.value
       };
-      this.customerService.rescheduleBooking(updatedBooking).subscribe(
-        response => {
-          // Handle successful reschedule
+      this.customerService.rescheduleBooking(updatedBooking).pipe(
+        takeUntil(this.destroy$)
+      ).subscribe({
+        next: () => {
           this.showRescheduleForm = false;
-          this.loadBookings(); // Refresh the booking list
+          this.loadBookings();
         },
-        error => {
-          // Handle error
+        error: (error) => {
           console.error('Error rescheduling booking', error);
         }
-      );
+      });
     }
   }
 
-  setLocation(lat: number, lng: number) {
+  setLocation(lat: number, lng: number): void {
     this.rescheduleForm.patchValue({ location: `${lat},${lng}` });
     this.getLocationName(lat, lng);
   }
 
-  getLocationName(lat: number, lng: number) {
-    this.http.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
-      .subscribe((result: any) => {
+  getLocationName(lat: number, lng: number): void {
+    this.http.get<LocationResponse>(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (result) => {
         this.rescheduleForm.patchValue({ locationName: result.display_name });
         this.isLocationLoading = false;
-      }, error => {
+      },
+      error: () => {
         this.alert.error('Failed to get location name. Please enter manually.');
         this.isLocationLoading = false;
-      });
+      }
+    });
   }
 
-  getCurrentLocation() {
+  getCurrentLocation(): void {
     this.isLocationLoading = true;
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -142,7 +161,7 @@ export class RequestListComponent {
           };
           this.setLocation(this.currentLocation.lat, this.currentLocation.lng);
         },
-        (error) => {
+        () => {
           this.alert.error('Unable to get current location. Please enter manually.');
           this.isLocationLoading = false;
         }
@@ -153,19 +172,24 @@ export class RequestListComponent {
     }
   }
 
-  openMapDialog() {
+  openMapDialog(): void {
     const dialogRef = this.dialog.open(MapDialogComponent, {
       width: '80vw',
       height: '80vh',
       data: { currentLocation: this.currentLocation, locationName: this.rescheduleForm.get('locationName')?.value }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(result => {
       if (result) {
         this.setLocation(result.lat, result.lng);
       }
     });
   }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 }
-
-

@@ -1,77 +1,69 @@
-// chat.service.ts
-import { Injectable } from '@angular/core';
+
+import { inject, Injectable } from '@angular/core';
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { TokenService } from './token.service';
 import * as signalR from '@microsoft/signalr';
-import { BehaviorSubject, catchError, Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { IBooking } from '../models/ibooking';
-import { environment } from '../../environments/environment';
-import { handleError } from '../shared/utils/handleError';
+import { combineGuids } from '../shared/utils/combineGuids';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
-  private hubConnection: signalR.HubConnection;
-  private messagesSubject = new BehaviorSubject<any[]>([]);
-  public messages$ = this.messagesSubject.asObservable();
-  private connectionPromise: Promise<void>;
+  tokenService = inject(TokenService);
+  private messageSubject = new BehaviorSubject<any[]>([]);
+  private hubConnection: HubConnection = new HubConnectionBuilder()
+  .withUrl('https://localhost:7283/chat', {
+    accessTokenFactory: () => this.tokenService.getToken() || ''
+  })
+  .configureLogging(signalR.LogLevel.Information)
+  .build();
 
-  constructor(private http: HttpClient) {
-    this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(environment.API_CHAT_URL,{
-        withCredentials:true
-      })
-      .withAutomaticReconnect()
-      .build();
 
-    this.connectionPromise = this.start();
+  constructor() {
+    this.start();
 
-    this.hubConnection.on('ReceiveMessage', (message: any) => {
-      const currentMessages = this.messagesSubject.value;
-      this.messagesSubject.next([...currentMessages, message]);
+    this.hubConnection.on('ReceiveMessage', (senderId: string, message: string) => {
+      console.log("new msg:" + message);
+
+      const currentMessages = this.messageSubject.value;
+      this.messageSubject.next([...currentMessages, { senderId, message }]);
     });
+
+    this.hubConnection.on('UserOffline', (e) => {
+      console.log("new msg:" + e);
+    });
+
+    this.hubConnection.on('UserOnline', (e) => {
+      console.log("user online");
+    });
+
   }
 
-  private async start() {
-    try {
+  public async start(){
+    try{
       await this.hubConnection.start();
-      console.log('SignalR connection started');
-    } catch (err) {
-      console.error('Error while starting SignalR connection:', err);
-      // Retry connection
-      setTimeout(() => this.start(), 5000);
+    }
+    catch(error){
+      console.error("error:",error);
     }
   }
 
-  async ensureConnection() {
-    if (this.hubConnection.state === signalR.HubConnectionState.Connected) {
-      return Promise.resolve();
-    } else {
-      return this.connectionPromise;
-    }
+  joinRoom(senderId: string, receiverId: string): Promise<void> {
+    const roomId = combineGuids(senderId,receiverId);
+    return this.hubConnection.invoke('JoinRoom', roomId)
+      .catch(err => console.error(err));
   }
 
-  async joinServiceRequestChat(serviceRequestId: string) {
-    await this.ensureConnection();
-    return this.hubConnection.invoke('JoinServiceRequestChat', serviceRequestId);
+  public sendMessage(receiverId: string, message: string): void {
+    this.hubConnection.invoke('SendMessage', receiverId, message)
+      .catch(err => console.error(err));
   }
 
-  async leaveServiceRequestChat(serviceRequestId: string) {
-    await this.ensureConnection();
-    return this.hubConnection.invoke('LeaveServiceRequestChat', serviceRequestId);
-  }
 
-  async sendMessage(message: any) {
-    await this.ensureConnection();
-    return this.hubConnection.invoke('SendMessage', message);
-  }
 
-  getMessages(serviceRequestId: string): Observable<any[]> {
-    return this.http.get<any[]>(`${environment.API_BASE_URL}/chat/${serviceRequestId}`, { withCredentials: true });
-  }
-  
-  getRequest(id:string): Observable<IBooking> {
-    return this.http.get<IBooking>(`${environment.API_BASE_URL}/Booking/${id}`, { withCredentials: true })
-      .pipe(catchError(handleError));
+
+  public getMessages(): Observable<any[]> {
+    return this.messageSubject.asObservable();
   }
 }

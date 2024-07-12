@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Craftify.Infrastructure.Migrations
 {
     [DbContext(typeof(CraftifyDbContext))]
-    [Migration("20240708154724_add_loc_locN_to_bookings")]
-    partial class add_loc_locN_to_bookings
+    [Migration("20240711060646_recreate-db_2")]
+    partial class recreatedb_2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -69,8 +69,14 @@ namespace Craftify.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("BookedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Location")
                         .IsRequired()
@@ -96,6 +102,56 @@ namespace Craftify.Infrastructure.Migrations
                     b.HasIndex("ProviderId");
 
                     b.ToTable("Bookings");
+                });
+
+            modelBuilder.Entity("Craftify.Domain.Entities.Conversation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PeerOneId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PeerTwoId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PeerOneId");
+
+                    b.HasIndex("PeerTwoId");
+
+                    b.ToTable("Conversations");
+                });
+
+            modelBuilder.Entity("Craftify.Domain.Entities.Message", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ReceiverId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RoomId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SenderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("TimeSpan")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoomId");
+
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("Craftify.Domain.Entities.Plan", b =>
@@ -210,7 +266,7 @@ namespace Craftify.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("9aef6e85-7960-4d8e-8181-a42391359158"),
+                            Id = new Guid("ce02bb62-f928-4a50-874b-b2402fe62b03"),
                             Blocked = false,
                             Email = "craftify.onion0.122@gmail.com",
                             EmailConfirmed = true,
@@ -290,6 +346,36 @@ namespace Craftify.Infrastructure.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("Provider");
+                });
+
+            modelBuilder.Entity("Craftify.Domain.Entities.Conversation", b =>
+                {
+                    b.HasOne("Craftify.Domain.Entities.User", "PeerOne")
+                        .WithMany()
+                        .HasForeignKey("PeerOneId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Craftify.Domain.Entities.User", "PeerTwo")
+                        .WithMany()
+                        .HasForeignKey("PeerTwoId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("PeerOne");
+
+                    b.Navigation("PeerTwo");
+                });
+
+            modelBuilder.Entity("Craftify.Domain.Entities.Message", b =>
+                {
+                    b.HasOne("Craftify.Domain.Entities.Conversation", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Room");
                 });
 
             modelBuilder.Entity("Craftify.Domain.Entities.Subscription", b =>

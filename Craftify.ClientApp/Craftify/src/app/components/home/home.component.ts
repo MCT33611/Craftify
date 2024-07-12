@@ -22,9 +22,4 @@ import { ProfileService } from '../../features/profile/services/profile.service'
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
-  _profile =inject(ProfileService);
-  constructor(){
-    this._profile.get().subscribe(res => console.log(res)
-    )
-  }
 }

@@ -29,7 +29,7 @@ const routes: Routes = [
         component: RequestListComponent
       },
       {
-        path: 'chat/:requestId',
+        path: 'chat',
         component: ChatComponent
       },
     ]

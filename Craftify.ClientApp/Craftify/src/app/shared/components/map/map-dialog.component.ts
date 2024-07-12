@@ -1,14 +1,24 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import * as L from 'leaflet';
 import { HttpClient } from '@angular/common/http';
 import { MaterialModule } from '../../material/material.module';
 import { CommonModule } from '@angular/common';
+import { Subject, takeUntil } from 'rxjs';
+
+interface Location {
+  lat: number;
+  lng: number;
+}
+
+interface LocationResponse {
+  display_name: string;
+}
 
 @Component({
   selector: 'app-map-dialog',
-  standalone:true,
-  imports:[MaterialModule, CommonModule],
+  standalone: true,
+  imports: [MaterialModule, CommonModule],
   template: `
     <h2 mat-dialog-title>Select Location</h2>
     <mat-dialog-content>
@@ -21,15 +31,16 @@ import { CommonModule } from '@angular/common';
     </mat-dialog-actions>
   `
 })
-export class MapDialogComponent implements OnInit {
+export class MapDialogComponent implements OnInit, OnDestroy {
   private map!: L.Map;
   private marker: L.Marker | null = null;
-  selectedLocation: { lat: number, lng: number } | null = null;
-  selectedLocationName: string = '';
+  selectedLocation: Location | null = null;
+  selectedLocationName = '';
+  private destroy$ = new Subject<void>();
 
   constructor(
     public dialogRef: MatDialogRef<MapDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { currentLocation: { lat: number, lng: number }, locationName: string },
+    @Inject(MAT_DIALOG_DATA) public data: { currentLocation: Location, locationName: string },
     private http: HttpClient
   ) { }
 
@@ -62,15 +73,24 @@ export class MapDialogComponent implements OnInit {
   }
 
   getLocationName(lat: number, lng: number) {
-    this.http.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
-      .subscribe((result: any) => {
-        this.selectedLocationName = result.display_name;
-      }, error => {
-        console.error('Failed to get location name:', error);
+    this.http.get<LocationResponse>(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (result) => {
+          this.selectedLocationName = result.display_name;
+        },
+        error: (error) => {
+          console.error('Failed to get location name:', error);
+        }
       });
   }
 
   onCancel(): void {
     this.dialogRef.close();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

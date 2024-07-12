@@ -18,6 +18,7 @@ namespace Craftify.Infrastructure.Presistence.Repository
 
         public IChatRepository Chat => new ChatRepository(_db);
 
+
         public IWorkerRepository Worker => new WorkerRepository(_db);
 
         public IBookingRepository Booking => new BookingRepository(_db);

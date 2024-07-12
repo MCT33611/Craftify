@@ -11,6 +11,7 @@ namespace Craftify.Infrastructure
     {
         public static IServiceCollection AddPresentation(this IServiceCollection services)
         {
+            services.AddSignalR();
             services.AddControllers(options => options.Filters.Add<ErrorHandlingFilterAttribute>());
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(c =>
@@ -50,7 +51,7 @@ namespace Craftify.Infrastructure
                 });
             });
             services.AddMappings();
-            services.AddSignalR();
+
             return services;
         }
     }

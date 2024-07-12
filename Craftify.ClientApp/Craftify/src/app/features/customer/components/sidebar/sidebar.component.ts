@@ -6,6 +6,14 @@ import { ProfileStore } from '../../../../shared/store/profile.store';
 import { Subject, takeUntil } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
+interface MenuItem {
+  icon: string;
+  label: string;
+  action: 'search' | 'notifications' | null;
+  active: boolean;
+  route?: string;
+}
+
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
@@ -18,10 +26,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
   _profileStore = inject(ProfileStore);
   @Output() toggleSidePopup = new EventEmitter<'search' | 'notifications' | null>();
   isExpanded = true;
-  menuItems = [
+  menuItems: MenuItem[] = [
     { icon: 'home', label: 'Home', action: null, active: true, route: './home' },
-    { icon: 'search', label: 'Search', action: 'search' as const, active: false },
-    { icon: 'notifications', label: 'Notifications', action: 'notifications' as const, active: false },
+    { icon: 'search', label: 'Search', action: 'search', active: false },
+    { icon: 'notifications', label: 'Notifications', action: 'notifications', active: false },
     { icon: 'chatbubbles', label: 'Messages', action: null, active: false },
     { icon: 'briefcase', label: 'Services', action: null, active: false, route: './services' },
     { icon: 'git-pull-request', label: 'Requests', action: null, active: false, route: './requests' },
@@ -31,6 +39,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   constructor(private breakpointObserver: BreakpointObserver) { }
+
   ngOnInit() {
     this.breakpointObserver
       .observe([
@@ -54,11 +63,11 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  isMobileHiddenItem(item: any): boolean {
-    return window.innerWidth <  768 && (item.label === 'Notifications' || item.label === 'Search');
+  isMobileHiddenItem(item: MenuItem): boolean {
+    return window.innerWidth < 768 && (item.label === 'Notifications' || item.label === 'Search');
   }
 
-  onMenuItemClick(action: string) {
+  onMenuItemClick(action: 'search' | 'notifications' | null) {
     if (action === 'search' || action === 'notifications') {
       this.toggleSidePopup.emit(action);
     }
