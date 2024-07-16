@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Craftify.Infrastructure.Migrations
 {
     [DbContext(typeof(CraftifyDbContext))]
-    [Migration("20240711060646_recreate-db_2")]
-    partial class recreatedb_2
+    [Migration("20240715122515_create-db")]
+    partial class createdb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -266,7 +266,7 @@ namespace Craftify.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("ce02bb62-f928-4a50-874b-b2402fe62b03"),
+                            Id = new Guid("2fbd9a2a-3c75-4546-ac4e-b8a900f2d7d6"),
                             Blocked = false,
                             Email = "craftify.onion0.122@gmail.com",
                             EmailConfirmed = true,

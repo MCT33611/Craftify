@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { catchError, Observable } from 'rxjs';
 import { IBooking } from '../../../../../models/ibooking';
-import { environment } from '../../../../../../environments/environment.prod';
+import { environment } from '../../../../../../environments/environment';
 import { handleError } from '../../../../../shared/utils/handleError';
 import { HttpClient } from '@angular/common/http';
 import { TokenService } from '../../../../../services/token.service';

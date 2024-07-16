@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { TokenService } from '../../../../../services/token.service';
 import { Observable, catchError } from 'rxjs';
 import { IUser } from '../../../../../models/iuser';
-import { environment } from '../../../../../../environments/environment.prod';
+import { environment } from '../../../../../../environments/environment';
 import { IRoles } from '../../../../../core/constants/roles';
 import { handleError } from '../../../../../shared/utils/handleError';
 import { IWorker } from '../../../../../models/iworker';

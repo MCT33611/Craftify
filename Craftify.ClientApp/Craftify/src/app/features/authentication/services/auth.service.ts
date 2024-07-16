@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { Injectable } from '@angular/core';
 import { IRegistration } from '../../../models/iregistration';
 import { Observable, catchError, tap, throwError } from 'rxjs';
-import { environment } from '../../../../environments/environment.prod';
+import { environment } from '../../../../environments/environment';
 import { ILogin } from '../../../models/ilogin';
 import { TokenService } from '../../../services/token.service';
 import { handleError } from '../../../shared/utils/handleError';

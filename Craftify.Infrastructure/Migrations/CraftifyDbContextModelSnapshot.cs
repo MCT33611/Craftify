@@ -263,7 +263,7 @@ namespace Craftify.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("ce02bb62-f928-4a50-874b-b2402fe62b03"),
+                            Id = new Guid("2fbd9a2a-3c75-4546-ac4e-b8a900f2d7d6"),
                             Blocked = false,
                             Email = "craftify.onion0.122@gmail.com",
                             EmailConfirmed = true,

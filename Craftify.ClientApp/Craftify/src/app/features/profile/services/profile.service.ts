@@ -3,7 +3,7 @@ import { Observable, catchError, tap, throwError } from 'rxjs';
 import { IUser } from '../../../models/iuser';
 import { TokenService } from '../../../services/token.service';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { environment } from '../../../../environments/environment.prod';
+import { environment } from '../../../../environments/environment';
 import { handleError } from '../../../shared/utils/handleError';
 import { IPlan } from '../../../models/iplan';
 import { ISubscription } from '../../../models/isubscription';
