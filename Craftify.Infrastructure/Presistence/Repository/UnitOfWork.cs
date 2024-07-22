@@ -1,4 +1,5 @@
 ﻿using Craftify.Application.Common.Interfaces.Persistence.IRepository;
+using Craftify.Infrastructure.Persistence.Repository;
 using Craftify.Infrastructure.Presistence.Repositories;
 using Microsoft.AspNetCore.Identity;
 

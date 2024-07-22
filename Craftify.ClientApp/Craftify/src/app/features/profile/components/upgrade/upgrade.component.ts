@@ -104,7 +104,11 @@ export class UpgradeComponent implements OnInit {
         this.authService.logout();
         this.router.navigate(['/auth/sign-in']);
       },
-      error: (err) => this.alert.error(`${err.error}, ${err.status}`)
+      error: (err) => {
+        this.alert.error(`${err.error}, ${err.status}`)
+        console.log(err);
+        
+      }
     });
   }
 

@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { ProfileStore } from '../../../../shared/store/profile.store';
 import { Subject, takeUntil } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { TokenService } from '../../../../services/token.service';
 
 interface MenuItem {
   icon: string;
@@ -22,15 +23,17 @@ interface MenuItem {
 export class SidebarComponent implements OnInit, OnDestroy {
 
   authService = inject(AuthService);
+  token = inject(TokenService);
   router = inject(Router);
   _profileStore = inject(ProfileStore);
   @Output() toggleSidePopup = new EventEmitter<'search' | 'notifications' | null>();
   isExpanded = true;
+  userId = this.token.getUserId();
   menuItems: MenuItem[] = [
     { icon: 'home', label: 'Home', action: null, active: true, route: './home' },
     { icon: 'search', label: 'Search', action: 'search', active: false },
     { icon: 'notifications', label: 'Notifications', action: 'notifications', active: false },
-    { icon: 'chatbubbles', label: 'Messages', action: null, active: false },
+    { icon: 'chatbubbles', label: 'Messages', action: null, active: false ,route:`./chat`},
     { icon: 'briefcase', label: 'Services', action: null, active: false, route: './services' },
     { icon: 'git-pull-request', label: 'Requests', action: null, active: false, route: './requests' },
     { icon: 'person', label: 'Profile', action: null, active: false, route: './profile' },
@@ -82,4 +85,5 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.authService.logout();
     this.router.navigate(['/auth/sign-in']);
   }
+
 }

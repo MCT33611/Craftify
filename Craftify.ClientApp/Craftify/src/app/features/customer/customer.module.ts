@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { CustomerRoutingModule } from './customer-routing.module';
@@ -16,9 +16,6 @@ import { ServiceDetailsComponent } from './components/service-details/service-de
 import { ServiceCardComponent } from '../../shared/components/service-card/service-card.component';
 import { BookingFormComponent } from './components/booking-form/booking-form.component';
 import { RequestListComponent } from './components/request-list/request-list.component';
-import { MatChipsModule } from '@angular/material/chips';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { BrowserModule } from '@angular/platform-browser';
 
 @NgModule({
   declarations: [

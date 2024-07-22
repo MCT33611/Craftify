@@ -4,7 +4,6 @@ import { LayoutComponent } from './layout/layout.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ImageManagementComponent } from './components/image-management/image-management.component';
 import { RequestListComponent } from './components/request-list/request-list.component';
-import { ChatComponent } from '../../shared/components/chat/chat.component';
 
 const routes: Routes = [
   {
@@ -28,10 +27,7 @@ const routes: Routes = [
         path: "requests",
         component: RequestListComponent
       },
-      {
-        path: 'chat',
-        component: ChatComponent
-      },
+
     ]
   }
 ];

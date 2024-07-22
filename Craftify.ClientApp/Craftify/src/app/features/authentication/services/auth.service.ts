@@ -20,11 +20,11 @@ export class AuthService {
   ) { }
 
   register(user: IRegistration): Observable<AuthResponse> {
-    return this._http.post<AuthResponse>(`${environment.API_BASE_URL}/Authentication/register/`, user)
+    return this._http.post<AuthResponse>(`${environment.API_BASE_URL}/api/Authentication/register/`, user)
   }
 
   login(user: ILogin): Observable<AuthResponse> {
-    return this._http.post<AuthResponse>(`${environment.API_BASE_URL}/Authentication/login/`, user).pipe(
+    return this._http.post<AuthResponse>(`${environment.API_BASE_URL}/api/Authentication/login/`, user).pipe(
       tap((res: AuthResponse) => {
         this._tokenService.setToken(res.accessToken);
         this._tokenService.setRefreshToken(res.refreshToken);
@@ -38,7 +38,7 @@ export class AuthService {
   
   loginWithGoogle(credential: string): Observable<AuthResponse> {
     return this._http.post<AuthResponse>(
-      `${environment.API_BASE_URL}/Authentication/loginWithGoogle`,
+      `${environment.API_BASE_URL}/api/Authentication/loginWithGoogle`,
       { idToken: credential }, 
       { headers: new HttpHeaders({'Content-Type': 'application/json'}) }
     ).pipe(
@@ -54,19 +54,19 @@ export class AuthService {
   }
 
   sentOtp(email: string): Observable<AuthResponse> {
-    return this._http.post<AuthResponse>(`${environment.API_BASE_URL}/Authentication/sendOtp/${encodeURIComponent(email)}`,null).pipe(
+    return this._http.post<AuthResponse>(`${environment.API_BASE_URL}/api/Authentication/sendOtp/${encodeURIComponent(email)}`,null).pipe(
       catchError(handleError)
     )
   }
 
   confirmEmail(otp: string, email: string): Observable<boolean> {
-    return this._http.put<boolean>(`${environment.API_BASE_URL}/Authentication/confirmEmail`, { otp, email }).pipe(
+    return this._http.put<boolean>(`${environment.API_BASE_URL}/api/Authentication/confirmEmail`, { otp, email }).pipe(
       catchError(handleError)
     );
   }
 
   forgetPassword(email: string): Observable<{passwordResetToken: string}> {
-    return this._http.post<{passwordResetToken: string}>(`${environment.API_BASE_URL}/Authentication/forgotPassword/${email}`,null).pipe(
+    return this._http.post<{passwordResetToken: string}>(`${environment.API_BASE_URL}/api/Authentication/forgotPassword/${email}`,null).pipe(
       tap((res: { passwordResetToken: string }) => {
         console.log(res);
         
@@ -93,7 +93,7 @@ export class AuthService {
     };
 
     return this._http.put(
-      `${environment.API_BASE_URL}/Authentication/resetPassword`,
+      `${environment.API_BASE_URL}/api/Authentication/resetPassword`,
       body
     ).pipe(
       tap(() => {

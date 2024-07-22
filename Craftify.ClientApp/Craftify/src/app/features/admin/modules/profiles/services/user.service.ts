@@ -19,28 +19,28 @@ export class UserService {
   ) { }
 
   get(userId:string): Observable<IUser> {
-    return this._http.get<IUser>(`${environment.API_BASE_URL}/Profile/${userId}`);
+    return this._http.get<IUser>(`${environment.API_BASE_URL}/api/Profile/${userId}`);
   }
 
   getWorker(workerId:string): Observable<IWorker> {
-    return this._http.get<IWorker>(`${environment.API_BASE_URL}/Profile/Worker/${workerId}`);
+    return this._http.get<IWorker>(`${environment.API_BASE_URL}/api/Profile/Worker/${workerId}`);
   }
 
   getAllCustomers(): Observable<IUser[]> {
-    return this._http.get<IUser[]>(`${environment.API_BASE_URL}/Profile/Custormers`)
+    return this._http.get<IUser[]>(`${environment.API_BASE_URL}/api/Profile/Custormers`)
     .pipe(catchError(handleError));
   }
   
   getAllWorkers(): Observable<IWorker[]> {
-    return this._http.get<IWorker[]>(`${environment.API_BASE_URL}/Profile/Workers`)
+    return this._http.get<IWorker[]>(`${environment.API_BASE_URL}/api/Profile/Workers`)
     .pipe(catchError(handleError));
   }
 
   AccessChange(userId:string): Observable<Object> {
-    return this._http.patch(`${environment.API_BASE_URL}/Profile/AccessChange/${userId}`,null);
+    return this._http.patch(`${environment.API_BASE_URL}/api/Profile/AccessChange/${userId}`,null);
   }
 
   ApprovalChange(userId:string): Observable<Object> {
-    return this._http.patch(`${environment.API_BASE_URL}/Profile/Worker/ApprovalChange/${userId}`,null);
+    return this._http.patch(`${environment.API_BASE_URL}/api/Profile/Worker/ApprovalChange/${userId}`,null);
   }
 }

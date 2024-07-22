@@ -4,6 +4,7 @@ using Craftify.Application.Common.Interfaces.Authentication;
 using Craftify.Application.Common.Interfaces.Service;
 using Craftify.Infrastructure.Authentication;
 using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
 
 namespace Craftify.Infrastructure
 {
@@ -12,7 +13,12 @@ namespace Craftify.Infrastructure
         public static IServiceCollection AddPresentation(this IServiceCollection services)
         {
             services.AddSignalR();
-            services.AddControllers(options => options.Filters.Add<ErrorHandlingFilterAttribute>());
+            services.AddControllers(options => options.Filters.Add<ErrorHandlingFilterAttribute>())
+                    .AddJsonOptions(options =>
+                    {
+                        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+                        options.JsonSerializerOptions.MaxDepth = 32;
+                    }); ;
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(c =>
             {

@@ -18,17 +18,17 @@ export class RequestService {
 
   getAllRequest(): Observable<IBooking[]> {
     const userId = this.token.getUserId();
-    return this._http.get<IBooking[]>(`${environment.API_BASE_URL}/Booking?userId=${userId}`)
+    return this._http.get<IBooking[]>(`${environment.API_BASE_URL}/api/Booking?userId=${userId}`)
       .pipe(catchError(handleError));
   }
 
   getRequest(id:string): Observable<IBooking> {
-    return this._http.get<IBooking>(`${environment.API_BASE_URL}/Booking/${id}`)
+    return this._http.get<IBooking>(`${environment.API_BASE_URL}/api/Booking/${id}`)
       .pipe(catchError(handleError));
   }
 
   rescheduleBooking(booking: IBooking): Observable<Object> {
-    return this._http.put(`${environment.API_BASE_URL}/Booking/${booking.id}`, booking)
+    return this._http.put(`${environment.API_BASE_URL}/api/Booking/${booking.id}`, booking)
       .pipe(catchError(handleError));
   }
 }

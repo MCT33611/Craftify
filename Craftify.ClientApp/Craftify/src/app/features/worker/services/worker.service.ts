@@ -21,7 +21,7 @@ export class WorkerService {
 
   get(): Observable<IWorker> {
     const workerId = this._tokenService.getWorkerId()
-    return this._http.get<IWorker>(`${environment.API_BASE_URL}/Profile/worker/${workerId}`).pipe(
+    return this._http.get<IWorker>(`${environment.API_BASE_URL}/api/Profile/worker/${workerId}`).pipe(
       catchError(handleError)
     );
   }
@@ -43,7 +43,7 @@ export class WorkerService {
       largePreviewImageUrl: worker.largePreviewImageUrl || ""
     };
 
-    return this._http.put<IWorker>(`${environment.API_BASE_URL}/Profile/worker/${workerId}`, requestBody).pipe(
+    return this._http.put<IWorker>(`${environment.API_BASE_URL}/api/Profile/worker/${workerId}`, requestBody).pipe(
       catchError((error) => {
         console.error('Update error:', error);
         return handleError(error);
@@ -53,12 +53,12 @@ export class WorkerService {
 
   getAllRequest(): Observable<IBooking[]> {
     const userId = this._tokenService.getUserId();
-    return this._http.get<IBooking[]>(`${environment.API_BASE_URL}/Booking?userId=${userId}`)
+    return this._http.get<IBooking[]>(`${environment.API_BASE_URL}/api/Booking?userId=${userId}`)
       .pipe(catchError(handleError));
   }
 
   rescheduleBooking(booking: IBooking): Observable<Object> {
-    return this._http.put(`${environment.API_BASE_URL}/Booking/${booking.id}`, booking)
+    return this._http.put(`${environment.API_BASE_URL}/api/Booking/${booking.id}`, booking)
       .pipe(catchError(handleError));
   }
 }

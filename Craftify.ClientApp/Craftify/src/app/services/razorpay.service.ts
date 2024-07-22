@@ -22,14 +22,14 @@ export class RazorpayService {
 
   private async getOrderId(userId: string, planId: string): Promise<string> {
     return await lastValueFrom(
-      this._http.get(`${environment.API_BASE_URL}/Profile/Payment/Init?userId=${userId}&planId=${planId}`, { responseType: 'text' }).pipe(
+      this._http.get(`${environment.API_BASE_URL}/api/Profile/Payment/Init?userId=${userId}&planId=${planId}`, { responseType: 'text' }).pipe(
         catchError(handleError)
       )
     );
   }
 
   private getPlan(PlanId: string) {
-    return this._http.get<IPlan>(`${environment.API_BASE_URL}/Plan/${PlanId}`);
+    return this._http.get<IPlan>(`${environment.API_BASE_URL}/api/Plan/${PlanId}`);
 
   }
 

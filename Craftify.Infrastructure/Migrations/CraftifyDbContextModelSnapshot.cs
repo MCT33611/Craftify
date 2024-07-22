@@ -107,17 +107,35 @@ namespace Craftify.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("BlockerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsBlocked")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime>("LastActivityTimestamp")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("PeerOneId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("PeerTwoId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("RoomId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("PeerOneId");
 
                     b.HasIndex("PeerTwoId");
+
+                    b.HasIndex("RoomId")
+                        .IsUnique();
 
                     b.ToTable("Conversations");
                 });
@@ -132,23 +150,68 @@ namespace Craftify.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ReceiverId")
+                    b.Property<Guid>("ConversationId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("RoomId")
+                    b.Property<Guid>("FromId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("SenderId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
-                    b.Property<DateTime>("TimeSpan")
+                    b.Property<bool>("IsRead")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ToId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RoomId");
+                    b.HasIndex("ConversationId");
 
                     b.ToTable("Messages");
+                });
+
+            modelBuilder.Entity("Craftify.Domain.Entities.MessageMedia", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("FileSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("MessageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("StoragePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MessageId");
+
+                    b.ToTable("MessageMedia");
                 });
 
             modelBuilder.Entity("Craftify.Domain.Entities.Plan", b =>
@@ -263,7 +326,7 @@ namespace Craftify.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("2fbd9a2a-3c75-4546-ac4e-b8a900f2d7d6"),
+                            Id = new Guid("a0a71308-89e6-4502-a749-bb2f66b29db6"),
                             Blocked = false,
                             Email = "craftify.onion0.122@gmail.com",
                             EmailConfirmed = true,
@@ -350,13 +413,13 @@ namespace Craftify.Infrastructure.Migrations
                     b.HasOne("Craftify.Domain.Entities.User", "PeerOne")
                         .WithMany()
                         .HasForeignKey("PeerOneId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Craftify.Domain.Entities.User", "PeerTwo")
                         .WithMany()
                         .HasForeignKey("PeerTwoId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("PeerOne");
@@ -366,13 +429,24 @@ namespace Craftify.Infrastructure.Migrations
 
             modelBuilder.Entity("Craftify.Domain.Entities.Message", b =>
                 {
-                    b.HasOne("Craftify.Domain.Entities.Conversation", "Room")
-                        .WithMany()
-                        .HasForeignKey("RoomId")
+                    b.HasOne("Craftify.Domain.Entities.Conversation", "Conversation")
+                        .WithMany("Messages")
+                        .HasForeignKey("ConversationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Room");
+                    b.Navigation("Conversation");
+                });
+
+            modelBuilder.Entity("Craftify.Domain.Entities.MessageMedia", b =>
+                {
+                    b.HasOne("Craftify.Domain.Entities.Message", "Message")
+                        .WithMany("Media")
+                        .HasForeignKey("MessageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Message");
                 });
 
             modelBuilder.Entity("Craftify.Domain.Entities.Subscription", b =>
@@ -403,6 +477,16 @@ namespace Craftify.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Craftify.Domain.Entities.Conversation", b =>
+                {
+                    b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("Craftify.Domain.Entities.Message", b =>
+                {
+                    b.Navigation("Media");
                 });
 #pragma warning restore 612, 618
         }

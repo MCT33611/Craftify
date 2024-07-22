@@ -72,6 +72,6 @@ export class RequestListComponent {
   }
 
   startMassage(booking:IBooking){
-    this.router.navigate(['/worker/chat'], { queryParams: { senderId: booking.providerId, receiverId: booking.customerId } });
+    this.router.navigate(['/worker/chat'], { queryParams: { senderId: booking.provider?.user!.id, receiverId: booking.customerId } });
   }
 }

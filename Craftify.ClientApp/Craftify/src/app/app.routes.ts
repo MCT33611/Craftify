@@ -7,9 +7,11 @@ import { IRoles } from './core/constants/roles';
 import { ProfileLayoutComponent } from './components/profile-layout/profile-layout.component';
 
 export const routes: Routes = [
+
+
     {
         path: '',
-        redirectTo: 'customer',
+        redirectTo: 'auth',
         pathMatch: 'full',
     },
     {
@@ -41,7 +43,7 @@ export const routes: Routes = [
     {
         path: "customer",
         canActivate: [authGuard],
-        //data: { role: IRoles.Role_Customer },
+        data: { role: IRoles.Role_Customer },
         loadChildren: () => import("../app/features/customer/customer.module").then(m => m.CustomerModule)
     }
 

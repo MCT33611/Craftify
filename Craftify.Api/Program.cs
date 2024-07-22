@@ -28,7 +28,7 @@ var app = builder.Build();
 
     app.MapControllers();
 
-    app.MapHub<ChatHub>("/chat");
+    app.MapHub<ChatHub>("hubs/chat");
 
     app.Run();
 }

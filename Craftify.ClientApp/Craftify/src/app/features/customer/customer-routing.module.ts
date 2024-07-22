@@ -1,12 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LayoutComponent } from './layout/layout.component';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { HomeComponent } from '../../components/home/home.component';
 import { ServiceListComponent } from './components/service-list/service-list.component';
 import { ServiceDetailsComponent } from './components/service-details/service-details.component';
 import { RequestListComponent } from './components/request-list/request-list.component';
-import { ProfileModule } from '../profile/profile.module';
 
 const routes: Routes = [{
   path:"",
@@ -35,7 +33,7 @@ const routes: Routes = [{
     },
     {
       path:'profile',
-      loadChildren:()=>ProfileModule
+      loadChildren: () => import('../profile/profile.module').then(m => m.ProfileModule)
     }
   ]
 }];

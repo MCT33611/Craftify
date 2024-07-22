@@ -92,7 +92,8 @@ namespace Craftify.Infrastructure
                         {
                             var accessToken = context.Request.Query["access_token"];
                             var path = context.HttpContext.Request.Path;
-                            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/chat"))
+                            if (!string.IsNullOrEmpty(accessToken) &&
+                                path.StartsWithSegments("/hubs/chat"))
                             {
                                 context.Token = accessToken;
                             }
@@ -113,6 +114,10 @@ namespace Craftify.Infrastructure
                 {
                     policy.RequireRole(AppConstants.Role_Worker);
                 });
+
+            services.AddHttpContextAccessor();
+
+
             return services;
         }
 

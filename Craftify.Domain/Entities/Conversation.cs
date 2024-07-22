@@ -6,22 +6,16 @@ namespace Craftify.Domain.Entities
 {
     public class Conversation
     {
+
         public Guid Id { get; set; }
-
-        [ForeignKey(nameof(PeerOne))]
+        public string RoomId { get; set; } = null!;
         public Guid PeerOneId { get; set; }
-
-        [AllowNull]
-        [DeleteBehavior(DeleteBehavior.NoAction)]
         public User PeerOne { get; set; }
-
-        [ForeignKey(nameof(PeerTwo))]
         public Guid PeerTwoId { get; set; }
-
-        [AllowNull]
-        [DeleteBehavior(DeleteBehavior.NoAction)]
         public User PeerTwo { get; set; }
-
-
+        public bool IsBlocked { get; set; } // For blocking functionality
+        public Guid? BlockerId { get; set; }
+        public DateTime LastActivityTimestamp { get; set; } // To track conversation activity
+        public ICollection<Message> Messages { get; set; } // Navigation property for messages
     }
 }

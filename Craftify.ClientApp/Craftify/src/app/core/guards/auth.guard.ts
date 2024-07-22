@@ -5,7 +5,6 @@ import { ProfileService } from '../../features/profile/services/profile.service'
 import { IUser } from '../../models/iuser';
 import { AlertService } from '../../services/alert.service';
 import { handleError } from '../../shared/utils/handleError';
-import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
 import { TokenService } from '../../services/token.service';
 

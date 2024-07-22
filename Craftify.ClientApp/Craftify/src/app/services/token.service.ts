@@ -158,7 +158,7 @@ export class TokenService {
     }
 
     return this._http.post<AuthResponse>(
-      `${environment.API_BASE_URL}/Authentication/refresh`,
+      `${environment.API_BASE_URL}/api/Authentication/refresh`,
       { email, accessToken, refreshToken }
     );
   }

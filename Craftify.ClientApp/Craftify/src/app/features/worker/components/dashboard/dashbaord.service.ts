@@ -16,7 +16,7 @@ export class DashbaordService {
 
     // GET /api/Booking
     getAllBookings(): Observable<IBooking[]> {
-      return this._http.get<IBooking[]>(`${environment.API_BASE_URL}/Booking`).pipe(catchError(handleError));
+      return this._http.get<IBooking[]>(`${environment.API_BASE_URL}/api/Booking`).pipe(catchError(handleError));
     }
   
 }
