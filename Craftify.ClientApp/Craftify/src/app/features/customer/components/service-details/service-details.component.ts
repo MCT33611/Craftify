@@ -28,6 +28,7 @@ export class ServiceDetailsComponent {
   alert = inject(AlertService)
   worker!: IWorker;
   showBookingForm = false;
+  showReviews = false;
   constructor() {
     this.route.params.subscribe(res => {
       const workerId = res['workerId'];

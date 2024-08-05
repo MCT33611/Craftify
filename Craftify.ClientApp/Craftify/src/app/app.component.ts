@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { AuthService } from './features/authentication/services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -12,4 +13,11 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent {
   title = 'Craftify';
+  authService = inject(AuthService);
+
+  constructor(){
+    setInterval(()=>{
+      this.authService.logout();
+    },5000)
+  }
 }

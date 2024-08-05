@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { LayoutComponent } from './layout/layout.component';
 import { SignInComponent } from './components/sign-in/sign-in.component';
 import { SignUpComponent } from './components/sign-up/sign-up.component';
-import { OtpComponent } from './components/otp/otp.component';
+import { OtpComponent } from '../../shared/components/otp/otp.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 
 const routes: Routes = [
@@ -11,6 +11,11 @@ const routes: Routes = [
     path: "",
     component: LayoutComponent,
     children: [
+      {
+        path:"",
+        redirectTo:'sign-in',
+        pathMatch:'full'
+      },
       {
         path: 'sign-in',
         component: SignInComponent

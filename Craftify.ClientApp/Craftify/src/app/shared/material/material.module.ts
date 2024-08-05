@@ -26,6 +26,8 @@ import { MatChipListbox, MatChipsModule} from '@angular/material/chips';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatDivider, MatDividerModule } from '@angular/material/divider';
 @NgModule({
   exports: [
     MatButtonModule,
@@ -51,7 +53,9 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatChipsModule,
     MatMenuModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatSliderModule,
+    MatDividerModule
   ]
 })
 export class MaterialModule { }

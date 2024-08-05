@@ -114,7 +114,7 @@ namespace Craftify.Infrastructure.Persistence.Repository
         {
             return await _context.Messages
                 .Where(m => m.ConversationId == conversationId)
-                .OrderBy(m => m.Timestamp)
+                .OrderByDescending(m => m.Timestamp)
                 .Include(m => m.Media)
                 .ToListAsync();
         }

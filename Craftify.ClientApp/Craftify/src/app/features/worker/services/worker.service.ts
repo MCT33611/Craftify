@@ -7,6 +7,7 @@ import { IUser } from '../../../models/iuser';
 import { environment } from '../../../../environments/environment';
 import { handleError } from '../../../shared/utils/handleError';
 import { IBooking } from '../../../models/ibooking';
+import { IApiResponse } from '../../../models/api-response.models';
 
 @Injectable({
   providedIn: 'root'
@@ -51,9 +52,9 @@ export class WorkerService {
     );
   }
 
-  getAllRequest(): Observable<IBooking[]> {
+  getAllRequest(): Observable<IApiResponse<IBooking>> {
     const userId = this._tokenService.getUserId();
-    return this._http.get<IBooking[]>(`${environment.API_BASE_URL}/api/Booking?userId=${userId}`)
+    return this._http.get<IApiResponse< IBooking>>(`${environment.API_BASE_URL}/api/Booking?userId=${userId}`)
       .pipe(catchError(handleError));
   }
 

@@ -52,7 +52,23 @@ export class UpgradeComponent implements OnInit {
     this.skillsInputCrl = this.subscriptionForm.get('skillCtrl') as FormControl;
   }
   ngOnInit(): void {
-    this.profileService.getAllPlans().subscribe((res) => this.plans = res);
+    this.profileService.getAllPlans().subscribe({
+      next: (res: any) => {
+        if (res && Array.isArray(res.$values)) {
+          this.plans = res.$values;
+        } else if (Array.isArray(res)) {
+          this.plans = res;
+        } else {
+          console.error('Unexpected response format:', res);
+          this.plans = []; 
+        }
+        console.log('Plans:', this.plans); 
+      },
+      error: (err) => {
+        console.error('Error fetching plans:', err);
+        this.plans = []; 
+      }
+    });
 
     this.filteredSkills = this.subscriptionForm.get('skillCtrl')?.valueChanges.pipe(
       startWith(null),

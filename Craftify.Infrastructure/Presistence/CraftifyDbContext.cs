@@ -25,6 +25,9 @@ namespace Craftify.Infrastructure.Presistence
 
         public DbSet<MessageMedia> MessageMedia { get; set; }
 
+        public DbSet<Review> Reviews { get; set; }
+        public DbSet<Rating> Ratings { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 

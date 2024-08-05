@@ -44,6 +44,7 @@ namespace Craftify.Application.BookingManagement.Queries.GetAllBookings
 
                 var BookingResults = Bookings.Select(Booking => {
                     var providerUser = _unitOfWork.User.Get(u => u.Id == Booking.Provider.UserId);
+                    var customer = _unitOfWork.User.Get(u => u.Id == Booking.CustomerId);
                     Booking.Provider.User = providerUser;
                     return new BookingResult
                     (
@@ -55,7 +56,7 @@ namespace Craftify.Application.BookingManagement.Queries.GetAllBookings
                         Booking.Location,
                         Booking.LocationName,
                         Booking.CustomerId,
-                        Booking.Customer,
+                        customer,
                         Booking.ProviderId,
                         Booking.Provider
                     );

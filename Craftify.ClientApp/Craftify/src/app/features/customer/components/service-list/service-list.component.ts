@@ -4,6 +4,8 @@ import { IWorker } from '../../../../models/iworker';
 import { CustomerService } from '../../services/customer.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AlertService } from '../../../../services/alert.service';
+import { ActivatedRoute } from '@angular/router';
+import { query } from '@angular/animations';
 
 @Component({
   selector: 'app-service-list',
@@ -36,21 +38,44 @@ export class ServiceListComponent implements OnInit {
 
   customerService = inject(CustomerService)
   _alert = inject(AlertService)
+  _rounte = inject(ActivatedRoute);
 
   ngOnInit() {
     this.loadWorkers();
     this.applyFilters();
+    
+    this._rounte.queryParams.subscribe(
+      queryParm=>{
+        const term = queryParm['search']
+        if(term)
+          this.searchTerm = queryParm['search']
+      }
+    )
   }
 
   loadWorkers() {
     this.customerService.getAllWorkers().subscribe({
-      next: (res: IWorker[]) => {
-        this.workers = res.filter((w)=>w.approved);
+      next: (res: any) => {
+        let workers: IWorker[];
+        
+        if (res && Array.isArray(res.$values)) {
+          workers = res.$values;
+        } else if (Array.isArray(res)) {
+          workers = res;
+        } else {
+          console.error('Unexpected response format:', res);
+          this._alert.error("Unexpected data format received");
+          workers = [];
+        }
+        
+        this.workers = workers.filter((w) => w.approved);
         this.applyFilters(); // Apply filters after data is loaded
         console.log(this.workers);
       },
       error: (err: HttpErrorResponse) => {
+        console.error('Error loading workers:', err);
         this._alert.error("Something went wrong");
+        this.workers = []; // Initialize to empty array to avoid further errors
       }
     });
   }

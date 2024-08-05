@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { CustomerRoutingModule } from './customer-routing.module';
 import { LayoutComponent } from './layout/layout.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { SidePopupComponent } from './components/side-popup/side-popup.component';
@@ -16,17 +15,19 @@ import { ServiceDetailsComponent } from './components/service-details/service-de
 import { ServiceCardComponent } from '../../shared/components/service-card/service-card.component';
 import { BookingFormComponent } from './components/booking-form/booking-form.component';
 import { RequestListComponent } from './components/request-list/request-list.component';
+import { ReviewDialogComponent } from './components/review-dialog/review-dialog.component';
+import { ReviewRatingComponent } from '../../shared/components/review-rating/review-rating.component';
 
 @NgModule({
   declarations: [
     LayoutComponent,
     SidebarComponent,
-    DashboardComponent,
     SidePopupComponent,
     ServiceListComponent,
     ServiceDetailsComponent,
     BookingFormComponent,
-    RequestListComponent
+    RequestListComponent,
+    ReviewDialogComponent
   ],
   imports: [
     CommonModule,
@@ -38,7 +39,8 @@ import { RequestListComponent } from './components/request-list/request-list.com
     ReactiveFormsModule,
     FormsModule,
     ServiceCardTwoComponent,
-    ServiceCardComponent
+    ServiceCardComponent,
+    ReviewRatingComponent
   ]
 })
 export class CustomerModule { }

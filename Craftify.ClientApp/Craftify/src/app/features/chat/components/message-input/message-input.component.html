@@ -1,0 +1,4 @@
+<div class="message-input-container" (keydown.enter)="onSend()">
+    <input type="text" [(ngModel)]="content" placeholder="Type a message...">
+    <button (click)="onSend()" [disabled]="!content.trim()">Send</button>
+</div>

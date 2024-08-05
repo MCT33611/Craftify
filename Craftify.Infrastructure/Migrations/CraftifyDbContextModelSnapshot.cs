@@ -239,6 +239,69 @@ namespace Craftify.Infrastructure.Migrations
                     b.ToTable("Plans");
                 });
 
+            modelBuilder.Entity("Craftify.Domain.Entities.Rating", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("OverallScore")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProfessionalismScore")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PunctualityScore")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QualityScore")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ReviewId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReviewId")
+                        .IsUnique();
+
+                    b.ToTable("Ratings");
+                });
+
+            modelBuilder.Entity("Craftify.Domain.Entities.Review", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BookingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProviderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookingId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("ProviderId");
+
+                    b.ToTable("Reviews");
+                });
+
             modelBuilder.Entity("Craftify.Domain.Entities.Subscription", b =>
                 {
                     b.Property<Guid>("Id")
@@ -326,7 +389,7 @@ namespace Craftify.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("a0a71308-89e6-4502-a749-bb2f66b29db6"),
+                            Id = new Guid("c5b35bf3-da38-4ab8-a5ce-a9744469a97e"),
                             Blocked = false,
                             Email = "craftify.onion0.122@gmail.com",
                             EmailConfirmed = true,
@@ -449,6 +512,44 @@ namespace Craftify.Infrastructure.Migrations
                     b.Navigation("Message");
                 });
 
+            modelBuilder.Entity("Craftify.Domain.Entities.Rating", b =>
+                {
+                    b.HasOne("Craftify.Domain.Entities.Review", "Review")
+                        .WithOne("Rating")
+                        .HasForeignKey("Craftify.Domain.Entities.Rating", "ReviewId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Review");
+                });
+
+            modelBuilder.Entity("Craftify.Domain.Entities.Review", b =>
+                {
+                    b.HasOne("Craftify.Domain.Entities.Booking", "Booking")
+                        .WithMany()
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Craftify.Domain.Entities.User", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Craftify.Domain.Entities.Worker", "Provider")
+                        .WithMany()
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Booking");
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Provider");
+                });
+
             modelBuilder.Entity("Craftify.Domain.Entities.Subscription", b =>
                 {
                     b.HasOne("Craftify.Domain.Entities.Plan", "Plan")
@@ -487,6 +588,12 @@ namespace Craftify.Infrastructure.Migrations
             modelBuilder.Entity("Craftify.Domain.Entities.Message", b =>
                 {
                     b.Navigation("Media");
+                });
+
+            modelBuilder.Entity("Craftify.Domain.Entities.Review", b =>
+                {
+                    b.Navigation("Rating")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

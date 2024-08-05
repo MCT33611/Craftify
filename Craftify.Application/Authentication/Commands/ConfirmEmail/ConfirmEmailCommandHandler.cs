@@ -24,7 +24,7 @@ namespace Craftify.Application.Authentication.Commands.ConfirmEmail
             }
             if (!_unitOfWork.User.IsOTPValid(command.Email, command.OTP))
             {
-                return Errors.Authentication.OtpTimeOut;
+                return Error.Validation();
             }
 
             user.EmailConfirmed = true;

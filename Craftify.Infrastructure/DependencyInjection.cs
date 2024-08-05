@@ -15,6 +15,7 @@ using Craftify.Infrastructure.Presistence.Repository;
 using Microsoft.AspNetCore.Identity;
 using Craftify.Domain.Constants;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using System.IdentityModel.Tokens.Jwt;
 namespace Craftify.Infrastructure
 {
     public static class DependencyInjection
@@ -83,7 +84,8 @@ namespace Craftify.Infrastructure
                         ValidIssuer = jwtSettings.Issuer,
                         ValidAudience = jwtSettings.Audience,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
-                        ClockSkew = TimeSpan.Zero
+                        ClockSkew = TimeSpan.Zero,
+                        NameClaimType = JwtRegisteredClaimNames.Sub
                     };
 
                     options.Events = new JwtBearerEvents

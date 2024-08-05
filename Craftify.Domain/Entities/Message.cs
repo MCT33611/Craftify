@@ -1,6 +1,4 @@
 ﻿using Craftify.Domain.Enums;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Craftify.Domain.Entities
 {

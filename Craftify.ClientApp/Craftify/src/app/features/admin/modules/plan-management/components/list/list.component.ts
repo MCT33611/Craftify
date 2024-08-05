@@ -27,12 +27,23 @@ export class ListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this._planService.getAll().pipe(
       takeUntil(this.destroy$)
-    ).subscribe((res: IPlan[]) => {
-      this.data = res.map((data: IPlan) => ({
-        ...data,
-        details: `/admin/plan/edit/${data.id}`,
-        delete: `/admin/plan/delete/${data.id}`
-      }));
+    ).subscribe({
+      next: (res: any) => {
+        if (res && Array.isArray(res.$values)) {
+          this.data = res.$values.map((data: IPlan) => ({
+            ...data,
+            details: `/admin/plan/edit/${data.id}`,
+            delete: `/admin/plan/delete/${data.id}`
+          }));
+        } else {
+          console.error('Unexpected response format:', res);
+          // Optionally, you can add error handling here
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching plans:', err);
+        // Optionally, you can add error handling here
+      }
     });
   }
 

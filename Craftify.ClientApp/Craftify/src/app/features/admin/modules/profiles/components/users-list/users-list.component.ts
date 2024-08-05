@@ -32,12 +32,19 @@ export class UsersListComponent implements OnInit, OnDestroy {
     this.userService.getAllCustomers().pipe(
       takeUntil(this.destroy$)
     ).subscribe({
-      next: (res: IUser[]) => {
-        this.data = res.map((ele: IUser) => ({
-          ...ele,
-          details: `../details/${ele.id}`,
-          accessChange: `../access/${ele.id}`
-        }));
+      next: (res: any) => {
+        console.log(res);
+        
+        if (res && res.$values && Array.isArray(res.$values)) {
+          this.data = res.$values.map((ele: IUser) => ({
+            ...ele,
+            details: `../details/${ele.id}`,
+            accessChange: `../access/${ele.id}`
+          }));
+        } else {
+          console.error('Unexpected response structure:', res);
+          this.alertService.error('Unexpected data structure received from server');
+        }
       },
       error: (err: HttpErrorResponse) => {
         this.alertService.error(err.message);

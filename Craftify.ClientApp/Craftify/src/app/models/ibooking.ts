@@ -6,14 +6,14 @@ import { IWorker } from "./iworker";
 
 export interface IBooking {
     id?: string;
-    status: IBookingStatus;
-    workingTime: number;
-    date: string;
+    status?: IBookingStatus;
+    workingTime?: number;
+    date?: string;
     bookedAt?: string;
-    location: string;
-    locationName: string;
-    customerId: string;
+    location?: string;
+    locationName?: string;
+    customerId?: string;
     customer?: IUser;
-    providerId: string;
+    providerId?: string;
     provider?: IWorker;
 }

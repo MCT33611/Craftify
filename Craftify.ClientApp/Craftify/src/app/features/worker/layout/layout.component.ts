@@ -9,6 +9,7 @@ import { TokenService } from '../../../services/token.service';
 })
 export class LayoutComponent {
   profileStore = inject(ProfileStore)
+  token = inject(TokenService);
   tokenService = inject(TokenService)
   ngOnInit(): void {
     this.profileStore.loadAll();
@@ -29,6 +30,16 @@ export class LayoutComponent {
       title: "Bookings Management",
       route: 'requests',
       iconSrc: 'assets/icons/service.svg'
+    },
+    {
+      title: "Messages",
+      route: 'chat',
+      iconSrc: 'assets/icons/message.svg'
+    },
+    {
+      title: "Reviews and Ratings",
+      route: `reviews/${this.tokenService.getWorkerId()}`,
+      iconSrc: 'assets/icons/review.svg'
     },
     {
       title: "Settings",

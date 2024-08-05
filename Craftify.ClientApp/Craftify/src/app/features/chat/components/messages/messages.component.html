@@ -1,0 +1,16 @@
+<div class="messages-list" #scrollContainer>
+    @for(message of messages; track $index) {
+    <div class="message-item" [class.my-message]="message.isMy" [class.deleted-message]="message.isDeleted">
+        <div class="message-content">
+            @if(message.isDeleted) {
+                <i>This message was deleted</i>
+            } @else {
+                {{ message.content }}
+            }
+        </div>
+        <div class="message-time">
+            {{ message.time | date:'short' }}
+        </div>
+    </div>
+    }
+</div>

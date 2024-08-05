@@ -24,7 +24,7 @@ namespace Craftify.Infrastructure.Presistence.Repository
 
         public IBookingRepository Booking => new BookingRepository(_db);
 
-
+        public IReviewRatingRepository ReviewRating => new ReviewRatingRepository(_db);
 
         public async Task Save()
         {

@@ -13,6 +13,8 @@
 
         IBookingRepository Booking { get; }
 
+        IReviewRatingRepository ReviewRating { get; }
+
         Task Save();
     }
 }

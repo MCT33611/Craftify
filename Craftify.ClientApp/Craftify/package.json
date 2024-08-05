@@ -25,6 +25,7 @@
     "@ionic/angular": "^8.2.5",
     "@microsoft/signalr": "^8.0.7",
     "@ngrx/signals": "^17.2.0",
+    "@swimlane/ngx-charts": "^20.5.0",
     "@types/google-one-tap": "^1.2.6",
     "@types/leaflet": "^1.9.12",
     "@uploadcare/blocks": "0.39.0",

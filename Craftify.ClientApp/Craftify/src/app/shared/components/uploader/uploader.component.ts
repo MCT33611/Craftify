@@ -3,7 +3,6 @@ import * as LR from "@uploadcare/blocks";
 import { OutputFileEntry } from '@uploadcare/blocks';
 import "@uploadcare/blocks/web/lr-file-uploader-regular.min.css";
 import { ProfileService } from '../../../features/profile/services/profile.service';
-import { IUser } from '../../../models/iuser';
 import { AlertService } from '../../../services/alert.service';
 import { ProfileStore } from '../../store/profile.store';
 import { HttpErrorResponse } from '@angular/common/http';

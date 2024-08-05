@@ -31,14 +31,18 @@ export class WorkersListComponent implements OnInit, OnDestroy {
     this.userService.getAllWorkers().pipe(
       takeUntil(this.destroy$)
     ).subscribe({
-      next: (res: IWorker[]) => {
-        this.data = res.map((ele) => ({
-          ...ele,
-          ...ele.user,
-          details: `../worker-details/${ele.id}`,
-          approvalChange: `../approval/${ele.userId}`,
-          accessChange: `../access/${ele.id}`
-        }));
+      next: (res: any) => {
+        if (res && Array.isArray(res.$values)) {
+          this.data = res.$values.map((ele: IWorker) => ({
+            ...ele,
+            ...ele.user,
+            details: `../worker-details/${ele.id}`,
+            approvalChange: `../approval/${ele.userId}`,
+            accessChange: `../access/${ele.id}`
+          }));
+        } else {
+          this.alertService.error('Unexpected response format');
+        }
       },
       error: (err: HttpErrorResponse) => {
         this.alertService.error(err.message);

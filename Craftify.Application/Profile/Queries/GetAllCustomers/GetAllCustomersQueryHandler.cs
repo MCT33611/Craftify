@@ -36,8 +36,9 @@ namespace Craftify.Application.Profile.Queries.GetAllCustomers
                 await Task.CompletedTask;
                 return ProfileResults;
             }
-            catch (Exception) { }
-            return Error.NotFound("Customers not found", "An error occurred while fetching Customers.");
+            catch (Exception) {
+                return Error.NotFound("Customers not found", "An error occurred while fetching Customers.");
+            }
         }
     }
 }

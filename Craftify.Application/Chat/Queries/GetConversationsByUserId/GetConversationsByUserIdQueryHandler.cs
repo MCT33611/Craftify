@@ -19,7 +19,8 @@ namespace Craftify.Application.Chat.Queries.GetConversationsByUserId
         public async Task<List<ConversationResult>> Handle(GetConversationsByUserIdQuery request, CancellationToken cancellationToken)
         {
             var conversations = await _unitOfWork.Chat.GetConversationsByUserIdAsync(request.UserId);
-            return _mapper.Map<List<ConversationResult>>(conversations);
+            var result =  _mapper.Map<List<ConversationResult>>(conversations);
+            return result;
         }
     }
 }

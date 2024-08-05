@@ -32,6 +32,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System.IdentityModel.Tokens.Jwt;
 using Craftify.Api.Hubs;
+using Craftify.Application.Chat.Queries.GetConversationByRoomId;
+using System.Security.Claims;
 
 namespace Craftify.Api.Controllers
 {
@@ -41,13 +43,11 @@ namespace Craftify.Api.Controllers
     {
         private readonly ISender _mediator;
         private readonly IMapper _mapper;
-        private readonly IHubContext<ChatHub> _hubContext;
 
-        public ChatController(ISender mediator, IMapper mapper, IHubContext<ChatHub> hubContext)
+        public ChatController(ISender mediator, IMapper mapper)
         {
             _mediator = mediator;
             _mapper = mapper;
-            _hubContext = hubContext;
         }
 
         [HttpPost("conversations")]
@@ -61,111 +61,6 @@ namespace Craftify.Api.Controllers
 
             var result = await _mediator.Send(command);
             return Ok(result);
-        }
-
-        [HttpPost("messages")]
-        public async Task<ActionResult<MessageResult>> SendMessage([FromBody] SendMessageRequest request)
-        {
-            var command = new SendMessageCommand
-            {
-                ConversationId = request.ConversationId,
-                FromId = request.FromId,
-                ToId = request.ToId,
-                Content = request.Content,
-                Type = request.Type,
-                Media = request.Media?.Select(m => new MessageMediaDto
-                {
-                    FileName = m.FileName,
-                    ContentType = m.ContentType,
-                    FileSize = m.FileSize,
-                    StoragePath = m.StoragePath,
-                    Type = m.Type
-                }).ToList()
-            };
-
-            var result = await _mediator.Send(command);
-            return Ok(result);
-        }
-
-        [HttpPut("messages/{messageId}")]
-        public async Task<ActionResult<MessageResult>> UpdateMessage(Guid messageId, [FromBody] UpdateMessageRequest request)
-        {
-            var command = _mapper.Map<UpdateMessageCommand>(request);
-            command.MessageId = messageId;
-            var result = await _mediator.Send(command);
-
-            // Notify clients about the update
-            await _hubContext.Clients.Group(result.ConversationId.ToString())
-                .SendAsync("MessageUpdated", result);
-
-            return Ok(result);
-        }
-
-        [HttpDelete("messages/{messageId}")]
-        [Authorize]
-        public async Task<ActionResult<bool>> DeleteMessage(Guid messageId)
-        {
-            try
-            {
-                var userId = GetCurrentUserId();
-                if (userId == null)
-                {
-                    return Unauthorized("User is not authenticated or user ID is invalid");
-                }
-                var command = new DeleteMessageCommand
-                {
-                    MessageId = messageId,
-                    UserId = userId.Value
-                };
-                var result = await _mediator.Send(command);
-
-                if (result)
-                {
-                    // Notify clients about the deletion
-                    var message = await _mediator.Send(new GetMessageByIdQuery { MessageId = messageId });
-                    await _hubContext.Clients.Group(message.ConversationId.ToString())
-                        .SendAsync("MessageDeleted", messageId);
-                }
-
-                return Ok(result);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Unauthorized();
-            }
-            catch (InvalidOperationException)
-            {
-                return BadRequest("Invalid user ID");
-            }
-        }
-
-        [HttpPost("conversations/{conversationId}/read")]
-        [Authorize]
-        public async Task<ActionResult<bool>> MarkConversationAsRead(Guid conversationId)
-        {
-            try
-            {
-                var userId = GetCurrentUserId();
-                if (userId == null)
-                {
-                    return Unauthorized("User is not authenticated or user ID is invalid");
-                }
-                var command = new MarkConversationAsReadCommand
-                {
-                    ConversationId = conversationId,
-                    UserId = userId.Value
-                };
-                var result = await _mediator.Send(command);
-                return Ok(result);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Unauthorized();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
         }
 
         [HttpPost("users/{blockedId}/block")]
@@ -299,6 +194,27 @@ namespace Craftify.Api.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("conversations/room/{roomId}")]
+        [Authorize]
+        public async Task<ActionResult<ConversationResult>> GetConversationByRoomId(string RoomId)
+        {
+            try
+            {
+                var query = new GetConversationByRoomIdQuery { RoomId = RoomId };
+                var result = await _mediator.Send(query);
+                return Ok(result);
+            }
+            catch (NotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
 
         [HttpGet("conversations")]
         [Authorize]
@@ -527,87 +443,18 @@ namespace Craftify.Api.Controllers
             }
         }
 
-        [HttpGet("conversations/{conversationId}/messages/search")]
-        [Authorize]
-        public async Task<ActionResult<List<MessageResult>>> SearchMessages(Guid conversationId, [FromQuery] string searchTerm)
-        {
-            try
-            {
-                var query = new SearchMessagesQuery(conversationId, searchTerm);
-                var result = await _mediator.Send(query);
-
-                if (result == null || !result.Any())
-                {
-                    return NotFound($"No messages found matching the search term '{searchTerm}'.");
-                }
-
-                return Ok(result);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Unauthorized();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpGet("conversations/search")]
-        [Authorize]
-        public async Task<ActionResult<List<ConversationResult>>> SearchConversations([FromQuery] string searchTerm)
-        {
-            try
-            {
-                var userId = GetCurrentUserId();
-
-                if (userId == null)
-                {
-                    return Unauthorized("User is not authenticated or user ID is invalid");
-                }
-                var query = new SearchConversationsQuery(userId.Value, searchTerm);
-                var result = await _mediator.Send(query);
-
-                if (result == null || !result.Any())
-                {
-                    return NotFound($"No conversations found matching the search term '{searchTerm}'.");
-                }
-
-                return Ok(result);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Unauthorized();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPost("conversations/{conversationId}/typing")]
-        [Authorize]
-        public async Task<ActionResult> SendTypingNotification(Guid conversationId)
-        {
-            var userId = GetCurrentUserId();
-            if (userId == null)
-            {
-                return Unauthorized("User is not authenticated or user ID is invalid");
-            }
-
-            await _hubContext.Clients.Group(conversationId.ToString()).SendAsync("UserTyping", userId);
-            return Ok();
-        }
 
         private Guid? GetCurrentUserId()
         {
-            var userIdClaim = User.FindFirst(JwtRegisteredClaimNames.Sub);
-            if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
-            {
-                return null;
-            }
+            var userIdClaim = User.FindFirst(JwtRegisteredClaimNames.Sub)
+                ?? User.FindFirst(ClaimTypes.NameIdentifier)
+                ?? User.FindFirst("uid");
 
-            return userId;
+            if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out Guid userId))
+            {
+                return userId;
+            }
+            return null;
         }
     }
 }

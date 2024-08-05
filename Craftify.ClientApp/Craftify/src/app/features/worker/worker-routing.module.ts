@@ -4,6 +4,7 @@ import { LayoutComponent } from './layout/layout.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ImageManagementComponent } from './components/image-management/image-management.component';
 import { RequestListComponent } from './components/request-list/request-list.component';
+import { ReviewRatingComponent } from '../../shared/components/review-rating/review-rating.component';
 
 const routes: Routes = [
   {
@@ -27,6 +28,14 @@ const routes: Routes = [
         path: "requests",
         component: RequestListComponent
       },
+      {
+        path: "reviews/:Id",
+        component: ReviewRatingComponent
+      },
+      {
+        path:'chat',
+        loadChildren: ()=>import('../chat/chat.module').then(m => m.ChatModule)
+      }
 
     ]
   }

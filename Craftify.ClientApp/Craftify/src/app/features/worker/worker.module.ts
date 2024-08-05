@@ -19,6 +19,9 @@ import { ImageSliderComponent } from '../../shared/components/image-slider/image
 import { ServiceCardTwoComponent } from '../../shared/components/service-card-two/service-card-two.component';
 import { RequestListComponent } from './components/request-list/request-list.component';
 import { IonicModule } from '@ionic/angular';
+import { TaskCompletionDialogComponent } from './components/task-completion-dialog/task-completion-dialog.component';
+import { OtpComponent } from '../../shared/components/otp/otp.component';
+import { ReviewRatingComponent } from '../../shared/components/review-rating/review-rating.component';
 
 
 @NgModule({
@@ -29,10 +32,11 @@ import { IonicModule } from '@ionic/angular';
     LayoutComponent,
     EditServiceModalComponent,
     RequestListComponent,
-    
+    TaskCompletionDialogComponent,
   ],
   imports: [
     CommonModule,
+    OtpComponent,
     SidebarComponent,
     WorkerRoutingModule,
     HeaderComponent,
@@ -45,7 +49,7 @@ import { IonicModule } from '@ionic/angular';
     FormsModule,
     ImageSliderComponent,
     ServiceCardTwoComponent,
-    IonicModule
+    IonicModule,
   ]
 })
 export class WorkerModule { }

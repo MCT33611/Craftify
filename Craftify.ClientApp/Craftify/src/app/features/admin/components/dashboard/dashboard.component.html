@@ -6,20 +6,20 @@
 
         <div class="card">
             <h3>Total Customers</h3>
-            <p>{{customersStore.users()?.length}}</p>
+            <p>{{customers.length}}</p>
         </div>
         <div class="cards">
             <div class="card">
                 <h3>Workers</h3>
-                <p>{{approvedWorkers().length}}</p>
+                <p>{{workers.length}}</p>
             </div>
             <div class="card">
                 <h3>Tasks</h3>
-                <p>50 tasks completed</p>
+                <p>{{completedTaskCount}} tasks completed</p>
             </div>
             <div class="card">
-                <h3>Resources</h3>
-                <p>30 resources used</p>
+                <h3>Total Bookings</h3>
+                <p>{{bookings.length}}</p>
             </div>
         </div>
         <table>
@@ -31,7 +31,7 @@
                 </tr>
             </thead>
             <tbody>
-                @for (user of customersStore.users()?.slice(0, 3); track user.id) {
+                @for (user of customers; track user.id) {
                     <tr>
                         <td><img [src]="user.profilePicture" alt=""  class="rounded-full w-5"></td>
                         <td>{{ user.firstName }}</td>

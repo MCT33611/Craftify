@@ -10,9 +10,9 @@ namespace Craftify.Application.Chat.Commands.SendMessage
         public Guid ConversationId { get; set; }
         public Guid FromId { get; set; }
         public Guid ToId { get; set; }
-        public string Content { get; set; }
+        public string Content { get; set; } = null!;
         public MessageType Type { get; set; }
-        public List<MessageMediaDto> Media { get; set; }
+        public List<MessageMediaDto>? Media { get; set; }
     }
 
 }

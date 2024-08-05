@@ -16,8 +16,8 @@
 
                 <div class="mt-4">
                     <mat-chip-listbox>
-                        <mat-chip [ngClass]="getColorStatus(booking.status)">
-                            {{ getStatus(booking.status) }}
+                        <mat-chip [ngClass]="getColorStatus(booking.status!)">
+                            {{ getStatus(booking.status!) }}
                         </mat-chip>
                     </mat-chip-listbox>
                 </div>
@@ -25,14 +25,14 @@
 
             <mat-card-actions class="flex flex-col gap-3 p-4">
                 <div class="flex flex-wrap gap-3 justify-end">
-                    <ng-container *ngIf="getStatus(booking.status) === 'Accepted'">
+                    <ng-container *ngIf="getStatus(booking.status!) === 'Accepted'">
                         <button mat-raised-button color="primary" (click)="openMessageDialog(booking)"
                             class="flex-grow sm:flex-grow-0">
                             <mat-icon>message</mat-icon>
                             Message
                         </button>
                     </ng-container>
-                    <ng-container *ngIf="getStatus(booking.status) === 'Pending'">
+                    <ng-container *ngIf="getStatus(booking.status!) === 'Pending'">
                         <button mat-raised-button color="accent" (click)="openRescheduleDialog(booking)"
                             class="flex-grow sm:flex-grow-0">
                             <mat-icon>event</mat-icon>
@@ -42,6 +42,13 @@
                             class="flex-grow sm:flex-grow-0">
                             <mat-icon>cancel</mat-icon>
                             Cancel
+                        </button>
+                    </ng-container>
+                    <ng-container *ngIf="getStatus(booking.status!) === 'Completed'">
+                        <button mat-raised-button color="primary" (click)="openReviewDialog(booking)"
+                            class="flex-grow sm:flex-grow-0">
+                            <mat-icon>rate_review</mat-icon>
+                            Leave Review
                         </button>
                     </ng-container>
                 </div>

@@ -28,20 +28,34 @@ export class RequestListComponent implements OnInit, OnDestroy {
   ];
 
   private destroy$ = new Subject<void>();
-
   ngOnInit(): void {
     this.requestService.getAllRequest().pipe(
       takeUntil(this.destroy$)
     ).subscribe({
-      next: (res: IBooking[]) => {
-        this.data = res.map((booking: IBooking) => ({
-          ...booking,
-          locationName:booking.locationName.split(',')[5],
-          status:IBookingStatus[booking.status],
-          customerName: booking.customer?.firstName || 'N/A',
-          providerName: booking.provider?.user?.firstName || 'N/A',
-          action: `/admin/request/reject/${booking.id}`
-        }));
+      next: (res: any) => {
+        if (res && Array.isArray(res.$values)) {
+          this.data = res.$values.map((booking: IBooking) => ({
+            ...booking,
+            locationName: booking.locationName?.split(',')[5] || 'N/A',
+            status: IBookingStatus[booking.status!] || 'Unknown',
+            customerName: booking.customer?.firstName || 'N/A',
+            providerName: booking.provider?.user?.firstName || 'N/A',
+            action: `/admin/request/reject/${booking.id}`
+          }));
+        } else if (Array.isArray(res)) {
+          // If res is already an array, use it directly
+          this.data = res.map((booking: IBooking) => ({
+            ...booking,
+            locationName: booking.locationName?.split(',')[5] || 'N/A',
+            status: IBookingStatus[booking.status!] || 'Unknown',
+            customerName: booking.customer?.firstName || 'N/A',
+            providerName: booking.provider?.user?.firstName || 'N/A',
+            action: `/admin/request/reject/${booking.id}`
+          }));
+        } else {
+          console.error('Unexpected response format:', res);
+          this.alertService.error('Unexpected response format from server');
+        }
       },
       error: (err: HttpErrorResponse) => {
         this.alertService.error(err.message);

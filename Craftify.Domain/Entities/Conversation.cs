@@ -1,8 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Diagnostics.CodeAnalysis;
-
-namespace Craftify.Domain.Entities
+﻿namespace Craftify.Domain.Entities
 {
     public class Conversation
     {

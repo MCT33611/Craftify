@@ -51,7 +51,7 @@ export class BookingFormComponent implements OnInit, OnDestroy {
 
   initForm() {
     this.bookingForm = this.fb.group({
-      workingTime: ['', [Validators.required, Validators.min(1)]],
+      workingTime: ['', [Validators.required, Validators.min(1),Validators.max(6)]],
       date: ['', Validators.required],
       location: ['', Validators.required],
       locationName: ['', Validators.required],

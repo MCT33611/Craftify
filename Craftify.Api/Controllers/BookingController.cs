@@ -18,6 +18,9 @@ using Microsoft.AspNetCore.Authorization;
 using CloudinaryDotNet.Actions;
 using Craftify.Domain.Constants;
 using ErrorOr;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
+using Google.Apis.Util;
 namespace Craftify.Api.Controllers
 {
     [Route("api/[controller]")]
@@ -44,6 +47,12 @@ namespace Craftify.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll(Guid userId)
         {
+            var currentUserId = GetCurrentUserId();
+            if (userId == Guid.Empty && currentUserId.HasValue)
+            {
+                userId = currentUserId.Value;
+            }
+
             var result = await _mediator.Send(new GetAllBookingsQuery(userId));
             return Ok(result.Value);
         }
@@ -67,6 +76,19 @@ namespace Craftify.Api.Controllers
             var command = _mapper.Map<UpdateBookingCommand>(booking);
             var result = await _mediator.Send(command);
             return Ok(result);
+        }
+
+        private Guid? GetCurrentUserId()
+        {
+            var userIdClaim = User.FindFirst(JwtRegisteredClaimNames.Sub)
+                ?? User.FindFirst(ClaimTypes.NameIdentifier)
+                ?? User.FindFirst("uid");
+
+            if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out Guid userId))
+            {
+                return userId;
+            }
+            return null;
         }
     }
 }
