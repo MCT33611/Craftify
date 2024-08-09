@@ -21,16 +21,11 @@ namespace Craftify.Application.Common.Interfaces.Persistence.IRepository
         Task<bool> UpdateMessageAsync(Message message);
         Task<bool> DeleteMessageAsync(Guid messageId);
 
-        Task<MessageMedia> CreateMessageMediaAsync(MessageMedia media);
-        Task<IEnumerable<MessageMedia>> GetMediaByMessageIdAsync(Guid messageId);
-        Task<MessageMedia?> GetMessageMediaByIdAsync(Guid mediaId);
         Task<bool> MarkConversationAsReadAsync(Guid conversationId, Guid userId);
         Task<int> GetUnreadConversationsCountAsync(Guid userId);
         Task<Message> GetLatestMessageByConversationIdAsync(Guid conversationId);
         Task<int> GetUnreadMessagesCountAsync(Guid conversationId, Guid userId);
         Task<(IEnumerable<Message> Messages, int TotalCount)> GetPaginatedMessagesAsync(Guid conversationId, int page, int pageSize);
-        Task<bool> DeleteMessageMediaAsync(Guid mediaId);
-        Task<List<MessageMedia>> GetMediaByTypeAsync(Guid conversationId, MediaType mediaType);
         Task<bool> BlockUserAsync(Guid blockerId, Guid blockedId);
         Task<bool> UnblockUserAsync(Guid unblockerId, Guid unblockedId);
         Task<bool> IsUserBlockedAsync(Guid userId1, Guid userId2);

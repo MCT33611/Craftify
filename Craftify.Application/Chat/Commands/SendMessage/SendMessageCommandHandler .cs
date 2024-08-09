@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Craftify.Application.Common.Interfaces.Persistence;
 using Craftify.Application.Chat.Common;
 using Craftify.Domain.Entities;
 using Craftify.Application.Common.Interfaces.Persistence.IRepository;
@@ -19,25 +18,22 @@ namespace Craftify.Application.Chat.Commands.SendMessage
         {
             var message = new Message
             {
-                Id = Guid.NewGuid(),
                 ConversationId = request.ConversationId,
                 FromId = request.FromId,
                 ToId = request.ToId,
                 Content = request.Content,
                 Type = request.Type,
-                Timestamp = DateTime.UtcNow,
-                IsRead = false
+                Timestamp = DateTime.UtcNow
             };
 
             if (request.Media != null && request.Media.Any())
             {
                 message.Media = request.Media.Select(m => new MessageMedia
                 {
-                    Id = Guid.NewGuid(),
                     FileName = m.FileName,
                     ContentType = m.ContentType,
                     FileSize = m.FileSize,
-                    StoragePath = m.StoragePath,
+                    CdnUrl = m.CdnUrl,
                     Type = m.Type
                 }).ToList();
             }
@@ -48,20 +44,18 @@ namespace Craftify.Application.Chat.Commands.SendMessage
             return new MessageResult
             {
                 Id = message.Id,
-                ConversationId = message.ConversationId,
+                Content = message.Content,
+                Timestamp = message.Timestamp,
                 FromId = message.FromId,
                 ToId = message.ToId,
-                Content = message.Content,
                 Type = message.Type,
-                Timestamp = message.Timestamp,
-                IsRead = message.IsRead,
                 Media = message.Media?.Select(m => new MessageMediaResult
                 {
                     Id = m.Id,
                     FileName = m.FileName,
                     ContentType = m.ContentType,
                     FileSize = m.FileSize,
-                    StoragePath = m.StoragePath,
+                    CdnUrl = m.CdnUrl,
                     Type = m.Type
                 }).ToList()
             };

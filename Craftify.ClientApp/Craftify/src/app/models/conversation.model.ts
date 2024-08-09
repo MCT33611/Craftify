@@ -1,3 +1,5 @@
+import { Message } from "./message.model";
+
 export interface Conversation {
     id: string;
     roomId: string;
@@ -8,6 +10,7 @@ export interface Conversation {
     isBlocked: boolean;
     blockerId?: string;
     lastActivityTimestamp: Date;
+    messages?:Message[]
   }
   
   export interface User {

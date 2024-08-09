@@ -31,9 +31,9 @@ namespace Craftify.Api.Controllers
             return Problem(errors[0]);
         }
 
-#pragma warning disable CA1859 // Use concrete types when possible for improved performance
+#pragma warning disable CA1859 
         private IActionResult Problem(Error error)
-#pragma warning restore CA1859 // Use concrete types when possible for improved performance
+#pragma warning restore CA1859 
         {
             var statusCode = error.Type switch
             {
@@ -45,9 +45,9 @@ namespace Craftify.Api.Controllers
             return Problem(statusCode: statusCode, title: error.Description);
         }
 
-#pragma warning disable CA1859 // Use concrete types when possible for improved performance
+#pragma warning disable CA1859 
         private IActionResult ValidationProblem(List<Error> errors)
-#pragma warning restore CA1859 // Use concrete types when possible for improved performance
+#pragma warning restore CA1859 
         {
             var modelStateDictionary = new ModelStateDictionary();
             foreach (var error in errors)

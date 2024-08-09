@@ -9,9 +9,9 @@
         public User PeerOne { get; set; }
         public Guid PeerTwoId { get; set; }
         public User PeerTwo { get; set; }
-        public bool IsBlocked { get; set; } // For blocking functionality
+        public bool IsBlocked { get; set; } 
         public Guid? BlockerId { get; set; }
-        public DateTime LastActivityTimestamp { get; set; } // To track conversation activity
-        public ICollection<Message> Messages { get; set; } // Navigation property for messages
+        public DateTime LastActivityTimestamp { get; set; } 
+        public ICollection<Message> Messages { get; set; } 
     }
 }

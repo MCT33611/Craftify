@@ -14,7 +14,7 @@ namespace Craftify.Domain.Entities
         public string FileName { get; set; } = null!;
         public string ContentType { get; set; } = null!;
         public long FileSize { get; set; } 
-        public string StoragePath { get; set; } = null!;
+        public string CdnUrl { get; set; } = null!;
         public MediaType Type { get; set; } 
     }
 }

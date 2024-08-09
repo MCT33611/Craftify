@@ -4,7 +4,6 @@ namespace Craftify.Domain.Entities
 {
     public class Message
     {
-        // Existing properties
         public Guid Id { get; set; }
         public Guid ConversationId { get; set; }
         public Conversation Conversation { get; set; }
@@ -13,10 +12,8 @@ namespace Craftify.Domain.Entities
         public Guid FromId { get; set; }
         public Guid ToId { get; set; }
         public bool IsDeleted { get; set; }
-
-        // New properties
-        public bool IsRead { get; set; } // To track read status
-        public MessageType Type { get; set; } // To differentiate between text, media, or mixed messages
-        public ICollection<MessageMedia> Media { get; set; } // Navigation property for media attachments
+        public bool IsRead { get; set; } 
+        public MessageType Type { get; set; } 
+        public ICollection<MessageMedia> Media { get; set; } 
     }
 }

@@ -118,8 +118,6 @@ export class TokenService {
 
   getWorkerId(): string | null | undefined {
     const userInfo = this.getUserInfo();
-    console.log(userInfo);
-
     return userInfo ? userInfo.WorkerId : null;
   }
 

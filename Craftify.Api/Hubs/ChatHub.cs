@@ -1,13 +1,16 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using MediatR;
-using Craftify.Application.Chat.Commands.SendMessage;
-using Craftify.Application.Chat.Queries.GetMessageById;
-using Craftify.Application.Chat.Commands.MarkConversationAsRead;
 using System.Security.Claims;
 using MapsterMapper;
+using Microsoft.AspNetCore.Authorization;
+using Craftify.Application.Chat.Commands.SendMessage;
 using Craftify.Application.Chat.Commands.UpdateMessage;
 using Craftify.Application.Chat.Commands.DeleteMessage;
-using Microsoft.AspNetCore.Authorization;
+using Craftify.Application.Chat.Commands.MarkConversationAsRead;
+using Craftify.Application.Chat.Commands.UploadMedia;
+using Craftify.Application.Chat.Common;
+using Microsoft.AspNetCore.Http;
+using Craftify.Application.Chat.Queries.GetMessageById;
 
 namespace Craftify.Api.Hubs
 {
@@ -16,6 +19,7 @@ namespace Craftify.Api.Hubs
     {
         private readonly ISender _mediator;
         private readonly IMapper _mapper;
+
         public ChatHub(ISender mediator, IMapper mapper)
         {
             _mediator = mediator;
@@ -54,7 +58,7 @@ namespace Craftify.Api.Hubs
 
             var result = await _mediator.Send(command);
 
-            string room = GetRoomId(request.FromId,request.ToId);
+            string room = GetRoomId(request.FromId, request.ToId);
 
             await Clients.Group(room).SendAsync("MessageReceived", result);
         }
@@ -64,42 +68,32 @@ namespace Craftify.Api.Hubs
             var command = _mapper.Map<UpdateMessageCommand>(request);
             command.MessageId = messageId;
             var result = await _mediator.Send(command);
-            await Clients.Group(result.ConversationId.ToString()).SendAsync("MessageUpdated", result);
+            var room = GetRoomId(result.FromId, result.ToId);
+            await Clients.Group(room).SendAsync("MessageUpdated", result);
         }
 
-        
         public async Task<bool> DeleteMessage(Guid messageId)
         {
-            try
+            var userId = Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var parsedUserId))
             {
-                var userId = Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var parsedUserId))
-                {
-                    throw new HubException("User is not authenticated or user ID is invalid");
-                }
+                throw new HubException("User is not authenticated or user ID is invalid");
+            }
 
-                var command = new DeleteMessageCommand
-                {
-                    MessageId = messageId,
-                    UserId = parsedUserId
-                };
+            var command = new DeleteMessageCommand
+            {
+                MessageId = messageId,
+                UserId = parsedUserId
+            };
 
-                var result = await _mediator.Send(command);
-                if (result)
-                {
-                    var message = await _mediator.Send(new GetMessageByIdQuery { MessageId = messageId });
-                    await Clients.Group(message.ConversationId.ToString()).SendAsync("MessageDeleted", messageId);
-                }
-                return result;
-            }
-            catch (UnauthorizedAccessException)
+            var result = await _mediator.Send(command);
+            if (result)
             {
-                throw new HubException("Unauthorized access");
+                var message = await _mediator.Send(new GetMessageByIdQuery { MessageId = messageId });
+                var room = GetRoomId(message.FromId, message.ToId);
+                await Clients.Group(room).SendAsync("MessageDeleted", messageId);
             }
-            catch (InvalidOperationException)
-            {
-                throw new HubException("Invalid user ID");
-            }
+            return result;
         }
 
         public async Task MarkConversationAsRead(Guid conversationId)
@@ -148,12 +142,34 @@ namespace Craftify.Api.Hubs
             await base.OnDisconnectedAsync(exception);
         }
 
-
         private string GetRoomId(Guid userId1, Guid userId2)
         {
             return userId1.CompareTo(userId2) < 0
                 ? $"{userId1}-{userId2}"
                 : $"{userId2}-{userId1}";
+        }
+
+        public async Task<List<MessageMediaResult>> UploadMedia(IFormFileCollection mediaFiles)
+        {
+            var command = new UploadMediaCommand { MediaFiles = mediaFiles };
+            return await _mediator.Send(command);
+        }
+
+        public async Task MediaMessageReceived(MessageMediaResult result)
+        {
+
+            await Clients.Group("all").SendAsync("MediaMessageReceived", result);
+        }
+
+        public async Task MediaDeleted(Guid mediaId)
+        {
+            string conversationId = await GetConversationIdForMedia(mediaId);
+            await Clients.Group(conversationId).SendAsync("MediaDeleted", mediaId);
+        }
+
+        private async Task<string> GetConversationIdForMedia(Guid mediaId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

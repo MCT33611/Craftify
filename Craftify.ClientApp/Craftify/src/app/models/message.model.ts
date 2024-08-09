@@ -1,3 +1,5 @@
+import { IApiResponse } from "./api-response.models";
+
 export interface Message {
     id?: string;
     conversationId: string;
@@ -7,12 +9,13 @@ export interface Message {
     type: MessageType;
     timestamp?: Date;
     isRead?: boolean;
-    media: MessageMedia[];
+    media:MessageMedia[];
   }
   
   export enum MessageType {
     Text,
-    Media
+    Media,
+    Mixed
   }
   
   export interface MessageMedia {
@@ -21,7 +24,7 @@ export interface Message {
     fileName: string;
     contentType: string;
     fileSize: number;
-    storagePath: string;
+    cdnUrl: string;
     type: MediaType;
   }
   

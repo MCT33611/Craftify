@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { Conversation, User } from '../../../../models/conversation.model';
 import { ChatService } from '../../services/chat.service';
 import { IApiResponse } from '../../../../models/api-response.models';
@@ -12,11 +12,13 @@ import { Subscription } from 'rxjs';
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.css'
 })
-export class ChatComponent implements OnInit, OnDestroy {
+export class ChatComponent implements OnInit,AfterViewChecked, OnDestroy {
+  @ViewChild('messageList') messageList!:ElementRef;
   convs: Conversation[] = []
   userId!: string;
   selectedConv: Conversation | null = null;
   private subscriptions: Subscription[] = [];
+  isTyping: { [userId: string]: boolean } = {};
 
   chat = inject(ChatService);
   alert = inject(AlertService);
@@ -27,6 +29,16 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.chat.startConnection();
     this.loadConversations();
     this.initializeChatListeners();
+    this.initializeTypingIndicator();
+  }
+
+  ngAfterViewChecked() {
+    this.scrollToBottom();
+  }
+  scrollToBottom() {
+    if (this.messageList) {      
+      this.messageList.nativeElement.scrollTop = this.messageList.nativeElement.scrollHeight;;
+    }
   }
 
   ngOnDestroy(): void {
@@ -69,27 +81,30 @@ onSelect(conv: Conversation) {
     .catch(error => {
       this.alert.error('Failed to join conversation: ' + error);
     });
+  this.scrollToBottom();
 }
 
-// Remove the startConnection call from here, as it's now handled in the service
+onSend(message: { files: File[], content: string }) {
+  if (this.selectedConv) {
+    let { files, content } = message;
+    const msg: Message = {
+      conversationId: this.selectedConv.id,
+      fromId: this.userId,
+      toId: this.otherUser(this.selectedConv)?.id!,
+      type: files.length > 0 ? MessageType.Mixed : MessageType.Text,
+      content,
+      timestamp: new Date(),
+      isRead: false,
+      media: []  
+    };
 
-  onSend(content: string) {
-    if (this.selectedConv) {
-      const msg: Message = {
-        conversationId: this.selectedConv.id,
-        fromId: this.userId,
-        toId: this.otherUser(this.selectedConv)?.id!,
-        type: MessageType.Text,
-        content,
-        timestamp: new Date(),
-        isRead: false,
-        media: []
-      };
-      this.chat.sendMessage(msg).catch(error => {
-        this.alert.error('Failed to send message: ' + error);
-      });
-    }
+    this.chat.sendMessage(msg, files).catch(error => {
+      this.alert.error('Failed to send message: ' + error);
+      console.log(error);
+      
+    });
   }
+}
 
   otherUser(conv: Conversation): User | null {
     if (!this.userId) {
@@ -100,6 +115,21 @@ onSelect(conv: Conversation) {
     return conv.peerOneId === this.userId ? conv.peerTwo : conv.peerOne;
   }
 
+  initializeTypingIndicator(): void {
+    this.chat.userTypingListener((userId: string) => {
+      this.isTyping[userId] = true;
+      setTimeout(() => {
+        this.isTyping[userId] = false;
+      }, 3000); // Reset after 3 seconds
+    });
+  }
+
+  onTyping(): void {
+    if (this.selectedConv) {
+      this.chat.sendTypingNotification(this.selectedConv.roomId);
+    }
+  }
+
   private updateConversationWithNewMessage(message: Message): void {
     // Implement logic to update conversation list or current conversation
   }
@@ -107,4 +137,6 @@ onSelect(conv: Conversation) {
   private updateConversationReadStatus(conversationId: string): void {
     // Implement logic to update unread count for the conversation
   }
+
+
 }

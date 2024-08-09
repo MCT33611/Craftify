@@ -1,39 +1,25 @@
-﻿using Craftify.Api.Contracts.Chat;
-using Craftify.Application.Chat.Commands.AddMessageMedia;
-using Craftify.Application.Chat.Commands.BlockUser;
+﻿using Craftify.Application.Chat.Commands.BlockUser;
 using Craftify.Application.Chat.Commands.CreateConversation;
-using Craftify.Application.Chat.Commands.DeleteMessage;
-using Craftify.Application.Chat.Commands.DeleteMessageMedia;
-using Craftify.Application.Chat.Commands.MarkConversationAsRead;
-using Craftify.Application.Chat.Commands.SendMessage;
 using Craftify.Application.Chat.Commands.UnblockUser;
-using Craftify.Application.Chat.Commands.UpdateMessage;
-using Craftify.Application.Chat.Common.Dtos;
 using Craftify.Application.Chat.Common;
 using Craftify.Application.Chat.Queries.GetConversationById;
 using Craftify.Application.Chat.Queries.GetConversationsByUserId;
 using Craftify.Application.Chat.Queries.GetLatestMessageByConversationId;
-using Craftify.Application.Chat.Queries.GetMediaByMessageId;
-using Craftify.Application.Chat.Queries.GetMediaByType;
 using Craftify.Application.Chat.Queries.GetMessageById;
 using Craftify.Application.Chat.Queries.GetMessagesByConversationId;
 using Craftify.Application.Chat.Queries.GetPaginatedMessages;
 using Craftify.Application.Chat.Queries.GetUnreadConversationsCount;
 using Craftify.Application.Chat.Queries.GetUnreadMessagesCount;
 using Craftify.Application.Chat.Queries.IsUserBlocked;
-using Craftify.Application.Chat.Queries.SearchConversations;
-using Craftify.Application.Chat.Queries.SearchMessages;
 using Craftify.Domain.Common.Errors;
-using Craftify.Domain.Enums;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using System.IdentityModel.Tokens.Jwt;
-using Craftify.Api.Hubs;
 using Craftify.Application.Chat.Queries.GetConversationByRoomId;
 using System.Security.Claims;
+using Craftify.Application.Chat.Commands.UploadMedia;
 
 namespace Craftify.Api.Controllers
 {
@@ -121,59 +107,6 @@ namespace Craftify.Api.Controllers
             }
         }
 
-        [HttpPost("messages/{messageId}/media")]
-        [Authorize]
-        public async Task<ActionResult<MessageMediaResult>> AddMessageMedia(Guid messageId, [FromBody] AddMessageMediaRequest request)
-        {
-            try
-            {
-                var command = _mapper.Map<AddMessageMediaCommand>(request);
-                command.MessageId = messageId;
-                var result = await _mediator.Send(command);
-                return Ok(result);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Unauthorized();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpDelete("messages/{messageId}/media/{mediaId}")]
-        [Authorize]
-        public async Task<ActionResult<bool>> DeleteMessageMedia(Guid messageId, Guid mediaId)
-        {
-            try
-            {
-                var userId = GetCurrentUserId();
-                if (userId == null)
-                {
-                    return Unauthorized("User is not authenticated or user ID is invalid");
-                }
-                var command = new DeleteMessageMediaCommand
-                {
-                    MediaId = mediaId,
-                    UserId = userId.Value
-                };
-                var result = await _mediator.Send(command);
-                return Ok(result);
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                return Unauthorized(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
 
         [HttpGet("conversations/{conversationId}")]
         [Authorize]
@@ -278,6 +211,15 @@ namespace Craftify.Api.Controllers
             }
         }
 
+        [HttpPost("messages/upload-media")]
+        [Authorize]
+        public async Task<ActionResult<List<MessageMediaResult>>> UploadMedia([FromForm] IFormFileCollection mediaFiles)
+        {
+            var command = new UploadMediaCommand { MediaFiles = mediaFiles };
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
         [HttpGet("unread-conversations-count")]
         [Authorize]
         public async Task<ActionResult<int>> GetUnreadConversationsCount()
@@ -366,57 +308,6 @@ namespace Craftify.Api.Controllers
             }
         }
 
-        [HttpGet("messages/{messageId}/media")]
-        [Authorize]
-        public async Task<ActionResult<List<MessageMediaResult>>> GetMediaByMessageId(Guid messageId)
-        {
-            try
-            {
-                var query = new GetMediaByMessageIdQuery(messageId);
-                var result = await _mediator.Send(query);
-
-                if (result == null || !result.Any())
-                {
-                    return NotFound("No media found for the given message.");
-                }
-
-                return Ok(result);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Unauthorized();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpGet("conversations/{conversationId}/media/{mediaType}")]
-        [Authorize]
-        public async Task<ActionResult<List<MessageMediaResult>>> GetMediaByType(Guid conversationId, MediaType mediaType)
-        {
-            try
-            {
-                var query = new GetMediaByTypeQuery(conversationId, mediaType);
-                var result = await _mediator.Send(query);
-
-                if (result == null || !result.Any())
-                {
-                    return NotFound($"No {mediaType} media found for the given conversation.");
-                }
-
-                return Ok(result);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Unauthorized();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
 
         [HttpGet("users/{otherUserId}/is-blocked")]
         [Authorize]
@@ -442,7 +333,6 @@ namespace Craftify.Api.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
 
         private Guid? GetCurrentUserId()
         {

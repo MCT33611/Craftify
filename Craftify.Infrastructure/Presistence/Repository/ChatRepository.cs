@@ -1,5 +1,4 @@
 ﻿using Craftify.Application.Chat.Common;
-using Craftify.Application.Chat.Queries.GetMediaByType;
 using Craftify.Application.Common.Interfaces.Persistence.IRepository;
 using Craftify.Domain.Entities;
 using Craftify.Domain.Enums;
@@ -219,45 +218,7 @@ namespace Craftify.Infrastructure.Persistence.Repository
             return (messages, totalCount);
         }
 
-        public async Task<MessageMedia> CreateMessageMediaAsync(MessageMedia media)
-        {
-            await _context.MessageMedia.AddAsync(media);
-            await _context.SaveChangesAsync();
-            return media;
-        }
-
-        public async Task<IEnumerable<MessageMedia>> GetMediaByMessageIdAsync(Guid messageId)
-        {
-            return await _context.MessageMedia
-                .Where(mm => mm.MessageId == messageId)
-                .ToListAsync();
-        }
-
-        public async Task<MessageMedia?> GetMessageMediaByIdAsync(Guid mediaId)
-        {
-            return await _context.MessageMedia
-                .Include(mm => mm.Message)
-                .FirstOrDefaultAsync(mm => mm.Id == mediaId);
-        }
-
-        public async Task<bool> DeleteMessageMediaAsync(Guid mediaId)
-        {
-            var media = await _context.MessageMedia.FindAsync(mediaId);
-            if (media != null)
-            {
-                _context.MessageMedia.Remove(media);
-                return await _context.SaveChangesAsync() > 0;
-            }
-            return false;
-        }
-
-        public async Task<List<MessageMedia>> GetMediaByTypeAsync(Guid conversationId, MediaType mediaType)
-        {
-            return await _context.MessageMedia
-                .Where(mm => mm.Message.ConversationId == conversationId && mm.Type == mediaType)
-                .Include(mm => mm.Message)
-                .ToListAsync();
-        }
+       
 
         public async Task<bool> BlockUserAsync(Guid blockerId, Guid blockedId)
         {

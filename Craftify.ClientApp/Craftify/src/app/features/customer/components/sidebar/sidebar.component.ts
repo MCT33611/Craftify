@@ -31,8 +31,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
   userId = this.token.getUserId();
   menuItems: MenuItem[] = [
     { icon: 'home', label: 'Home', action: null, active: true, route: './home' },
-    { icon: 'search', label: 'Search', action: 'search', active: false },
-    { icon: 'notifications', label: 'Notifications', action: 'notifications', active: false },
+    //{ icon: 'search', label: 'Search', action: 'search', active: false },
+    //{ icon: 'notifications', label: 'Notifications', action: 'notifications', active: false },
     { icon: 'chatbubbles', label: 'Messages', action: null, active: false ,route:`./chat`},
     { icon: 'briefcase', label: 'Services', action: null, active: false, route: './services' },
     { icon: 'git-pull-request', label: 'Requests', action: null, active: false, route: './requests' },

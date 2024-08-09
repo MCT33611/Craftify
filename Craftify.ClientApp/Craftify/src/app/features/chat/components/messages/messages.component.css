@@ -19,8 +19,25 @@
     align-self: flex-end;
 }
 
-.message-content {
+/* .message-content {
     margin-bottom: 5px;
+} */
+
+.message-content {
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+}
+
+.message-text {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 90%;
+    align-self: flex-start;
+}
+
+.my-message .message-text {
+    align-self: flex-end;
 }
 
 .message-time {

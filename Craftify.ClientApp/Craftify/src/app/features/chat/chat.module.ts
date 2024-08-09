@@ -9,9 +9,11 @@ import { EmtyComponent } from './components/emty/emty.component';
 import { ChatRoutingModule } from './chat-routing.module';
 import { MessageInputComponent } from './components/message-input/message-input.component';
 import { ChatHeaderComponent } from './components/chat-hearder/chat-header.component';
-
-
-
+import { IonicModule } from '@ionic/angular';
+import { MediaViewerComponent } from './components/media-viewer/media-viewer.component';
+import { PickerComponent } from '@ctrl/ngx-emoji-mart';
+import { AudioContextModule } from 'angular-audio-context';
+import { AudioRecorderComponent } from './components/audio-recorder/audio-recorder.component';
 @NgModule({
   declarations: [
     ChatComponent,
@@ -19,15 +21,20 @@ import { ChatHeaderComponent } from './components/chat-hearder/chat-header.compo
     MessagesComponent,
     MessageInputComponent,
     EmtyComponent,
-    ChatHeaderComponent
+    ChatHeaderComponent,
+    MediaViewerComponent,
+    AudioRecorderComponent
   ],
   imports: [
     ChatRoutingModule,
-    CommonModule,
     FormsModule,
+    CommonModule,
     ReactiveFormsModule,
-    MaterialModule
+    MaterialModule,
+    IonicModule,
+    PickerComponent,
+    AudioContextModule.forRoot('balanced')
   ],
-  bootstrap:[ChatComponent]
+  bootstrap: [ChatComponent]
 })
 export class ChatModule { }

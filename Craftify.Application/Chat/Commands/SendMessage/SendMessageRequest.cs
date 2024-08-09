@@ -1,4 +1,6 @@
-﻿using Craftify.Domain.Enums;
+﻿using Craftify.Domain.Entities;
+using Craftify.Domain.Enums;
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace Craftify.Application.Chat.Commands.SendMessage
@@ -19,25 +21,7 @@ namespace Craftify.Application.Chat.Commands.SendMessage
         [Required]
         public MessageType Type { get; set; }
 
-        public List<MessageMediaRequest> Media { get; set; }
+        public List<MessageMedia> Media { get; set; } = new List<MessageMedia>();
     }
 
-    public class MessageMediaRequest
-    {
-        [Required]
-        public string FileName { get; set; }
-
-        [Required]
-        public string ContentType { get; set; }
-
-        [Required]
-        [Range(1, long.MaxValue)]
-        public long FileSize { get; set; }
-
-        [Required]
-        public string StoragePath { get; set; }
-
-        [Required]
-        public MediaType Type { get; set; }
-    }
 }

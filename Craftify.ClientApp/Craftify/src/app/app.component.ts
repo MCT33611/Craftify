@@ -13,11 +13,4 @@ import { AuthService } from './features/authentication/services/auth.service';
 })
 export class AppComponent {
   title = 'Craftify';
-  authService = inject(AuthService);
-
-  constructor(){
-    setInterval(()=>{
-      this.authService.logout();
-    },5000)
-  }
 }

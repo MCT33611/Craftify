@@ -2,9 +2,9 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { environment } from '../../../../environments/environment';
-import { MediaType, Message } from '../../../models/message.model';
+import { MediaType, Message, MessageMedia } from '../../../models/message.model';
 import { Conversation } from '../../../models/conversation.model';
-import { catchError, Observable } from 'rxjs';
+import { catchError, lastValueFrom, Observable } from 'rxjs';
 import { IApiResponse } from '../../../models/api-response.models';
 import { handleError } from '../../../shared/utils/handleError';
 import { TokenService } from '../../../services/token.service';
@@ -45,7 +45,7 @@ export class ChatService {
     this._connection.on('Error', callback);
   }
 
-  messageReceivedListener(callback: (message: Message) => void): void {
+  messageReceivedListener(callback: (message: any) => void): void {
     this._connection.on('MessageReceived', callback);
   }
 
@@ -65,13 +65,40 @@ export class ChatService {
     this._connection.on('UserTyping', callback);
   }
 
+  mediaMessageReceivedListener(callback: (result: any) => void) {
+    this._connection.on('MediaMessageReceived', callback);
+  }
+  
+  mediaDeletedListener(callback: (mediaId: string) => void) {
+    this._connection.on('MediaDeleted', callback);
+  }
+
   // Hub invokers
   joinConversation(room: string): Promise<void> {
     return this._connection.invoke('JoinConversation', room);
   }
 
-  sendMessage(request: Message): Promise<void> {
-    return this._connection.invoke('SendMessage', request);
+  async sendMessage(request: Message, files: File[]): Promise<void> {
+    const formData = new FormData();
+    formData.append('request', JSON.stringify(request));
+    
+    files.forEach((file, index) => {
+      formData.append(`mediaFiles`, file, file.name);
+    });
+
+    try {
+      // First, upload the files
+      const mediaUploadResponse = await this._http.post<IApiResponse<MessageMedia>>(`${this._apiUrl}/messages/upload-media`, formData).toPromise();
+      
+      // Then, add the uploaded media to the message
+      request.media = mediaUploadResponse?.$values || [];
+      
+      // Finally, send the message through SignalR
+      await this._connection.invoke('SendMessage', request);
+    } catch (error) {
+      console.error('Error sending message with media:', error);
+      throw error;
+    }
   }
 
   updateMessage(messageId: string, request: Message): Promise<void> {
@@ -81,6 +108,7 @@ export class ChatService {
   deleteMessage(messageId: string): Promise<boolean> {
     return this._connection.invoke('DeleteMessage', messageId);
   }
+
 
   markConversationAsRead(conversationId: string): Promise<void> {
     return this._connection.invoke('MarkConversationAsRead', conversationId);

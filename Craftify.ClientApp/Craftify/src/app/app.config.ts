@@ -19,6 +19,10 @@ export const appConfig: ApplicationConfig = {
     { provide: ErrorHandler, useClass: GlobalErrorHandlerService },
     { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
     JwtHelperService,
+    {
+      provide: AudioContext,
+      useFactory: () => new (window.AudioContext || (window as any).webkitAudioContext)()
+    }
   ]
 };
 

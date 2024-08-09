@@ -4,14 +4,16 @@ using Craftify.Application.Plan.Commands.UpdatePlan;
 using Craftify.Application.Plan.Queries.GetAllPlan;
 using Craftify.Application.Plan.Queries.GetPlan;
 using Craftify.Contracts.Plan;
+using Craftify.Domain.Constants;
 using Mapster;
 using MapsterMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Craftify.Api.Controllers
 {
-    //[Authorize(Roles = AppConstants.Role_Admin)]
+    [Authorize(Roles = AppConstants.Role_Admin)]
     [Route("api/[controller]")]
     [ApiController]
     public class PlanController(
